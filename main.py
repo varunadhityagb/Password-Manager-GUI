@@ -1,4 +1,3 @@
-import mysql.connector as sqlc
 import random
 from string import ascii_letters, ascii_uppercase, digits, ascii_lowercase
 
@@ -33,3 +32,4 @@ def password(n : int):
     shuffle(passwd)
     
     return passwd
+
