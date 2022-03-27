@@ -33,3 +33,12 @@ def password(n : int):
     
     return passwd
 
+def encrypt(strg):
+    str_ls = list(strg)
+    for i in str_ls:
+        pass
+    
+        
+def decrypt(strg : str):
+    pass
+
