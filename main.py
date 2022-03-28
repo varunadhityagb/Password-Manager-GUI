@@ -1,13 +1,20 @@
 import random
 from string import ascii_letters, ascii_uppercase, digits, ascii_lowercase
+#characters
+lcase, ucase, num, alpha, pun = list(ascii_lowercase), list(ascii_uppercase),\
+     list(digits), list(ascii_letters), ['!','@','#','$','%','^','&','*','-','_','/']
+
+#defining encryption variables
+lcase_crypt = ['M','L','W','U','Z','C','H','A','N','J','O','P','I','S','T','D','G','K','X','E','B','Y','R','Q','V','F']
+ucase_crypt = ['m','w','f','l','s','n','o','i','d','a','g','e','u','h','p','r','y','k','q','c','x','b','v','z','j','t']
+num_crypt = ['net', 'enin', 'thgie', 'neves', 'xis', 'evif', 'ruof', 'eerht', 'owt', 'eno']
+#done
 
 def shuffle(strg):
     ls = list(strg)
     random.shuffle(ls)
     
 def password(n : int):
-    #list of characters
-    lcase, ucase, num, alpha, pun = list(ascii_lowercase), list(ascii_uppercase), list(digits), list(ascii_letters), ['!','@','#'] 
     char = [lcase, ucase, num, alpha, pun]
 
     #generating the password
@@ -33,7 +40,7 @@ def password(n : int):
     
     return passwd
 
-def encrypt(strg):
+def encrypt(strg : str):
     str_ls = list(strg)
     for i in str_ls:
         pass
@@ -41,4 +48,3 @@ def encrypt(strg):
         
 def decrypt(strg : str):
     pass
-
