@@ -66,9 +66,3 @@ def decrypt(strg : str):
             pass
     strg = ''.join(str_ls)
     return strg
-while True:
-    ab = input("Enter:")
-    e = encrypt(ab)
-    d = decrypt(e)
-    print(e)
-    print(d)
