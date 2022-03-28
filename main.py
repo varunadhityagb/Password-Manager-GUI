@@ -1,6 +1,5 @@
 import random
 from string import ascii_letters, ascii_uppercase, digits, ascii_lowercase
-from unicodedata import digit
 #characters
 lcase, ucase, num, alpha, pun = list(ascii_lowercase), list(ascii_uppercase),\
      list(digits), list(ascii_letters), ['!','@','#','$','%','^','&','*','-','_','/']
