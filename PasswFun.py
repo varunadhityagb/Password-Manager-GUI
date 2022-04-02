@@ -1,5 +1,17 @@
+#import modules
 import random
 from string import ascii_letters, ascii_uppercase, digits, ascii_lowercase
+import mysql.connector as sqlc
+
+
+#function for creating database
+def sqldb():
+    mydtb = sqlc.connect(host='localhost', user='root', passwd='root')
+    mycurs = mydtb.cursor()
+    mycurs.execute("CREATE DATABASE IF NOT EXISTS mypusers;")
+
+
+#########################   VARIABLES   ##################################################
 #characters
 lcase, ucase, num, alpha, pun = list(ascii_lowercase), list(ascii_uppercase),\
      list(digits), list(ascii_letters), ['!','@','#','$','%','^','&','*','-','_','/']
@@ -10,8 +22,9 @@ lcase_crypt = ['M','L','W','U','Z','C','H','A','N','J','O','P','I','S','T','D','
 ucase_crypt = ['m','w','f','l','s','n','o','i','d','a','g','e','u','h','p','r','y','k','q','c','x','b','v','z','j','t']
 num_crypt = ['6', '4', '7', '8', '5', '2', '0', '3', '1', '9']
 charst_crypt = lcase_crypt + ucase_crypt + num_crypt
-#done
+#########################   VARIABLES   ##################################################
 
+#########################   FUNCTIONS   ##################################################
 def shuffle(strg):
     ls = list(strg)
     random.shuffle(ls)
