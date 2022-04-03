@@ -1,15 +1,6 @@
 #import modules
 import random
 from string import ascii_letters, ascii_uppercase, digits, ascii_lowercase
-import mysql.connector as sqlc
-
-
-#function for creating database
-def sqldb():
-    mydtb = sqlc.connect(host='localhost', user='root', passwd='root')
-    mycurs = mydtb.cursor()
-    mycurs.execute("CREATE DATABASE IF NOT EXISTS mypusers;")
-
 
 #########################   VARIABLES   ##################################################
 #characters
