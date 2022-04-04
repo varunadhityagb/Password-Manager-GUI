@@ -1,6 +1,7 @@
 #import modules
 import random
 from string import ascii_letters, ascii_uppercase, digits, ascii_lowercase
+from hashlib import *
 
 #########################   VARIABLES   ##################################################
 #characters
@@ -13,7 +14,6 @@ lcase_crypt = ['M','L','W','U','Z','C','H','A','N','J','O','P','I','S','T','D','
 ucase_crypt = ['m','w','f','l','s','n','o','i','d','a','g','e','u','h','p','r','y','k','q','c','x','b','v','z','j','t']
 num_crypt = ['6', '4', '7', '8', '5', '2', '0', '3', '1', '9']
 charst_crypt = lcase_crypt + ucase_crypt + num_crypt
-#########################   VARIABLES   ##################################################
 
 #########################   FUNCTIONS   ##################################################
 def shuffle(strg):
@@ -58,14 +58,10 @@ def encrypt(strg : str):
     strg = ''.join(str_ls)
     return strg      
         
-def decrypt(strg : str):
-    str_ls = list(strg)
-    for i in str_ls:
-        if i in charst:
-            i_pos = str_ls.index(i)
-            c_pos = charst_crypt.index(i)
-            str_ls[i_pos] = charst[c_pos]
-        else:
-            pass
-    strg = ''.join(str_ls)
-    return strg
+
+def hashcrypt(var):
+    hash = md5(var.encode())
+    hashc = hash.hexdigest()
+    hash_crypt = encrypt(hashc)
+    return hash_crypt
+
