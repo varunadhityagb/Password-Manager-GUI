@@ -1,4 +1,5 @@
-#import modules
+######################## IMPORTING MODULES ###############################################
+import mysql.connector as sqlc
 import random
 from string import ascii_letters, ascii_uppercase, digits, ascii_lowercase, punctuation
 from hashlib import *

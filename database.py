@@ -1,4 +1,3 @@
-import mysql.connector as sqlc
 from mypfuncs import *
 ##################################### CREATING DATABASE ################################
 
