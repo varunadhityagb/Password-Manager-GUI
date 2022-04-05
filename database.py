@@ -1,5 +1,5 @@
 import mysql.connector as sqlc
-from PasswFun import *
+from mypfuncs import *
 ##################################### CREATING DATABASE ################################
 
 mydb = sqlc.connect(host='localhost', user='root', passwd='root',)
