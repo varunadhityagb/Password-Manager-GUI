@@ -1,12 +1,9 @@
 ######################## IMPORTING MODULES ###############################################
-import mysql.connector as sqlc
 import random
 from string import ascii_letters, ascii_uppercase, digits, ascii_lowercase, punctuation
 from hashlib import *
-import os
-import sys
 from database import *
-from getpass import getpass
+import requests
 
 #########################   VARIABLES   ##################################################
 #characters
@@ -82,4 +79,13 @@ def unamecheck(strg):
         else:
             True
 
-        
+def emailcheck(strg):
+    email = strg
+    response = requests.get("https://isitarealemail.com/api/email/validate", params= {'email': email})
+    status = response.json()['status']
+    if status == "valid":
+        True
+    elif status == "invalid":
+        False
+
+    

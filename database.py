@@ -1,4 +1,8 @@
+import mysql.connector as sqlc
 from mypfuncs import *
+from getpass import getpass
+import os
+import sys
 ##################################### CREATING DATABASE ################################
 
 mydb = sqlc.connect(host='localhost', user='root', passwd='root',)
@@ -58,11 +62,18 @@ def login_page():
         w = 't'
         fName = input("Enter your first name:")
         lName = input("Enter your last name:")
+        
+        ############ USER NAME CHECK
         uName = input("Enter your username:")
         while unamecheck(uName) is False:
-            print("Please enter valid characters. \n Only @ and _ are the special characters allowed.")
+            print("Invalid Password")
             uName = input("Enter your username:")
-        eMail = input("Enter your first name:")
+        
+        ############ EMAIL CHECK
+        eMail = input("Enter your e-mail address:")
+        while emailcheck(eMail) is False:
+            print("Invalid Email") 
+            eMail = input("Enter a valid e-mail address:")    
         while w == 't':
             masterPass = getpass("New Password: ")
             masterPass_check = getpass("Re-enter Password: ")
