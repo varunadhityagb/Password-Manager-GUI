@@ -1,9 +1,14 @@
 ######################## IMPORTING MODULES ###############################################
+import mysql.connector as sqlc
 import random
 from string import ascii_letters, ascii_uppercase, digits, ascii_lowercase, punctuation
 from hashlib import *
-from database import *
 import requests
+
+######################## CONNECTING SQL ###############################################
+mydb = sqlc.connect(host='localhost', user='root', passwd='root',)
+mycur = mydb.cursor()
+mycur.execute("USE MYP;")
 
 #########################   VARIABLES   ##################################################
 #characters
@@ -67,7 +72,7 @@ def hashcrypt(var):
     hash_crypt = encrypt(hashc)
     return hash_crypt
 
-def unamecheck(strg):
+def unamevalidation(strg):
     pun_ls = list(punctuation)
     pun_ls.remove('@')
     pun_ls. remove('_')
@@ -75,17 +80,35 @@ def unamecheck(strg):
     strg_ls = list(strg)
     for i in strg_ls:
         if i in pun_ls:
-            False
+            return False
         else:
-            True
+            return True
 
-def emailcheck(strg):
+def emailvalidation(strg):
     email = strg
     response = requests.get("https://isitarealemail.com/api/email/validate", params= {'email': email})
     status = response.json()['status']
     if status == "valid":
-        True
+        return True
     elif status == "invalid":
-        False
+        return False
 
-    
+def unamecheck(strg):
+    username_ls = []
+    mycur.execute("SELECT userName FROM myp_users;")
+    for i in mycur:
+        username_ls.append(i)
+    if strg in username_ls:
+        return False
+    else:
+        return True
+
+def emailcheck(strg):
+    email_ls = []
+    mycur.execute("SELECT eMail FROM myp_users;")
+    for i in mycur:
+        email_ls.append(i)
+    if strg in email_ls:
+        return False
+    else:
+        return True

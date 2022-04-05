@@ -64,16 +64,35 @@ def login_page():
         lName = input("Enter your last name:")
         
         ############ USER NAME CHECK
-        uName = input("Enter your username:")
-        while unamecheck(uName) is False:
-            print("Invalid Password")
-            uName = input("Enter your username:")
+        usName = input("Enter your username:")
+        if unamevalidation(usName) is False:
+            print("Invalid Email Address")
+            usName = input("Enter a vaild username:")
+
+            if unamecheck(usName) is False:
+                print("This username already exists.")
+                uName = input("Enter another username: ")
+            else:
+                uName = usName
+
+        else:
+            uName = usName
+
         
         ############ EMAIL CHECK
-        eMail = input("Enter your e-mail address:")
-        while emailcheck(eMail) is False:
-            print("Invalid Email") 
-            eMail = input("Enter a valid e-mail address:")    
+        e_Mail = input("Enter your e-mail address:")
+        if emailvalidation(e_Mail) is False:
+            print('Invalid email id')
+            e_Mail = input("Enter a vaild e-mail address:") 
+
+            if emailcheck(e_Mail) is False:
+                print("There is another account linked with this e-mail address")
+                eMail = input("Enter your e-mail address: ")
+            else:
+                eMail = e_Mail
+        else:
+            eMail = e_Mail
+
         while w == 't':
             masterPass = getpass("New Password: ")
             masterPass_check = getpass("Re-enter Password: ")
@@ -84,6 +103,3 @@ def login_page():
                 print("Your passwords don't match!")
     elif opt == 3:
         sys.exit            
-
-
-
