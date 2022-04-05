@@ -1,31 +1,25 @@
-#from database import *
-import os
+from database import *
 from mypfuncs import *
-from getpass import getpass
-import sys
 
-print(''' -----------MENU-----------
-1. Login
-2. Sign Up
-3. Exit''')
 
-opt = int(input(""))
-os.system('clear')
-if opt == 1:
+########################## CHECKING AND CREATING DATABASE #############################
+mycur.execute('SHOW SCHEMAS;')
+db_ls = []
+for i in mycur:
+    db_ls.append(i)
+
+if ('MYP',) not in db_ls:
+    createDB()
+    mycur.execute("USE MYP;")
+else:
+    mycur.execute("USE MYP;")
+
+########################## CHECKING AND CREATING TABLES ###############################
+mycur.execute('SHOW TABLES;')
+tb_ls = []
+for i in mycur:
+    tb_ls.append()
+if tb_ls == []:
+    createTbls()
+else:
     pass
-elif opt == 2:
-    w = 't'
-    fName = input("Enter your first name:")
-    lName = input("Enter your first name:")
-    uName = input("Enter your first name:")
-    eMail = input("Enter your first name:")
-    while w == 't':
-        masterPass = getpass("New Password: ")
-        masterPass_check = getpass("Re-enter Password: ")
-        if masterPass_check == masterPass:    
-            #insintousers(fName, lName, uName, eMail, masterPass)
-            break
-        else:
-            print("Your passwords don't match!")
-elif opt == 3:
-    sys.exit

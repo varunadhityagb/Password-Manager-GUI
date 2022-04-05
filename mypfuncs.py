@@ -1,7 +1,11 @@
 #import modules
 import random
-from string import ascii_letters, ascii_uppercase, digits, ascii_lowercase
+from string import ascii_letters, ascii_uppercase, digits, ascii_lowercase, punctuation
 from hashlib import *
+import os
+import sys
+from database import *
+from getpass import getpass
 
 #########################   VARIABLES   ##################################################
 #characters
@@ -65,3 +69,16 @@ def hashcrypt(var):
     hash_crypt = encrypt(hashc)
     return hash_crypt
 
+def unamecheck(strg):
+    pun_ls = list(punctuation)
+    pun_ls.remove('@')
+    pun_ls. remove('_')
+    pun_ls.append(' ')
+    strg_ls = list(strg)
+    for i in strg_ls:
+        if i in pun_ls:
+            False
+        else:
+            True
+
+        
