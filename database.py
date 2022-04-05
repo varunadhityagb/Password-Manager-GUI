@@ -40,8 +40,11 @@ def insintodata(website, loginName, loginPass, userId):
     mycur.execute("USE MYP;") 
     global passd
     passd = hashcrypt(loginPass)
-    action = f'''INSERT INTO myp_data (website, loginName, loginPass, userId)
-        VALUES ({website}, {loginName}, {passd}, {userId});'''
+    action = f"""INSERT INTO myp_users (website, loginName, loginPass, userId) 
+        VALUES ('""" + website + "', '" + loginName + "', '" + passd + "', '" + userId + "');"
     mycur.execute(action)
     mydb.commit()
+
+
+
 
