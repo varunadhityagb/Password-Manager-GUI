@@ -57,8 +57,36 @@ def login_page():
     opt = int(input(""))
     os.system('clear')
     if opt == 1:
-        cho = input("Username or e-mail?")
-    
+        mycur.execute("USE MYP;")
+        print("How would you like to sign in? \n1.Username \n2.E-mail address ")
+        cho = int(input())
+        os.system('clear')
+        sea = False  #just a random variable
+        while sea == False:
+            if cho == 1:
+                uname_srch = input("Username: ")
+                sea = True
+                mycur.execute(f"SELECT masterPass FROM myp_users WHERE userName = '{uname_srch}';")
+            elif cho == 2:
+                email_srch = input("E-Mail Address: ")
+                sea = True
+                mycur.execute(f"SELECT masterPass FROM myp_users WHERE eMail = '{email_srch}';")
+            else:
+                print("ENTER ONLY 1 OR 2!!")
+        pass_ls = []
+        for i in mycur:
+            pass_ls.extend(i)
+
+        ch = False
+        while ch == False:
+            masterPass_check_hash = hashcrypt(getpass("Password: "))
+            if masterPass_check_hash == pass_ls[0]:
+                print("Access Granted")
+                ch = True
+            else:
+                print("Access Denied")
+
+
     elif opt == 2:
         w = 't'
         fName = input("Enter your first name:")
@@ -73,17 +101,16 @@ def login_page():
             opun = unamevalidation(usName)
 
         if unamecheck(usName) is False:
-            print("This username already exists.")
+            print("THIS USERNAME ALREADY EXISTS !!!")
             uName = input("Enter another username: ")
         else:
             uName = usName
 
-        
         ############ EMAIL CHECK
         e_Mail = input("Enter your e-mail address:")
         ope = emailvalidation(e_Mail)
         while ope is False:
-            print('Invalid email id')
+            print('INVALID EMAIL ID !!')
             e_Mail = input("Enter a vaild e-mail address:") 
             ope = emailvalidation(e_Mail)
 
@@ -101,6 +128,8 @@ def login_page():
                 insintousers(fName, lName, uName, eMail, masterPass)
                 break
             else:
-                print("Your passwords don't match!")
+                print("YOUR PASSWORDS DON'T MATCH!")
+                
+
     elif opt == 3:
         sys.exit            
