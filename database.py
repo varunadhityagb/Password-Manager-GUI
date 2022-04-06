@@ -57,7 +57,8 @@ def login_page():
     opt = int(input(""))
     os.system('clear')
     if opt == 1:
-        pass
+        cho = input("Username or e-mail?")
+    
     elif opt == 2:
         w = 't'
         fName = input("Enter your first name:")
