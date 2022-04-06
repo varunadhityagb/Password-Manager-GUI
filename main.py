@@ -26,5 +26,3 @@ else:
 
 login_page()
 
-
-# check login after signing up another user
