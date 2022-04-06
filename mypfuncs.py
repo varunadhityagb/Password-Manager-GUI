@@ -8,7 +8,6 @@ import requests
 ######################## CONNECTING SQL ###############################################
 mydb = sqlc.connect(host='localhost', user='root', passwd='root',)
 mycur = mydb.cursor()
-mycur.execute("USE MYP;")
 
 #########################   VARIABLES   ##################################################
 #characters
@@ -94,6 +93,7 @@ def emailvalidation(strg):
         return False
 
 def unamecheck(strg):
+    mycur.execute("USE MYP;")
     username_ls = []
     mycur.execute("SELECT userName FROM myp_users;")
     for i in mycur:
@@ -104,6 +104,7 @@ def unamecheck(strg):
         return True
 
 def emailcheck(strg):
+    mycur.execute("USE MYP;")
     email_ls = []
     mycur.execute("SELECT eMail FROM myp_users;")
     for i in mycur:

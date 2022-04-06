@@ -18,7 +18,7 @@ else:
 mycur.execute('SHOW TABLES;')
 tb_ls = []
 for i in mycur:
-    tb_ls.append()
+    tb_ls.extend(i)
 if tb_ls == []:
     createTbls()
 else:

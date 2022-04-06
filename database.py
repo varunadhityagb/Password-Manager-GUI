@@ -8,7 +8,7 @@ import sys
 mydb = sqlc.connect(host='localhost', user='root', passwd='root',)
 mycur = mydb.cursor()
 def createDB():
-    mycur.execute("CREATE DATABASE IF NOT EXISTS MYP;")
+    mycur.execute("CREATE DATABASE MYP;")
 
 ##################################### CREATING TABLES ################################
 
@@ -65,34 +65,34 @@ def login_page():
         
         ############ USER NAME CHECK
         usName = input("Enter your username:")
-        if unamevalidation(usName) is False:
+        opun = unamevalidation(usName)
+        while opun is False:
             print("Invalid Email Address")
             usName = input("Enter a vaild username:")
+            opun = unamevalidation(usName)
 
-            if unamecheck(usName) is False:
-                print("This username already exists.")
-                uName = input("Enter another username: ")
-            else:
-                uName = usName
-
+        if unamecheck(usName) is False:
+            print("This username already exists.")
+            uName = input("Enter another username: ")
         else:
             uName = usName
 
         
         ############ EMAIL CHECK
         e_Mail = input("Enter your e-mail address:")
-        if emailvalidation(e_Mail) is False:
+        ope = emailvalidation(e_Mail)
+        while ope is False:
             print('Invalid email id')
             e_Mail = input("Enter a vaild e-mail address:") 
+            ope = emailvalidation(e_Mail)
 
-            if emailcheck(e_Mail) is False:
-                print("There is another account linked with this e-mail address")
-                eMail = input("Enter your e-mail address: ")
-            else:
-                eMail = e_Mail
+        if emailcheck(e_Mail) is False:
+            print("There is another account linked with this e-mail address")
+            eMail = input("Enter your e-mail address: ")
         else:
             eMail = e_Mail
 
+        ############ password
         while w == 't':
             masterPass = getpass("New Password: ")
             masterPass_check = getpass("Re-enter Password: ")
