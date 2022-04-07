@@ -63,7 +63,18 @@ def encrypt(strg : str):
             pass        
     strg = ''.join(str_ls)
     return strg      
-        
+
+def decrypt(strg : str):
+    str_ls = list(strg)
+    for i in str_ls:
+        if i in charst:
+            i_pos = str_ls.index(i)
+            c_pos = charst_crypt.index(i)
+            str_ls[i_pos] = charst[c_pos]
+        else:
+            pass
+    strg = ''.join(str_ls)
+    return strg
 
 def hashcrypt(var):
     hash = md5(var.encode())
@@ -77,27 +88,33 @@ def unamevalidation(strg):
     pun_ls. remove('_')
     pun_ls.append(' ')
     strg_ls = list(strg)
-    for i in strg_ls:
+    print(strg_ls)
+    '''for i in strg_ls:
         if i in pun_ls:
             return False
         else:
-            return True
+            return True'''
 
 def emailvalidation(strg):
+    # this functions checks whether the e-mail really exists with a help of a tool by isitrealemail.com 
+    api_key = '00209c5b-b82b-4c80-8db2-5621a90ff038'
     email = strg
-    response = requests.get("https://isitarealemail.com/api/email/validate", params= {'email': email})
+    response = requests.get("https://isitarealemail.com/api/email/validate", params= {'email': email}, headers= {'Authorization': "Bearer" + api_key})
     status = response.json()['status']
     if status == "valid":
         return True
     elif status == "invalid":
         return False
+    else:
+        print('limit exeeded')
 
 def unamecheck(strg):
+    # this finction checks wheather this username already exists, if it exeist it tell the user to try a different username        
     mycur.execute("USE MYP;")
     username_ls = []
     mycur.execute("SELECT userName FROM myp_users;")
     for i in mycur:
-        username_ls.append(i)
+        username_ls.extend(i)
     if strg in username_ls:
         return False
     else:

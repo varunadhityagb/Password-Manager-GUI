@@ -1,10 +1,10 @@
 from operator import imod
 import mysql.connector as sqlc
 from mypfuncs import *
-from getpass import getpass
+from pwinput import pwinput
 import os
 import sys
-import smtplib, ssl
+import smtplib
 from email.message import EmailMessage
 import random
 ##################################### CREATING DATABASE ################################
@@ -14,8 +14,7 @@ mycur = mydb.cursor()
 def createDB():
     mycur.execute("CREATE DATABASE MYP;")
 
-##################################### CREATING TABLES ################################
-
+##################################### FUNCTIONS ################################
 def createTbls():
     mycur.execute("USE MYP;") 
     mycur.execute('''CREATE TABLE myp_users (
@@ -38,10 +37,9 @@ def insintousers(firstName, lastName, userName, eMail, masterPass):
     global passu
     passu = hashcrypt(masterPass)
     action = f"""INSERT INTO myp_users (firstName, lastName, userName, eMail, masterPass)
-        VALUES ('""" + firstName + "', '" + lastName + "', '" + userName + "', '" + eMail + "', '" + passu + "');"
+        VALUES (""" + "TRIM('" + firstName + "'), " + "TRIM('" + lastName + "'), '" + userName + "', '" + eMail + "', '" + passu + "');"
     mycur.execute(action)
     mydb.commit()
-
 
 def insintodata(website, loginName, loginPass, userId):
     mycur.execute("USE MYP;") 
@@ -78,7 +76,7 @@ def otpmail(name, receivermail):
 
 def login():
     mycur.execute("USE MYP;")
-    print("How would you like to sign in? \n1.Username \n2.E-mail address ")
+    print("How would you like to sign in? \n1.Username \n2.E-mail address\n3.Go Back ")
     cho = int(input())
     os.system('clear')
     sea = False  #just a random variable
@@ -91,21 +89,26 @@ def login():
             email_srch = input("E-Mail Address: ")
             sea = True
             mycur.execute(f"SELECT masterPass FROM myp_users WHERE eMail = '{email_srch}';")
+        elif cho == 3:
+            login_page()
+            if opt_lp == 3:
+                sys.exit
         else:
-            print("ENTER ONLY 1 OR 2!!")
+            print("ENTER ONLY 1 OR 2 OR 3!!")
     pass_ls = []
     for i in mycur:
         pass_ls.extend(i)
 
     ch = False
     while ch == False:
-        masterPass_check_hash = hashcrypt(getpass("Password: "))
+        masterPass_check_hash = hashcrypt(pwinput("Password: "))
         if masterPass_check_hash == pass_ls[0]:
             print("Access Granted")
             ch = True
         else:
             print("Access Denied")
     pass_ls = []
+    post_login()
 
 def signup():
     w = 't'
@@ -114,18 +117,12 @@ def signup():
         
     ############ USER NAME CHECK
     usName = input("Enter your username:")
-    opun = unamevalidation(usName)
-    while opun is False:
-        print("Invalid Email Address")
-        usName = input("Enter a vaild username:")
-        opun = unamevalidation(usName)
-
-    if unamecheck(usName) is False:
+    while unamecheck(usName) is False:
         print("THIS USERNAME ALREADY EXISTS !!!")
-        uName = input("Enter another username: ")
-    else:
-        uName = usName
+        usName = input("Enter another username: ")
 
+    uName = usName
+    
     ############ EMAIL CHECK
     e_Mail = input("Enter your e-mail address:")
     ope = emailvalidation(e_Mail)
@@ -148,7 +145,7 @@ def signup():
         if otp_check != otp:
             otp_count += 1
             otp_check = int(input("Please double check your OTP: "))
-            if otp_count >= 2:
+            if otp_count > 1:
                 os.system('clear')
                 print('Resend OTP?')
                 c = int(input("1.Yes\n2.No\n3.Exit"))
@@ -173,8 +170,8 @@ def signup():
 
     ############ password
     while w == 't':
-        masterPass = getpass("New Password: ")
-        masterPass_check = getpass("Re-enter Password: ")
+        masterPass = pwinput("New Password: ")
+        masterPass_check = pwinput("Re-enter Password: ")
         if masterPass_check == masterPass:    
             insintousers(fName, lName, uName, eMail, masterPass)
             break
@@ -184,20 +181,52 @@ def signup():
     os.system('clear')
     login()
 
+def retrievepass():
+    pass
+
+def storepass():
+    pass
+
+def generatepass():
+    web = input("Website Name: ")
+
+
 def login_page():
     print('''-----------MENU-----------
     1. Login
     2. Sign Up
     3. Exit''')
 
-    opt = int(input(""))
+    global opt_lp
+    opt_lp = int(input(""))
     os.system('clear')
-    if opt == 1:
+    if opt_lp == 1:
         login()
 
-    elif opt == 2:
+    elif opt_lp == 2:
         signup()
         
-    elif opt == 3:
+    elif opt_lp == 3:
         sys.exit            
 
+def post_login():
+    os.system('clear')
+    print('''-----------MENU-----------
+    1. Retrieve Password
+    2. Store Password
+    3. Generate Password
+    4. Log Out
+    5. Exit''')
+
+    opt = int(input())
+    if opt == 1:
+        pass
+    elif opt == 2:
+        pass
+    elif opt == 3:
+        pass
+    elif opt == 4:
+        os.system('clear')
+        login_page()
+    elif opt == 5:
+        sys.exit
