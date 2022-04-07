@@ -4,7 +4,6 @@ from mypfuncs import *
 ########################## CHECKING AND CREATING DATABASE #############################
 mycur.execute('SHOW SCHEMAS;')
 db_ls = []
-
 for i in mycur:
     db_ls.extend(i)
     
@@ -28,3 +27,4 @@ else:
     pass
 
 login_page()
+post_login()

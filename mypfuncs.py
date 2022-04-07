@@ -4,6 +4,7 @@ import random
 from string import ascii_letters, ascii_uppercase, digits, ascii_lowercase, punctuation
 from hashlib import *
 import requests
+import pyperclip
 
 ######################## CONNECTING SQL ###############################################
 mydb = sqlc.connect(host='localhost', user='root', passwd='root',)
@@ -76,7 +77,7 @@ def decrypt(strg : str):
     strg = ''.join(str_ls)
     return strg
 
-def hashcrypt(var):
+def hashcrypt(var: str):
     hash = md5(var.encode())
     hashc = hash.hexdigest()
     hash_crypt = encrypt(hashc)
@@ -130,3 +131,30 @@ def emailcheck(strg):
         return False
     else:
         return True
+
+def generate_strongpass():
+    global gen_pass
+    gen_pass = encrypt(password(12))
+    print(f"""Here you go, this password will take about 500 thousand years for a computer to crack it:
+    {decrypt(gen_pass)}""")
+    pyperclip.copy(decrypt(gen_pass))
+    print("Also the password is already copied to your clipboard🙂")
+
+def generate_vstrongpass():
+    global gen_pass
+    gen_pass = encrypt(password(16))
+    print(f"""Here you go, this password will take about 1 trillion years for a computer to crack it:
+    {decrypt(gen_pass)}""")
+    pyperclip.copy(decrypt(gen_pass))
+    print("Also the password is already copied to your clipboard🙂")
+
+def generate_pass():
+    print("""How secure do you want your password to be?
+    1. STRONG
+    2. VERY STRONG""")
+    opt_ps = int(input())
+    if opt_ps == 1:
+        generate_strongpass()
+    elif opt_ps == 2:
+        generate_vstrongpass()
+    return gen_pass

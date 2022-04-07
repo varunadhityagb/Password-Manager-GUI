@@ -1,4 +1,5 @@
 from operator import imod
+from re import M
 import mysql.connector as sqlc
 from mypfuncs import *
 from pwinput import pwinput
@@ -7,10 +8,12 @@ import sys
 import smtplib
 from email.message import EmailMessage
 import random
+import time
 ##################################### CREATING DATABASE ################################
 
 mydb = sqlc.connect(host='localhost', user='root', passwd='root',)
 mycur = mydb.cursor()
+
 def createDB():
     mycur.execute("CREATE DATABASE MYP;")
 
@@ -43,10 +46,8 @@ def insintousers(firstName, lastName, userName, eMail, masterPass):
 
 def insintodata(website, loginName, loginPass, userId):
     mycur.execute("USE MYP;") 
-    global passd
-    passd = hashcrypt(loginPass)
-    action = f"""INSERT INTO myp_users (website, loginName, loginPass, userId) 
-        VALUES ('""" + website + "', '" + loginName + "', '" + passd + "', '" + userId + "');"
+    action = f"""INSERT INTO myp_data (website, loginName, loginPass, userId) 
+        VALUES ('""" + website + "', '" + loginName + "', '" + loginPass + "', '" + userId + "');"
     mycur.execute(action)
     mydb.commit()
 
@@ -108,7 +109,6 @@ def login():
         else:
             print("Access Denied")
     pass_ls = []
-    post_login()
 
 def signup():
     w = 't'
@@ -172,12 +172,16 @@ def signup():
     while w == 't':
         masterPass = pwinput("New Password: ")
         masterPass_check = pwinput("Re-enter Password: ")
+        print(""" REMEMBER !!!!!!
+        THIS IS YOUR MASTER PASSWORD
+        IF YOU FORGET THIS PASSWORD YOU KNOW WHAT HAPPENS😐""")
         if masterPass_check == masterPass:    
             insintousers(fName, lName, uName, eMail, masterPass)
             break
         else:
             print("YOUR PASSWORDS DON'T MATCH!")
 
+    time.sleep(9)
     os.system('clear')
     login()
 
@@ -186,10 +190,6 @@ def retrievepass():
 
 def storepass():
     pass
-
-def generatepass():
-    web = input("Website Name: ")
-
 
 def login_page():
     print('''-----------MENU-----------
@@ -220,11 +220,79 @@ def post_login():
 
     opt = int(input())
     if opt == 1:
-        pass
+        retrievepass()
     elif opt == 2:
-        pass
+        web = input("Web address:  ")
+        logName = input(f"Enter username in {web}: ")
+        logPass = encrypt(pwinput(f"Enter the password for {logName}: "))
+    
+        #masterpass checking
+        mpc = False
+        while mpc == False:
+            mp = str(pwinput("Enter your Master Password: "))           
+            hash = md5(mp.encode())
+            hashd = hash.hexdigest()
+            hash_crypt = encrypt(hashd)
+            mp_verify = hash_crypt
+            mycur.execute("""SELECT masterPass FROM myp_users;""")
+            p_ls = []
+            for i in mycur:
+                p_ls.append(i[0])
+            if mp_verify in p_ls:
+                mpc = True
+            else:
+                print("PLEASE DOUBLE CHECK YOUR PASSWORD AS THERE IS NO USER IN OUR DATABASE WITH THIS PASSWORD")
+                mp = str(pwinput("Enter your Master Password: "))           
+                hash = md5(mp.encode())
+                hashd = hash.hexdigest()
+                hash_crypt = encrypt(hashd)
+                mp_verify = hash_crypt
+
+        action = """SELECT userId FROM myp_users WHERE masterPass = '""" + mp_verify + "';"
+        mycur.execute(action)
+            
+        for i in mycur:
+            uId = str(i[0])
+            
+        insintodata(web, logName, logPass, uId)
+
     elif opt == 3:
-        pass
+        os.system('clear')
+        print("""-----------MENU-----------
+    1. Only generate password?
+    2. Or save it too?
+    3. Go Back
+    4. Exit""")
+
+        opt = int(input())
+        if opt == 1:
+            generate_pass()
+        elif opt == 2:
+            web = input("Web address:  ")
+            logName = input(f"Enter username in {web}: ")
+            
+            logPass = generate_pass()
+    
+            mp = str(pwinput("Enter your Master Password: "))
+            
+            hash = md5(mp.encode())
+            hashd = hash.hexdigest()
+            hash_crypt = encrypt(hashd)
+            
+            mp_verify = hash_crypt
+            
+            action = """SELECT userId FROM myp_users WHERE masterPass = '""" + mp_verify + "';"
+            mycur.execute(action)
+            
+            for i in mycur:
+                uId = str(i[0])
+            
+            insintodata(web, logName, logPass, uId)
+        elif opt == 3:
+            post_login()
+        elif opt == 4:
+            sys.exit
+    
     elif opt == 4:
         os.system('clear')
         login_page()
