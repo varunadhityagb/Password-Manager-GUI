@@ -1,13 +1,9 @@
-import email
-from statistics import multimode
 import mysql.connector as sqlc
 from mypfuncs import *
 from pwinput import pwinput
 import os
 import sys
 import smtplib, ssl, email
-from email import encoders
-from email.mime.base import MIMEBase
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import random
@@ -54,7 +50,7 @@ def insintodata(website, loginName, loginPass, userId):
     mycur.execute(action)
     mydb.commit()
 
-def otpmail(name, receivermail):
+def otpmail(receivermail):
     global otp
     recmail = receivermail
     otp = random.randint(100000, 999999)
@@ -152,6 +148,7 @@ def signup():
     otpmail(fName + ' ' + lName, eMail)
     otp_opt = False
     otp_count = 0 
+    time.
     while otp_opt == False:
         otp_check = int(input("Enter the OTP recieved on your registered email: "))
         if otp_check != otp:
