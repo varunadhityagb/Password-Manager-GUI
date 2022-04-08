@@ -1,12 +1,15 @@
-from operator import imod
-from re import M
+import email
+from statistics import multimode
 import mysql.connector as sqlc
 from mypfuncs import *
 from pwinput import pwinput
 import os
 import sys
-import smtplib
-from email.message import EmailMessage
+import smtplib, ssl, email
+from email import encoders
+from email.mime.base import MIMEBase
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 import random
 import time
 ##################################### CREATING DATABASE ################################
@@ -56,24 +59,35 @@ def otpmail(name, receivermail):
     recmail = receivermail
     otp = random.randint(100000, 999999)
 
-    msg = EmailMessage()
-    msg.set_content(f'''Hello {name},
-        Thank you for trying our password manager.
-        Hope you like our product.
-        
-        THE ONE-TIME PASSWORD FOR YOUR ACCOUNT IS:
-                    
-                            {otp}                             ''')
-    
-    msg['Subject'] = 'One-Time-Password for Password Manager'
+    msg = MIMEMultipart("alternative")
+    msg['Subject'] = 'OTP fro Login'
     msg['From'] = 'manageyourpass91@gmail.com'
     msg['To'] = recmail
+
+    html = (f"""
+    <html>
+        <body>
+            <p style="font-size:300%; text-align: center;"><b>Verification Code</b></p>
+            <h1 style="text-align:center; font-size:300%;">{otp}</h1>
+            <p style="font-size:160%; text-align: center;">
+            Here is your one time password (OTP) Verification Code to
+            login. This OTP is valid for 5 minutes only.
+            <br>
+            Thank you for trying our password manager.
+            Hope you like our product.
+            </p>
+        </body>
+    </html>""")
     
-    server = smtplib.SMTP('smtp.gmail.com', 587)
-    server.starttls()
-    server.login('manageyourpass91@gmail.com','Acc3ssGr@nted')
-    server.send_message(msg)
-    server.quit()
+    part = MIMEText(html, "html")
+    msg.attach(part)
+
+    context = ssl.create_default_context()
+    with smtplib.SMTP_SSL('smtp.gmail.com', 465, context=context ) as server:
+        server.login('manageyourpass91@gmail.com','Acc3ssGr@nted')
+        server.send_message(msg)
+        server.quit()
+    
 
 def login():
     mycur.execute("USE MYP;")
@@ -92,8 +106,6 @@ def login():
             mycur.execute(f"SELECT masterPass FROM myp_users WHERE eMail = '{email_srch}';")
         elif cho == 3:
             login_page()
-            if opt_lp == 3:
-                sys.exit
         else:
             print("ENTER ONLY 1 OR 2 OR 3!!")
     pass_ls = []
@@ -193,15 +205,47 @@ def storepass():
 
 def login_page():
     print('''-----------MENU-----------
-    1. Login
-    2. Sign Up
-    3. Exit''')
+1. Login
+2. Sign Up
+3. Exit''')
 
     global opt_lp
     opt_lp = int(input(""))
     os.system('clear')
     if opt_lp == 1:
-        login()
+        mycur.execute("USE MYP;")
+        print("How would you like to sign in? \n1.Username \n2.E-mail address\n3.Go Back ")
+        cho = int(input())
+        os.system('clear')
+        sea = False  #just a random variable
+        while sea == False:
+            if cho == 1:
+                uname_srch = input("Username: ")
+                sea = True
+                mycur.execute(f"SELECT masterPass FROM myp_users WHERE userName = '{uname_srch}';")
+            elif cho == 2:
+                email_srch = input("E-Mail Address: ")
+                sea = True
+                mycur.execute(f"SELECT masterPass FROM myp_users WHERE eMail = '{email_srch}';")
+            elif cho == 3:
+                login_page()
+                if opt_lp == 3:
+                    sys.exit
+            else:
+                print("ENTER ONLY 1 OR 2 OR 3!!")
+        pass_ls = []
+        for i in mycur:
+            pass_ls.extend(i)
+
+        ch = False
+        while ch == False:
+            masterPass_check_hash = hashcrypt(pwinput("Password: "))
+            if masterPass_check_hash == pass_ls[0]:
+                print("Access Granted")
+                ch = True
+            else:
+                print("Access Denied")
+        pass_ls = []
 
     elif opt_lp == 2:
         signup()
@@ -220,7 +264,7 @@ def post_login():
 
     opt = int(input())
     if opt == 1:
-        retrievepass()
+        pass
     elif opt == 2:
         web = input("Web address:  ")
         logName = input(f"Enter username in {web}: ")
@@ -298,3 +342,5 @@ def post_login():
         login_page()
     elif opt == 5:
         sys.exit
+
+otpmail("Varun", "varunadhityagb@gmail.com")
