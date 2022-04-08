@@ -116,10 +116,13 @@ def unamecheck(strg):
     mycur.execute("SELECT userName FROM myp_users;")
     for i in mycur:
         username_ls.extend(i)
-    if strg in username_ls:
-        return False
-    else:
+    if username_ls == []:
         return True
+    else:
+        if strg in username_ls:
+            return False
+        else:
+            return True
 
 def emailcheck(strg):
     mycur.execute("USE MYP;")
