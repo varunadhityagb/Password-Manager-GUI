@@ -149,5 +149,3 @@ def generate_pass():
         generate_vstrongpass()
     return gen_pass
 
-
-#recursion after password creating

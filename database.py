@@ -8,6 +8,7 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import random
 import time
+global opt_lp
 ##################################### CREATING DATABASE ################################
 
 mydb = sqlc.connect(host='localhost', user='root', passwd='root',)
@@ -84,8 +85,9 @@ def otpmail(receivermail):
         server.send_message(msg)
         server.quit()
     
-
 def login():
+    global user
+    os.system('clear')
     mycur.execute("USE MYP;")
     print("How would you like to sign in? \n1.Username \n2.E-mail address\n3.Go Back ")
     cho = int(input())
@@ -93,17 +95,30 @@ def login():
     sea = False  #just a random variable
     while sea == False:
         if cho == 1:
+            os.system('clear')
             uname_srch = input("Username: ")
             sea = True
+            mycur.execute(f"SELECT userId FROM myp_users WHERE userName = '{uname_srch}';")
+            user_ls = []
+            for i in mycur:
+                user_ls.extend(i)
+            user = user_ls[0]
             mycur.execute(f"SELECT masterPass FROM myp_users WHERE userName = '{uname_srch}';")
+        
         elif cho == 2:
-            email_srch = input("E-Mail Address: ")
+            os.system('clear')
+            email_srch = input("E-Mail Address: ")  
             sea = True
+            mycur.execute(f"SELECT userId FROM myp_users WHERE eMail = '{email_srch}';")
+            user_ls = []
+            for i in mycur:
+                user_ls.extend(i)
+            user = user_ls[0]
             mycur.execute(f"SELECT masterPass FROM myp_users WHERE eMail = '{email_srch}';")
+        
         elif cho == 3:
+            os.system('clear')
             login_page()
-            if opt_lp == 3:
-                sys.exit
         else:
             print("ENTER ONLY 1 OR 2 OR 3!!")
     pass_ls = []
@@ -113,9 +128,10 @@ def login():
     ch = False
     while ch == False:
         masterPass_check_hash = hashcrypt(pwinput("Password: "))
-        if masterPass_check_hash == pass_ls[0]:
-            
-            ch = True
+        if masterPass_check_hash == pass_ls[0]: 
+            ch = True 
+            print(user)
+            #post_login()
         else:
             print("Access Denied")
     pass_ls = []
@@ -213,22 +229,19 @@ def signup():
     os.system('clear')
     login()
 
-def retrievepass():
-    pass
-
-def storepass():
-    pass
-
 def login_page():
-    print('''-----------MENU-----------
-1. Login
-2. Sign Up
-3. Exit''')
-
-    global opt_lp
-    opt_lp = int(input(""))
     os.system('clear')
+    print('''-----------MENU-----------
+    1. Login
+    2. Sign Up
+    3. Show users
+    4. Exit''')
+
+    opt_lp = int(input(""))
+    
     if opt_lp == 1:
+        login()
+        '''os.system('clear')
         mycur.execute("USE MYP;")
         print("How would you like to sign in? \n1.Username \n2.E-mail address\n3.Go Back ")
         cho = int(input())
@@ -236,14 +249,29 @@ def login_page():
         sea = False  #just a random variable
         while sea == False:
             if cho == 1:
+                os.system('clear')
                 uname_srch = input("Username: ")
                 sea = True
+                mycur.execute(f"SELECT userId FROM myp_users WHERE userName = '{uname_srch}';")
+                user_ls = []
+                for i in mycur:
+                    user_ls.extend(i)
+                user = user_ls[0]
                 mycur.execute(f"SELECT masterPass FROM myp_users WHERE userName = '{uname_srch}';")
+
             elif cho == 2:
+                os.system('clear')
                 email_srch = input("E-Mail Address: ")
                 sea = True
+                mycur.execute(f"SELECT userId FROM myp_users WHERE eMail = '{email_srch}';")
+                user_ls = []
+                for i in mycur:
+                    user_ls.extend(i)
+                user = user_ls[0]
                 mycur.execute(f"SELECT masterPass FROM myp_users WHERE eMail = '{email_srch}';")
+
             elif cho == 3:
+                os.system('clear')
                 login_page()
             else:
                 print("ENTER ONLY 1 OR 2 OR 3!!")
@@ -255,16 +283,36 @@ def login_page():
         while ch == False:
             masterPass_check_hash = hashcrypt(pwinput("Password: "))
             if masterPass_check_hash == pass_ls[0]:
-                print("Access Granted")
                 ch = True
+                post_login()
             else:
                 print("Access Denied")
-        pass_ls = []
+        pass_ls = []'''
+
+    
+
 
     elif opt_lp == 2:
         signup()
-        
+
     elif opt_lp == 3:
+        os.system('clear')
+        mycur.execute("USE MYP;")
+        mycur.execute("SELECT userName FROM myp_users")
+        data = mycur.fetchall()
+        ls = []
+        for i in data:
+            ls.extend(i)
+
+        for j in range(len(ls)):
+            print(str(j+1) + '. ' + ls[j])
+        print("We give you 10 seconds to find your username.") 
+
+        time.sleep(10)
+        login_page()        
+
+    elif opt_lp == 4:
+        os.system('clear')
         sys.exit            
 
 def post_login():
@@ -322,10 +370,10 @@ def post_login():
     3. Go Back
     4. Exit""")
 
-        opt = int(input())
-        if opt == 1:
+        opt_lp = int(input())
+        if opt_lp == 1:
             generate_pass()
-        elif opt == 2:
+        elif opt_lp == 2:
             web = input("Web address:  ")
             logName = input(f"Enter username in {web}: ")
             
@@ -346,13 +394,19 @@ def post_login():
                 uId = str(i[0])
             
             insintodata(web, logName, logPass, uId)
-        elif opt == 3:
+        elif opt_lp == 3:
             post_login()
-        elif opt == 4:
+        elif opt_lp == 4:
             sys.exit
     
     elif opt == 4:
         os.system('clear')
         login_page()
+
     elif opt == 5:
         sys.exit
+
+
+while True:
+    login()
+    time.sleep(5)
