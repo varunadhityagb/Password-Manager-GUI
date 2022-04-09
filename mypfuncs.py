@@ -83,19 +83,6 @@ def hashcrypt(var: str):
     hash_crypt = encrypt(hashc)
     return hash_crypt
 
-def unamevalidation(strg):
-    pun_ls = list(punctuation)
-    pun_ls.remove('@')
-    pun_ls. remove('_')
-    pun_ls.append(' ')
-    strg_ls = list(strg)
-    print(strg_ls)
-    '''for i in strg_ls:
-        if i in pun_ls:
-            return False
-        else:
-            return True'''
-
 def emailvalidation(strg):
     # this functions checks whether the e-mail really exists with a help of a tool by isitrealemail.com 
     api_key = '00209c5b-b82b-4c80-8db2-5621a90ff038'
@@ -116,20 +103,20 @@ def unamecheck(strg):
     mycur.execute("SELECT userName FROM myp_users;")
     for i in mycur:
         username_ls.extend(i)
-    if username_ls == []:
-        return True
+    if strg in username_ls:
+        return False
     else:
-        if strg in username_ls:
-            return False
-        else:
-            return True
+        return True
 
 def emailcheck(strg):
     mycur.execute("USE MYP;")
     email_ls = []
     mycur.execute("SELECT eMail FROM myp_users;")
-    for i in mycur:
-        email_ls.append(i)
+    data = mycur.fetchall()
+
+    for i in data:
+        email_ls.extend(i)
+
     if strg in email_ls:
         return False
     else:
@@ -161,3 +148,6 @@ def generate_pass():
     elif opt_ps == 2:
         generate_vstrongpass()
     return gen_pass
+
+
+#recursion after password creating

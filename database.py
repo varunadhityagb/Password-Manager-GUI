@@ -56,7 +56,7 @@ def otpmail(receivermail):
     otp = random.randint(100000, 999999)
 
     msg = MIMEMultipart("alternative")
-    msg['Subject'] = 'OTP fro Login'
+    msg['Subject'] = 'OTP for Login'
     msg['From'] = 'manageyourpass91@gmail.com'
     msg['To'] = recmail
 
@@ -102,6 +102,8 @@ def login():
             mycur.execute(f"SELECT masterPass FROM myp_users WHERE eMail = '{email_srch}';")
         elif cho == 3:
             login_page()
+            if opt_lp == 3:
+                sys.exit
         else:
             print("ENTER ONLY 1 OR 2 OR 3!!")
     pass_ls = []
@@ -112,7 +114,7 @@ def login():
     while ch == False:
         masterPass_check_hash = hashcrypt(pwinput("Password: "))
         if masterPass_check_hash == pass_ls[0]:
-            print("Access Granted")
+            
             ch = True
         else:
             print("Access Denied")
@@ -124,31 +126,48 @@ def signup():
     lName = input("Enter your last name:")
         
     ############ USER NAME CHECK
-    usName = input("Enter your username:")
-    while unamecheck(usName) is False:
-        print("THIS USERNAME ALREADY EXISTS !!!")
-        usName = input("Enter another username: ")
+    mycur.execute("USE MYP;")
+    username_ls = []
+    mycur.execute("SELECT userName FROM myp_users;")
+    for i in mycur:
+        username_ls.extend(i)
 
-    uName = usName
-    
-    ############ EMAIL CHECK
-    e_Mail = input("Enter your e-mail address:")
-    ope = emailvalidation(e_Mail)
-    while ope is False:
-        print('INVALID EMAIL ID !!')
-        e_Mail = input("Enter a vaild e-mail address:") 
-        ope = emailvalidation(e_Mail)
-
-    if emailcheck(e_Mail) is False:
-        print("There is another account linked with this e-mail address")
-        eMail = input("Enter your e-mail address: ")
+    if username_ls == []:
+        uName = input("Enter your username:")
     else:
-        eMail = e_Mail
+        usName = input("Enter your username:")
+        while unamecheck(usName) is False:
+            print("THIS USERNAME ALREADY EXISTS !!!")
+            usName = input("Enter another username: ")
 
-    otpmail(fName + ' ' + lName, eMail)
+        uName = usName
+        
+    ############ EMAIL CHECK
+    email_ls = []
+    mycur.execute("SELECT eMail FROM myp_users;")
+    for i in mycur:
+        email_ls.extend(i)
+    
+    if email_ls == []:
+        eMail = input("Enter your e-mail address:")
+        while emailvalidation(eMail) is False:
+            print('INVALID EMAIL ID !!')
+            eMail = input("Enter a vaild e-mail address:") 
+    else:        
+        e_Mail = input("Enter your e-mail address:")
+        while emailvalidation(e_Mail) is False:
+            print('INVALID EMAIL ID !!')
+            e_Mail = input("Enter a vaild e-mail address:") 
+
+        if emailcheck(e_Mail) is False:
+            print("There is another account linked with this e-mail address")
+            eMail = input("Enter your e-mail address: ")
+        else:
+            eMail = e_Mail
+
+    otpmail(eMail)
     otp_opt = False
     otp_count = 0 
-    time.
     while otp_opt == False:
         otp_check = int(input("Enter the OTP recieved on your registered email: "))
         if otp_check != otp:
@@ -226,8 +245,6 @@ def login_page():
                 mycur.execute(f"SELECT masterPass FROM myp_users WHERE eMail = '{email_srch}';")
             elif cho == 3:
                 login_page()
-                if opt_lp == 3:
-                    sys.exit
             else:
                 print("ENTER ONLY 1 OR 2 OR 3!!")
         pass_ls = []
@@ -339,5 +356,3 @@ def post_login():
         login_page()
     elif opt == 5:
         sys.exit
-
-otpmail("Varun", "varunadhityagb@gmail.com")
