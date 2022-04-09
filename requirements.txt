@@ -33,6 +33,7 @@ python3-xlib==0.15
 pytweening==1.0.4
 pywin32-ctypes==0.2.0
 requests==2.27.1
+tabulate==0.8.9
 urllib3==1.26.9
 whichcraft==0.6.1
 zope.event==4.5.0

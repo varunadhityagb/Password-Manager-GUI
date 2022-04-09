@@ -8,6 +8,7 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import random
 import time
+from tabulate import tabulate
 global opt_lp
 ##################################### CREATING DATABASE ################################
 
@@ -50,6 +51,70 @@ def insintodata(website, loginName, loginPass, userId):
         VALUES ('""" + website + "', '" + loginName + "', '" + loginPass + "', '" + userId + "');"
     mycur.execute(action)
     mydb.commit()
+
+def retrieve(n: int):
+    mycur.execute("USE MYP;")
+    mycur.execute("SET @ROW := 0 ;")
+    mycur.execute(f"""SELECT @ROW := @ROW + 1 , loginName
+    FROM myp_data
+    WHERE userId = {n};""") 
+    data = mycur.fetchall()
+
+    mycur.execute(f"""SELECT loginPass
+    FROM myp_data
+    WHERE userId = {n};""") 
+    data_ls = mycur.fetchall()
+    
+    ls = []
+    for i in data_ls:
+        ls.extend(i)  
+    datadict = {}
+    for j in range(len(ls)):
+        datadict[j+1] = ls[j]
+     
+    print(tabulate(data, headers=['Sl.No.', 'Username'], tablefmt='psql'))
+    print("Enter the number corresponding to the website to check the password:")   
+    datain = int(input())
+    print()
+    print()
+    print(decrypt(datadict[datain]))
+    pyperclip.copy(decrypt(datadict[datain]))
+    print()
+    print()
+    print("YOUR PASSWORD IS COPIED TO YOUR CLIPBOARD🙂")
+
+    time.sleep(5)
+    post_login() 
+
+def insert(usr):
+    web = input("Web address:  ")
+    logName = input(f"Enter username in {web}: ")
+    logPass = encrypt(pwinput(f"Enter the password for {logName}: "))
+        
+    #masterpass checking
+    uId = str(usr)
+    mycur.execute("USE MYP;")
+    action = f"""SELECT masterPass FROM myp_users WHERE userId = {uId}"""
+    mycur.execute(action)
+                
+    for i in mycur:
+        u = str(i[0])
+
+    hello = False
+    while hello is False:
+        mp = str(pwinput("Enter your Master Password: "))           
+        hash = md5(mp.encode())
+        hashd = hash.hexdigest()
+        hash_crypt = encrypt(hashd)
+        mp_verify = hash_crypt
+
+        if mp_verify == u:
+            hello = True
+            insintodata(web, logName, logPass, uId)
+            
+        else:
+            print("PLEASE DOUBLE CHECK YOUR PASSWORD AS THERE IS NO USER IN OUR DATABASE WITH THIS PASSWORD")
+            hello = False
 
 def otpmail(receivermail):
     global otp
@@ -130,8 +195,7 @@ def login():
         masterPass_check_hash = hashcrypt(pwinput("Password: "))
         if masterPass_check_hash == pass_ls[0]: 
             ch = True 
-            print(user)
-            #post_login()
+            post_login()
         else:
             print("Access Denied")
     pass_ls = []
@@ -241,71 +305,18 @@ def login_page():
     
     if opt_lp == 1:
         login()
-        '''os.system('clear')
-        mycur.execute("USE MYP;")
-        print("How would you like to sign in? \n1.Username \n2.E-mail address\n3.Go Back ")
-        cho = int(input())
-        os.system('clear')
-        sea = False  #just a random variable
-        while sea == False:
-            if cho == 1:
-                os.system('clear')
-                uname_srch = input("Username: ")
-                sea = True
-                mycur.execute(f"SELECT userId FROM myp_users WHERE userName = '{uname_srch}';")
-                user_ls = []
-                for i in mycur:
-                    user_ls.extend(i)
-                user = user_ls[0]
-                mycur.execute(f"SELECT masterPass FROM myp_users WHERE userName = '{uname_srch}';")
-
-            elif cho == 2:
-                os.system('clear')
-                email_srch = input("E-Mail Address: ")
-                sea = True
-                mycur.execute(f"SELECT userId FROM myp_users WHERE eMail = '{email_srch}';")
-                user_ls = []
-                for i in mycur:
-                    user_ls.extend(i)
-                user = user_ls[0]
-                mycur.execute(f"SELECT masterPass FROM myp_users WHERE eMail = '{email_srch}';")
-
-            elif cho == 3:
-                os.system('clear')
-                login_page()
-            else:
-                print("ENTER ONLY 1 OR 2 OR 3!!")
-        pass_ls = []
-        for i in mycur:
-            pass_ls.extend(i)
-
-        ch = False
-        while ch == False:
-            masterPass_check_hash = hashcrypt(pwinput("Password: "))
-            if masterPass_check_hash == pass_ls[0]:
-                ch = True
-                post_login()
-            else:
-                print("Access Denied")
-        pass_ls = []'''
-
-    
-
-
+        
     elif opt_lp == 2:
         signup()
 
     elif opt_lp == 3:
         os.system('clear')
         mycur.execute("USE MYP;")
-        mycur.execute("SELECT userName FROM myp_users")
+        mycur.execute("SET @ROW := 0;")
+        mycur.execute("SELECT @ROW := @ROW + 1, userName FROM myp_users")
         data = mycur.fetchall()
-        ls = []
-        for i in data:
-            ls.extend(i)
 
-        for j in range(len(ls)):
-            print(str(j+1) + '. ' + ls[j])
+        print(tabulate(data, headers=['Sl.No.', 'Username'], tablefmt='psql'))
         print("We give you 10 seconds to find your username.") 
 
         time.sleep(10)
@@ -326,41 +337,13 @@ def post_login():
 
     opt = int(input())
     if opt == 1:
-        pass
-    elif opt == 2:
-        web = input("Web address:  ")
-        logName = input(f"Enter username in {web}: ")
-        logPass = encrypt(pwinput(f"Enter the password for {logName}: "))
-    
-        #masterpass checking
-        mpc = False
-        while mpc == False:
-            mp = str(pwinput("Enter your Master Password: "))           
-            hash = md5(mp.encode())
-            hashd = hash.hexdigest()
-            hash_crypt = encrypt(hashd)
-            mp_verify = hash_crypt
-            mycur.execute("""SELECT masterPass FROM myp_users;""")
-            p_ls = []
-            for i in mycur:
-                p_ls.append(i[0])
-            if mp_verify in p_ls:
-                mpc = True
-            else:
-                print("PLEASE DOUBLE CHECK YOUR PASSWORD AS THERE IS NO USER IN OUR DATABASE WITH THIS PASSWORD")
-                mp = str(pwinput("Enter your Master Password: "))           
-                hash = md5(mp.encode())
-                hashd = hash.hexdigest()
-                hash_crypt = encrypt(hashd)
-                mp_verify = hash_crypt
+        retrieve(user)
 
-        action = """SELECT userId FROM myp_users WHERE masterPass = '""" + mp_verify + "';"
-        mycur.execute(action)
-            
-        for i in mycur:
-            uId = str(i[0])
-            
-        insintodata(web, logName, logPass, uId)
+    elif opt == 2:
+        insert(user)
+
+        time.sleep(2)
+        post_login()
 
     elif opt == 3:
         os.system('clear')
@@ -373,29 +356,19 @@ def post_login():
         opt_lp = int(input())
         if opt_lp == 1:
             generate_pass()
+
+            time.sleep(7)
+            post_login()
+            
         elif opt_lp == 2:
-            web = input("Web address:  ")
-            logName = input(f"Enter username in {web}: ")
-            
-            logPass = generate_pass()
-    
-            mp = str(pwinput("Enter your Master Password: "))
-            
-            hash = md5(mp.encode())
-            hashd = hash.hexdigest()
-            hash_crypt = encrypt(hashd)
-            
-            mp_verify = hash_crypt
-            
-            action = """SELECT userId FROM myp_users WHERE masterPass = '""" + mp_verify + "';"
-            mycur.execute(action)
-            
-            for i in mycur:
-                uId = str(i[0])
-            
-            insintodata(web, logName, logPass, uId)
+            insert(user)
+
+            time.sleep(7)
+            post_login()
+
         elif opt_lp == 3:
             post_login()
+
         elif opt_lp == 4:
             sys.exit
     
@@ -405,8 +378,3 @@ def post_login():
 
     elif opt == 5:
         sys.exit
-
-
-while True:
-    login()
-    time.sleep(5)

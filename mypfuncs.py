@@ -148,4 +148,3 @@ def generate_pass():
     elif opt_ps == 2:
         generate_vstrongpass()
     return gen_pass
-
