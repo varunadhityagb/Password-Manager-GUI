@@ -156,51 +156,49 @@ def login():
     global user
     os.system('clear')
     mycur.execute("USE MYP;")
-    print("How would you like to sign in? \n1.Username \n2.E-mail address\n3.Go Back ")
-    cho = int(input())
-    os.system('clear')
-    sea = False  #just a random variable
-    while sea == False:
-        if cho == 1:
-            os.system('clear')
-            uname_srch = input("Username: ")
-            sea = True
+    mycur.execute("SET @ROW := 0 ;")
+    mycur.execute(f"""SELECT @ROW := @ROW + 1 , userName FROM myp_users;""") 
+    data = mycur.fetchall()
+
+    mycur.execute(f"""SELECT userName FROM myp_users""") 
+    data_ls = mycur.fetchall()
+    
+    ls = []
+    for i in data_ls:
+        ls.extend(i)   
+    datadict = {}
+    for j in range(len(ls)):
+        datadict[j+1] = ls[j]
+
+    if datadict != {}:
+        print(tabulate(data, headers=['Sl.No.', 'Username'], tablefmt='psql'))
+        print("Enter the number corresponding to the user name to login: (or type esc to go back to the previous menu) ")   
+        datain = int(input())  
+        if int(datain) in range(1,100):
+            uname_srch = datadict.get(datain)
             mycur.execute(f"SELECT userId FROM myp_users WHERE userName = '{uname_srch}';")
             user_ls = []
             for i in mycur:
                 user_ls.extend(i)
             user = user_ls[0]
             mycur.execute(f"SELECT masterPass FROM myp_users WHERE userName = '{uname_srch}';")
-        
-        elif cho == 2:
-            os.system('clear')
-            email_srch = input("E-Mail Address: ")  
-            sea = True
-            mycur.execute(f"SELECT userId FROM myp_users WHERE eMail = '{email_srch}';")
-            user_ls = []
-            for i in mycur:
-                user_ls.extend(i)
-            user = user_ls[0]
-            mycur.execute(f"SELECT masterPass FROM myp_users WHERE eMail = '{email_srch}';")
-        
-        elif cho == 3:
+        elif datain == 'esc':
             os.system('clear')
             login_page()
-        else:
-            print("ENTER ONLY 1 OR 2 OR 3!!")
-    pass_ls = []
-    for i in mycur:
-        pass_ls.extend(i)
+        
+        pass_ls = []
+        for i in mycur:
+            pass_ls.extend(i)
 
-    ch = False
-    while ch == False:
-        masterPass_check_hash = hashcrypt(pwinput("Password: "))
-        if masterPass_check_hash == pass_ls[0]: 
-            ch = True 
-            post_login()
-        else:
-            print("Access Denied")
-    pass_ls = []
+        ch = False
+        while ch == False:
+            masterPass_check_hash = hashcrypt(pwinput("Password: "))
+            if masterPass_check_hash == pass_ls[0]: 
+                ch = True 
+                post_login()
+            else:
+                print("Access Denied")
+        pass_ls = []
 
 def signup():
     w = 't'
