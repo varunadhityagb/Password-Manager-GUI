@@ -9,17 +9,22 @@ from email.mime.multipart import MIMEMultipart
 import random
 import time
 from tabulate import tabulate
-global opt_lp
-##################################### CREATING DATABASE ################################
+
+##################################### CONNECTING MySQL ################################
 
 mydb = sqlc.connect(host='localhost', user='root', passwd='root',)
 mycur = mydb.cursor()
 
+
+##################################### FUNCTIONS ################################
+
+global opt_lp
+
 def createDB():
     mycur.execute("CREATE DATABASE MYP;")
 
-##################################### FUNCTIONS ################################
 def createTbls():
+    #CREATING TWO TABLES myp_users and myp_data having a comman row userId
     mycur.execute("USE MYP;") 
     mycur.execute('''CREATE TABLE myp_users (
             userId INT  UNSIGNED PRIMARY KEY AUTO_INCREMENT,
@@ -37,6 +42,7 @@ def createTbls():
         userId INT NOT NULL); ''')
 
 def insintousers(firstName, lastName, userName, eMail, masterPass):
+    # this functions inserts data into the myp_user table
     mycur.execute("USE MYP;")
     global passu
     passu = hashcrypt(masterPass)
@@ -46,6 +52,7 @@ def insintousers(firstName, lastName, userName, eMail, masterPass):
     mydb.commit()
 
 def insintodata(website, loginName, loginPass, userId):
+    # this functions inserts data into the myp_data table
     mycur.execute("USE MYP;") 
     action = f"""INSERT INTO myp_data (website, loginName, loginPass, userId) 
         VALUES ('""" + website + "', '" + loginName + "', '" + loginPass + "', '" + userId + "');"
@@ -53,6 +60,8 @@ def insintodata(website, loginName, loginPass, userId):
     mydb.commit()
 
 def retrieve(n: int):
+    # this fucntion retrives data from the myp_data table
+    # given that the userId is given 
     mycur.execute("USE MYP;")
     mycur.execute("SET @ROW := 0 ;")
     mycur.execute(f"""SELECT @ROW := @ROW + 1 , loginName
@@ -88,7 +97,50 @@ def retrieve(n: int):
     time.sleep(5)
     post_login() 
 
+def deletedata(n: int):
+    # this fucntion deletes data from the myp_data table
+    # given that the userId is given 
+    mycur.execute("USE test;")
+    mycur.execute("SET @ROW := 0")
+    mycur.execute(f"""SELECT @ROW := @ROW + 1 , loginName
+    FROM myp_data
+    WHERE userId = {n};""") 
+    data = mycur.fetchall()
+
+    mycur.execute(f"""SELECT passId
+    FROM myp_data
+    WHERE userId = {n};""") 
+    data_ls = mycur.fetchall()
+    
+    ls = []
+    for i in data_ls:
+        ls.extend(i)
+
+    datadict = {}
+    for j in range(len(ls)):
+        datadict[j+1] = ls[j]
+
+    if datadict != {}:
+        print(tabulate(data, headers=['Sl.No.', 'Username'], tablefmt='psql'))
+        print("Enter the number corresponding to the website to delete the record:")   
+        datain = int(input())
+        dataout = datadict[datain]
+        print()
+        action = f"DELETE FROM myp_data WHERE (passId = {dataout});"
+        mycur.execute(action)
+        mydb.commit()
+        print("SUCCESSFULLY DELETED THE SELECTED RECORD")
+    else:
+        print("THERE ARE NO PASSWORDS SAVED FOR THIS USER.")
+    time.sleep(5)
+    post_login()
+
+def deleteuser(n: int):
+    pass
+
 def insert(usr):
+    # this function inserts data into the myp_data table along with the help
+    # of inintodata() function 
     web = input("Web address:  ")
     logName = input(f"Enter username in {web}: ")
     logPass = encrypt(pwinput(f"Enter the password for {logName}: "))
@@ -119,6 +171,7 @@ def insert(usr):
             hello = False
 
 def otpmail(receivermail):
+    # sends an otp to the receivermail  
     global otp
     recmail = receivermail
     otp = random.randint(100000, 999999)
@@ -153,6 +206,7 @@ def otpmail(receivermail):
         server.quit()
     
 def login():
+    #displays a list of the users singed up
     global user
     os.system('clear')
     mycur.execute("USE MYP;")
@@ -170,6 +224,7 @@ def login():
     for j in range(len(ls)):
         datadict[j+1] = ls[j]
 
+    # ask the user to select which user wants ot sign in
     if datadict != {}:
         print(tabulate(data, headers=['Sl.No.', 'Username'], tablefmt='psql'))
         print("Enter the number corresponding to the user name to login: (or type esc to go back to the previous menu) ")   
@@ -189,7 +244,8 @@ def login():
         pass_ls = []
         for i in mycur:
             pass_ls.extend(i)
-
+        
+        #asks the masterpass for the selected user
         ch = False
         while ch == False:
             masterPass_check_hash = hashcrypt(pwinput("Password: "))
@@ -201,6 +257,7 @@ def login():
         pass_ls = []
 
 def signup():
+    #asks users their details and a masterpass for signing up
     w = 't'
     fName = input("Enter your first name:")
     lName = input("Enter your last name:")
@@ -245,6 +302,8 @@ def signup():
         else:
             eMail = e_Mail
 
+    #optmail() function is triggered
+    # to check whether the given mail is the user's mail
     otpmail(eMail)
     otp_opt = False
     otp_count = 0 
@@ -294,12 +353,14 @@ def signup():
     login()
 
 def login_page():
+    # this is the first page when u run the program
+    # it asks the user whether they are signing in or creating their account
     os.system('clear')
+
     print('''-----------MENU-----------
     1. Login
     2. Sign Up
-    3. Show users
-    4. Exit''')
+    3. Exit''')
 
     opt_lp = int(input(""))
     
@@ -307,33 +368,25 @@ def login_page():
         login()
         
     elif opt_lp == 2:
-        signup()
+        signup()        
 
     elif opt_lp == 3:
-        os.system('clear')
-        mycur.execute("USE MYP;")
-        mycur.execute("SET @ROW := 0;")
-        mycur.execute("SELECT @ROW := @ROW + 1, userName FROM myp_users")
-        data = mycur.fetchall()
-
-        print(tabulate(data, headers=['Sl.No.', 'Username'], tablefmt='psql'))
-        print("We give you 10 seconds to find your username.") 
-
-        time.sleep(10)
-        login_page()        
-
-    elif opt_lp == 4:
         os.system('clear')
         sys.exit            
 
 def post_login():
+
+    # as the functions name defines this is the second page post login
     os.system('clear')
+
     print('''-----------MENU-----------
     1. Retrieve Password
     2. Store Password
     3. Generate Password
-    4. Log Out
-    5. Exit''')
+    4. Remove Passwords
+    5. Log Out
+    6. Exit
+    7. Delete User''')
 
     opt = int(input())
     if opt == 1:
@@ -373,8 +426,25 @@ def post_login():
             sys.exit
     
     elif opt == 4:
+        deletedata(user)
+
+        time.sleep(7)
+        post_login()
+    
+    elif opt == 5:
         os.system('clear')
         login_page()
 
-    elif opt == 5:
+    elif opt == 6:
+        os.system('clear')   ################### YET TO DEFINE delete()
         sys.exit
+    
+    elif opt == 7:
+        print("Are you sure that you want to delete this account?")
+        print("This means that all our data in our database will be deleted.")
+        print("Y/N ?")
+        ansch = input()
+        if ansch.upper() == 'Y':
+            deleteuser(user)
+        else:
+            post_login()

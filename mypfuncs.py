@@ -5,7 +5,7 @@ from string import ascii_letters, ascii_uppercase, digits, ascii_lowercase, punc
 from hashlib import *
 import requests
 import pyperclip
-
+#ProjectbyVarunAdhityaGB
 ######################## CONNECTING SQL ###############################################
 mydb = sqlc.connect(host='localhost', user='root', passwd='root',)
 mycur = mydb.cursor()
@@ -23,11 +23,13 @@ num_crypt = ['6', '4', '7', '8', '5', '2', '0', '3', '1', '9']
 charst_crypt = lcase_crypt + ucase_crypt + num_crypt
 
 #########################   FUNCTIONS   ##################################################
-def shuffle(strg):
+def shuffle(strg): 
+    #takes input as string and shuffles
     ls = list(strg)
     random.shuffle(ls)
     
-def password(n : int):
+def password(n : int):  
+    #takes in a the number of digits and returns the password of length digits
     char = [lcase, ucase, num, alpha, pun]
 
     #generating the password
@@ -53,7 +55,8 @@ def password(n : int):
     
     return passwd
 
-def encrypt(strg : str):
+def encrypt(strg : str):  
+    # takes input a string and returns a encryted passwd
     str_ls = list(strg)
     for i in str_ls:
         if i in charst:
@@ -65,7 +68,8 @@ def encrypt(strg : str):
     strg = ''.join(str_ls)
     return strg      
 
-def decrypt(strg : str):
+def decrypt(strg : str): 
+    ## takes input a string and returns a encryted passwd
     str_ls = list(strg)
     for i in str_ls:
         if i in charst:
@@ -77,7 +81,8 @@ def decrypt(strg : str):
     strg = ''.join(str_ls)
     return strg
 
-def hashcrypt(var: str):
+def hashcrypt(var: str): 
+    # it is a one time conversion which cannot be reverted back
     hash = md5(var.encode())
     hashc = hash.hexdigest()
     hash_crypt = encrypt(hashc)
@@ -97,7 +102,7 @@ def emailvalidation(strg):
         print('limit exeeded')
 
 def unamecheck(strg):
-    # this finction checks wheather this username already exists, if it exeist it tell the user to try a different username        
+    # this finction checks whether this username already exists, if it exeist it tell the user to try a different username        
     mycur.execute("USE MYP;")
     username_ls = []
     mycur.execute("SELECT userName FROM myp_users;")
@@ -109,6 +114,8 @@ def unamecheck(strg):
         return True
 
 def emailcheck(strg):
+    #this functions checks whether the email address is already 
+    # used ot not in our database 
     mycur.execute("USE MYP;")
     email_ls = []
     mycur.execute("SELECT eMail FROM myp_users;")
@@ -123,6 +130,7 @@ def emailcheck(strg):
         return True
 
 def generate_strongpass():
+    # generates a strong password of 12 digits
     global gen_pass
     gen_pass = encrypt(password(12))
     print(f"""Here you go, this password will take about 500 thousand years for a computer to crack it:
@@ -131,6 +139,7 @@ def generate_strongpass():
     print("Also the password is already copied to your clipboard🙂")
 
 def generate_vstrongpass():
+    #generates a very strong password of 16 digits
     global gen_pass
     gen_pass = encrypt(password(16))
     print(f"""Here you go, this password will take about 1 trillion years for a computer to crack it:
@@ -139,6 +148,7 @@ def generate_vstrongpass():
     print("Also the password is already copied to your clipboard🙂")
 
 def generate_pass():
+    #combination of the above two functions
     print("""How secure do you want your password to be?
     1. STRONG
     2. VERY STRONG""")
