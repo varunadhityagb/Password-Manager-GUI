@@ -67,22 +67,24 @@ def retrieve(n: int):
     
     ls = []
     for i in data_ls:
-        ls.extend(i)  
+        ls.extend(i)   
     datadict = {}
     for j in range(len(ls)):
         datadict[j+1] = ls[j]
-     
-    print(tabulate(data, headers=['Sl.No.', 'Username'], tablefmt='psql'))
-    print("Enter the number corresponding to the website to check the password:")   
-    datain = int(input())
-    print()
-    print()
-    print(decrypt(datadict[datain]))
-    pyperclip.copy(decrypt(datadict[datain]))
-    print()
-    print()
-    print("YOUR PASSWORD IS COPIED TO YOUR CLIPBOARD🙂")
 
+    if datadict != {}:
+        print(tabulate(data, headers=['Sl.No.', 'Username'], tablefmt='psql'))
+        print("Enter the number corresponding to the website to check the password:")   
+        datain = int(input())
+        print()
+        print()
+        print(decrypt(datadict[datain]))
+        pyperclip.copy(decrypt(datadict[datain]))
+        print()
+        print()
+        print("YOUR PASSWORD IS COPIED TO YOUR CLIPBOARD🙂")
+    else:
+        print("THERE ARE NO PASSWORDS SAVED FOR THIS USER.")
     time.sleep(5)
     post_login() 
 
