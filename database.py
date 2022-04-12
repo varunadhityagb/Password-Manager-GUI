@@ -15,7 +15,6 @@ from tabulate import tabulate
 mydb = sqlc.connect(host='localhost', user='root', passwd='root',)
 mycur = mydb.cursor()
 
-
 ##################################### FUNCTIONS ################################
 
 global opt_lp
@@ -100,7 +99,7 @@ def retrieve(n: int):
 def deletedata(n: int):
     # this fucntion deletes data from the myp_data table
     # given that the userId is given 
-    mycur.execute("USE test;")
+    mycur.execute("USE myp;")
     mycur.execute("SET @ROW := 0")
     mycur.execute(f"""SELECT @ROW := @ROW + 1 , loginName
     FROM myp_data
@@ -136,7 +135,52 @@ def deletedata(n: int):
     post_login()
 
 def deleteuser(n: int):
-    pass
+    # this fucntion deletes user from the myp_users table
+    print("Are you sure you want to delete your account? ")
+    deleinp = input("Y/N ? ")
+    if deleinp.upper() == 'Y':
+        mycur.execute("USE myp;")
+
+        mycur.execute("USE myp;")
+        mycur.execute(f"""SELECT eMail
+        FROM myp_users
+        WHERE userId = {n}""")
+        emaild = mycur.fetchall()
+
+        els = []
+        for i in emaild:
+            els.extend(i)
+
+        mycur.execute(f"""SELECT passId 
+        FROM myp_data 
+        WHERE userId = {n};""")
+        data = mycur.fetchall()
+
+        ls = []
+        for i in data:
+            ls.extend(i)
+        
+        for i in ls:
+            mycur.execute(f"""DELETE FROM myp_data
+            WHERE (passId = {i});""")
+            mydb.commit()
+        
+        mycur.execute(f"""DELETE FROM myp_users 
+        WHERE (userId = {n});""")
+        mydb.commit()
+
+        print("Successfully deleted your details and data from our database")
+        byemail(els[0])     
+        time.sleep(5)
+        login_page()
+
+    elif deleinp.upper() == 'N':
+            print("Let me tell you a secret..........")
+            time.sleep(1)
+            print("YOU ARE ALWAYS RIGHT IN MAKING DECISIONS!!")
+            print("🙂🙂🙂🙂🙂🙂")   
+            time.sleep(5)
+            post_login()
 
 def insert(usr):
     # this function inserts data into the myp_data table along with the help
@@ -200,11 +244,42 @@ def otpmail(receivermail):
     msg.attach(part)
 
     context = ssl.create_default_context()
-    with smtplib.SMTP_SSL('smtp.gmail.com', 465, context=context ) as server:
+    with smtplib.SMTP_SSL('smtp.gmail.com', 465, context=context ) as server:  
         server.login('manageyourpass91@gmail.com','Acc3ssGr@nted')
         server.send_message(msg)
         server.quit()
     
+def byemail(receivermail):
+    #send a bye message to the user who leaves the app
+    recmail = receivermail
+
+    msg = MIMEMultipart("alternative")
+    msg['Subject'] = 'Thank you for using the app! '
+    msg['From'] = 'manageyourpass91@gmail.com'
+    msg['To'] = recmail
+
+    html = (f"""<html>
+        <body>
+            <p style="font-size:300%; text-align: center;"><b>SORRY TO SEE YOU GO ☹️☹️</b></p>
+            <p style="font-size:160%; text-align: center;">
+            Hope you use our app some another day again.
+            <br>
+            Thank you for trying our password manager.
+            Hope you liked our product.
+            </p>
+            <h1 style="text-align:center; font-size:300%;">THANK YOU!!</h1>
+        </body>
+    </html>""")
+    
+    part = MIMEText(html, "html")
+    msg.attach(part)
+
+    context = ssl.create_default_context()
+    with smtplib.SMTP_SSL('smtp.gmail.com', 465, context=context ) as server:  
+        server.login('manageyourpass91@gmail.com','Acc3ssGr@nted')
+        server.send_message(msg)
+        server.quit()
+
 def login():
     #displays a list of the users singed up
     global user
@@ -219,27 +294,26 @@ def login():
     
     ls = []
     for i in data_ls:
-        ls.extend(i)   
+        ls.extend(i)
+    print(ls)   
     datadict = {}
     for j in range(len(ls)):
         datadict[j+1] = ls[j]
+    print(datadict)
 
-    # ask the user to select which user wants ot sign in
+    # ask the user to select which user wants to sign in
     if datadict != {}:
         print(tabulate(data, headers=['Sl.No.', 'Username'], tablefmt='psql'))
-        print("Enter the number corresponding to the user name to login: (or type esc to go back to the previous menu) ")   
-        datain = int(input())  
-        if int(datain) in range(1,100):
-            uname_srch = datadict.get(datain)
-            mycur.execute(f"SELECT userId FROM myp_users WHERE userName = '{uname_srch}';")
-            user_ls = []
-            for i in mycur:
-                user_ls.extend(i)
-            user = user_ls[0]
-            mycur.execute(f"SELECT masterPass FROM myp_users WHERE userName = '{uname_srch}';")
-        elif datain == 'esc':
-            os.system('clear')
-            login_page()
+        print("Enter the number corresponding to the user name to login: ")   
+        datain = int(input())
+        uname_srch = datadict.get(datain)
+        mycur.execute(f"SELECT userId FROM myp_users WHERE userName = '{uname_srch}';")
+        user_ls = []
+        for i in mycur:
+            user_ls.extend(i)
+        
+        user = user_ls[0]
+        mycur.execute(f"SELECT masterPass FROM myp_users WHERE userName = '{uname_srch}';")
         
         pass_ls = []
         for i in mycur:
@@ -380,16 +454,14 @@ def post_login():
     os.system('clear')
 
     print('''-----------MENU-----------
-    1. Retrieve Password
-    2. Store Password
-    3. Generate Password
-    4. Remove Passwords
-    5. Log Out
-    6. Exit
-    7. Delete User''')
+    1. Retrieve Password\t2. Store Password
+    3. Generate Password\t4. Remove Passwords
+    5. Log Out\t\t\t6. Delete User
+    7. Exit''')
 
     opt = int(input())
     if opt == 1:
+        os.system('clear')
         retrieve(user)
 
     elif opt == 2:
@@ -435,16 +507,9 @@ def post_login():
         os.system('clear')
         login_page()
 
-    elif opt == 6:
-        os.system('clear')   ################### YET TO DEFINE delete()
+    elif opt == 7:
+        os.system('clear')   
         sys.exit
     
-    elif opt == 7:
-        print("Are you sure that you want to delete this account?")
-        print("This means that all our data in our database will be deleted.")
-        print("Y/N ?")
-        ansch = input()
-        if ansch.upper() == 'Y':
-            deleteuser(user)
-        else:
-            post_login()
+    elif opt == 6:
+        deleteuser(user)
