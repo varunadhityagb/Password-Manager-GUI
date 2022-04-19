@@ -103,7 +103,7 @@ def emailvalidation(strg):
 
 def unamecheck(strg):
     # this finction checks whether this username already exists, if it exeist it tell the user to try a different username        
-    mycur.execute("USE MYP;")
+    mycur.execute("USE myp;")
     username_ls = []
     mycur.execute("SELECT userName FROM myp_users;")
     for i in mycur:
@@ -116,7 +116,7 @@ def unamecheck(strg):
 def emailcheck(strg):
     #this functions checks whether the email address is already 
     # used ot not in our database 
-    mycur.execute("USE MYP;")
+    mycur.execute("USE myp;")
     email_ls = []
     mycur.execute("SELECT eMail FROM myp_users;")
     data = mycur.fetchall()

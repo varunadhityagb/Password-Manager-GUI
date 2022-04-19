@@ -11,10 +11,10 @@ for i in mycur:
 if 'MYP' in db_ls:
     mycur.execute("USE MYP;")
 elif 'myp' in db_ls:
-    mycur.execute("USE MYP;")
+    mycur.execute("USE myp;")
 else:
     createDB()
-    mycur.execute("USE MYP;")
+    mycur.execute("USE myp;")
 #ProjectbyVarunAdhityaGB
 ########################## CHECKING AND CREATING TABLES ###############################
 mycur.execute('SHOW TABLES;')

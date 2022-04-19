@@ -20,11 +20,11 @@ mycur = mydb.cursor()
 global opt_lp
 
 def createDB():
-    mycur.execute("CREATE DATABASE MYP;")
+    mycur.execute("CREATE DATABASE myp;")
 
 def createTbls():
     #CREATING TWO TABLES myp_users and myp_data having a comman row userId
-    mycur.execute("USE MYP;") 
+    mycur.execute("USE myp;") 
     mycur.execute('''CREATE TABLE myp_users (
             userId INT  UNSIGNED PRIMARY KEY AUTO_INCREMENT,
             firstName VARCHAR(225) NOT NULL,
@@ -42,7 +42,7 @@ def createTbls():
 
 def insintousers(firstName, lastName, userName, eMail, masterPass):
     # this functions inserts data into the myp_user table
-    mycur.execute("USE MYP;")
+    mycur.execute("USE myp;")
     global passu
     passu = hashcrypt(masterPass)
     action = f"""INSERT INTO myp_users (firstName, lastName, userName, eMail, masterPass)
@@ -52,7 +52,7 @@ def insintousers(firstName, lastName, userName, eMail, masterPass):
 
 def insintodata(website, loginName, loginPass, userId):
     # this functions inserts data into the myp_data table
-    mycur.execute("USE MYP;") 
+    mycur.execute("USE myp;") 
     action = f"""INSERT INTO myp_data (website, loginName, loginPass, userId) 
         VALUES ('""" + website + "', '" + loginName + "', '" + loginPass + "', '" + userId + "');"
     mycur.execute(action)
@@ -61,7 +61,7 @@ def insintodata(website, loginName, loginPass, userId):
 def retrieve(n: int):
     # this fucntion retrives data from the myp_data table
     # given that the userId is given 
-    mycur.execute("USE MYP;")
+    mycur.execute("USE myp;")
     mycur.execute("SET @ROW := 0 ;")
     mycur.execute(f"""SELECT @ROW := @ROW + 1 , loginName
     FROM myp_data
@@ -191,7 +191,7 @@ def insert(usr):
         
     #masterpass checking
     uId = str(usr)
-    mycur.execute("USE MYP;")
+    mycur.execute("USE myp;")
     action = f"""SELECT masterPass FROM myp_users WHERE userId = {uId}"""
     mycur.execute(action)
                 
@@ -243,8 +243,8 @@ def otpmail(receivermail):
     part = MIMEText(html, "html")
     msg.attach(part)
 
-    context = ssl.create_default_context()
-    with smtplib.SMTP_SSL('smtp.gmail.com', 465, context=context ) as server:  
+    #context = ssl.create_default_context()
+    with smtplib.SMTP_SSL('smtp.gmail.com', 465) as server:  #, context=context 
         server.login('manageyourpass91@gmail.com','Acc3ssGr@nted')
         server.send_message(msg)
         server.quit()
@@ -274,8 +274,8 @@ def byemail(receivermail):
     part = MIMEText(html, "html")
     msg.attach(part)
 
-    context = ssl.create_default_context()
-    with smtplib.SMTP_SSL('smtp.gmail.com', 465, context=context ) as server:  
+    #context = ssl.create_default_context()
+    with smtplib.SMTP_SSL('smtp.gmail.com', 465,) as server:  #context=context
         server.login('manageyourpass91@gmail.com','Acc3ssGr@nted')
         server.send_message(msg)
         server.quit()
@@ -284,7 +284,7 @@ def login():
     #displays a list of the users singed up
     global user
     os.system('clear')
-    mycur.execute("USE MYP;")
+    mycur.execute("USE myp;")
     mycur.execute("SET @ROW := 0 ;")
     mycur.execute(f"""SELECT @ROW := @ROW + 1 , userName FROM myp_users;""") 
     data = mycur.fetchall()
@@ -294,12 +294,10 @@ def login():
     
     ls = []
     for i in data_ls:
-        ls.extend(i)
-    print(ls)   
+        ls.extend(i)   
     datadict = {}
     for j in range(len(ls)):
         datadict[j+1] = ls[j]
-    print(datadict)
 
     # ask the user to select which user wants to sign in
     if datadict != {}:
@@ -329,6 +327,10 @@ def login():
             else:
                 print("Access Denied")
         pass_ls = []
+    else:
+        print("There are no users logged in.")
+        time.sleep(3)
+        login_page()
 
 def signup():
     #asks users their details and a masterpass for signing up
@@ -337,7 +339,7 @@ def signup():
     lName = input("Enter your last name:")
         
     ############ USER NAME CHECK
-    mycur.execute("USE MYP;")
+    mycur.execute("USE myp;")
     username_ls = []
     mycur.execute("SELECT userName FROM myp_users;")
     for i in mycur:
