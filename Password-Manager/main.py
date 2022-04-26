@@ -49,23 +49,32 @@ def ipass_ui():
 
 
 def ui(uid):
-
+    def showpass(id):
+        mycur.execute(f"SELECT loginPass FROM myp_data WHERE passId = {id};")
+        passwdr = mycur.fetchone()
+        print(passwdr)
+        
+        messagebox.showinfo('Password Manager', 'COPIED PASSWORD !!')
     def signout():
         psl.destroy()
         open('cache.txt', 'w')
         rootw()
-        
+    
     global psl
+    global pass_btn
     psl = Tk()
     psl.title("Sign Up")
     psl.config(bg='#26242f')
     psl.state('zoomed')
+    psl.resizable(0,1)
     psl.iconbitmap(r"images/icon.ico")
 
     serch_img = ImageTk.PhotoImage(Image.open("images/search.png"))
     uparow = ImageTk.PhotoImage(Image.open("images/uparrow.png"))
     downarrow = ImageTk.PhotoImage(Image.open("images/downarrow.png"))
     blankarrow = ImageTk.PhotoImage(Image.open("images/blankarrow.png"))
+    close = ImageTk.PhotoImage(Image.open("images/closeeye.png"))
+    open = ImageTk.PhotoImage(Image.open("images/openeye.png"))
 
     maincanva = Canvas(psl, width = 1920, height=1)
     maincanva.place(relx= 0, rely= 0.25)
@@ -84,58 +93,96 @@ def ui(uid):
 
     site_head = Button(site_frm, text='Website', bg='#26242f', fg='white', activebackground='#26242f',
         borderwidth=0, font=('',12,'bold underline'))
-    site_head.grid(row=1, column=1, padx=10, pady=20)
+    site_head.grid(row=1, column=1, padx=10, pady=20, sticky=W)
     btn1 = Button(site_frm, image=blankarrow, bg='#26242f', activebackground='#26242f', borderwidth=0)
     btn1.grid(row=1, column=2, columnspan=2)
 
     ########## USER NAME HEAD ###############################
     uname_frm = Frame(psl, width = 20, background='#26242f')
-    uname_frm.place(relx=0.3, rely=0.15 )
+    uname_frm.place(relx=0.25, rely=0.15 )
 
     uname_head = Button(uname_frm, text='Username', bg='#26242f', fg='white', activebackground='#26242f',
         borderwidth=0, font=('',12,'bold underline'))
-    uname_head.grid(row=1, column=1, padx=10, pady=20)
+    uname_head.grid(row=1, column=1, padx=10, pady=20, sticky=W)
     btn2 = Button(uname_frm, image=blankarrow, bg='#26242f', activebackground='#26242f', borderwidth=0)
 
     btn2.grid(row=1, column=2)
 
     ########## PASSWORD HEAD ###############################
-    passwd_frm = Frame(psl, width = 20, background='#26242f')
-    passwd_frm.place(relx=0.55, rely=0.15)
+    pass_frm = Frame(psl, width = 20, background='#26242f')
+    pass_frm.place(relx=0.5, rely=0.15 )
 
-    passwd_head = Button(passwd_frm, text='Password', bg='#26242f', fg='white', activebackground='#26242f',
+    pass_head = Button(pass_frm, text='Password', bg='#26242f', fg='white', activebackground='#26242f',
         borderwidth=0, font=('',12,'bold underline'))
-    passwd_head.grid(row=1, column=1, padx=10, pady=20)
-    btn3 = Button(passwd_frm, image=blankarrow, bg='#26242f', activebackground='#26242f', borderwidth=0)
+    pass_head.grid(row=1, column=1, padx=10, pady=20, sticky=W)
+    btn3 = Button(pass_frm, image=blankarrow, bg='#26242f', activebackground='#26242f', borderwidth=0)
+
     btn3.grid(row=1, column=2)
 
     ########## MAIN FRAME ###############################
-    master_frm = Frame(psl, height=50, width=40, background='#26242f')
+    master_frm = Frame(psl, background='#26242f')
     master_frm.place(relx=0.05, rely=0.35)
+    #####################################################
+    mycur.execute("SELECT passId FROM myp_data WHERE userId="+str(uid))
+    uiddata = mycur.fetchall()
+    uidls = []
+    for i in uiddata:
+        uidls.extend(i)
 
-    ########## WEBSITE ###############################    
-    site_ls_frm = Frame(master_frm,background='#26242f')
-    site_ls_frm.place(relx=0.05, rely=0.35)
-
+    uls = []
     
+    for uidn in uidls:
+        mycur.execute("SELECT website, loginName, loginPass, passId FROM myp_data WHERE passId="+str(uidn))
+        for data in (mycur.fetchall()):
+            uls.append(data)
 
-    ########## USER NAME ###############################
-    uname_ls_frm = Frame(master_frm, background='#26242f')
-    uname_ls_frm.place(relx=0.3, rely=0.35 )
+        for i in range(len(uls)):
+            p = decrypt(str(uls[i][2]))
+            p_len=len(str(uls[i][2]))
 
-    ########## PASSWORD ###############################
-    passwd_ls_frm = Frame(master_frm, background='#26242f')
-    passwd_ls_frm.place(relx=0.55, rely=0.35)
+            site_lbl = Label(master_frm, text=uls[i][0], font=('',12), fg='white', bg='#26242f')
+            indent_lbl = Label(master_frm, text='                        ', font=('',12), fg='white', bg='#26242f')
+            uname_l = Label(master_frm, text=uls[i][1], font=('',12), fg='white', bg='#26242f')
+            indent_lbl1= Label(master_frm, text='                        ', font=('',12), fg='white', bg='#26242f')
+            pass_ent = Entry(master_frm, font=('',12), fg='black', borderwidth=1)
+            showpass_btn = Button(master_frm, image=close, borderwidth=0, bg='#26242f')
+            
+            site_lbl.grid(row=i+1, column=2, padx=10, pady=10, sticky=W)
+            indent_lbl.grid(row=i+1, column=3, padx=10, pady=10, sticky=W)
+            uname_l.grid(row=i+1, column=4, padx=30, pady=10, sticky=W)
+            indent_lbl1.grid(row=i+1, column=5, padx=10, pady=10, sticky=W)
+            pass_ent.grid(row=i+1, column=6, padx=120, pady=10)
+            showpass_btn.grid(row=i+1, column=7, pady=10)
+
+            pass_ent.insert(0,('•'*p_len))
+            pass_ent.configure(state='readonly')
+
+            can1 = Canvas(psl, height=1080, width=1)
+            can1.place(relx=0.2, rely=0.15)    
+
+            can2 = Canvas(psl, height=1080, width=1)
+            can2.place(relx=0.45, rely=0.15)
+
+    j = (len(uls) + 1)
+    adddata_btn = Button(master_frm, text='Add entry...', font=('',11, 'bold'), fg='white', bg='#26242f', activebackground='#26242f') 
+    deletedata_btn = Button(master_frm, text="Delete data!!", font=('',12), fg='white', bg='grey', relief='raised',
+                activebackground='grey', borderwidth=2)    
+
+    adddata_btn.grid(row=j, column=2, padx=10, pady=10)
+    deletedata_btn.grid(row=j+1, column=7, padx=0, pady=10)
 
 
     out_btn = Button(psl, text='Sign Out', bg='#26242f', fg='white', borderwidth=0, font=('',12), command=signout)
     out_btn.place(relx=0.95, rely=0.95)
+
+    
 
     psl.mainloop()
 
 def login_page():
     root.destroy()
     global lpg
+    global user
     lpg = Tk()
     lpg.title("Login")
     lpg.config(bg="#26242f")
@@ -164,7 +211,6 @@ def login_page():
         mydb = sqlc.connect(host='localhost', user='root', passwd='root',)
         mycur = mydb.cursor()
 
-        global user
         mycur.execute("USE myp;")
         
         uname_srch = usern_dm.get()
@@ -176,6 +222,7 @@ def login_page():
             for i in mycur:
                     user_ls.extend(i)
 
+            global user
             user = user_ls[0]
             with open("cache.txt",'a') as fileerite:
                 fileerite.write(str(user))
@@ -250,7 +297,12 @@ def signup_page():
 
         def upass_ui():
             insintousers(str(f_name_ent.get()), str(l_name_ent.get()), str(u_name_ent.get()), str(email_ent.get()), str(upass_ent.get()) )
-            messagebox.showinfo("Successfully Signed Up", "You have successfull created your account.\nPlease go back to the previous page\nand sign in.")
+            messagebox.showinfo("Successfully Signed Up", "You have successfull created your account")
+            okres = messagebox.showinfo("Reload Required", "Click ok to reload.")
+            if okres == 'ok':
+                spg.destroy()
+                rootw()
+
             f_name_ent.delete(0, END)
             l_name_ent.delete(0, END)
             u_name_ent.delete(0, END)
@@ -272,6 +324,7 @@ def signup_page():
             messagebox.showerror("Password Mismatch","PLease make sure that your passwords match.")
         elif len(upass_ent.get()) < 10:
             messagebox.showerror("Password Not Satisfying Requirements","The password should be atleast a minimum of 10 characters.")
+        
         else:
             upass_ui()
 
