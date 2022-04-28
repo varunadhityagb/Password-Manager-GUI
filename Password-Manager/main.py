@@ -31,6 +31,7 @@ else:
     pass
 ##############################################################################
 open('cache.txt', 'a')
+shp_count = 0
 
 ########################## FUNCTOINS ###############################
 def lbk_rootw():
@@ -49,17 +50,55 @@ def ipass_ui():
 
 
 def ui(uid):
-    def showpass(id):
-        mycur.execute(f"SELECT loginPass FROM myp_data WHERE passId = {id};")
-        passwdr = mycur.fetchone()
-        print(passwdr)
-        
-        messagebox.showinfo('Password Manager', 'COPIED PASSWORD !!')
     def signout():
         psl.destroy()
-        open('cache.txt', 'w')
         rootw()
     
+    def showpass():
+        global iclick
+        iclick += 1
+
+        if iclick%2 == 0:
+            showpass_btn.configure(image=close)
+            uidls1 = []
+            for i in uiddata:
+                uidls1.extend(i)
+
+            uls1 = []
+
+            for uidn in uidls:
+                mycur.execute("SELECT website, loginName, loginPass, passId FROM myp_data WHERE passId="+str(uidn))
+                for data in (mycur.fetchall()):
+                    uls1.append(data)
+                for i in range(len(uls)):
+                    p2 = decrypt(str(uls[i][2]))
+                    text1 = Entry(master_frm, font=('',12), fg='black', show='•')
+                    text1.grid(row=i+1, column=6, padx=120, pady=10)
+                    text1.insert(0,(p2))
+                    text1.configure(state='readonly')    
+        else:
+            showpass_btn.configure(image=open_e)
+
+            uidls1 = []
+            for i in uiddata:
+                uidls1.extend(i)
+
+            uls1 = []
+
+            for uidn in uidls:
+                mycur.execute("SELECT website, loginName, loginPass, passId FROM myp_data WHERE passId="+str(uidn))
+                for data in (mycur.fetchall()):
+                    uls1.append(data)
+                for i in range(len(uls)):
+                    p1 = decrypt(str(uls[i][2]))
+                    text2 = Entry(master_frm, font=('',12), fg='black')
+                    text2.grid(row=i+1, column=6, padx=120, pady=10)
+                    text2.insert(0,(p1))
+                    text2.configure(state='readonly')
+                    
+                      
+                
+    global iclick
     global psl
     global pass_btn
     psl = Tk()
@@ -67,18 +106,21 @@ def ui(uid):
     psl.config(bg='#26242f')
     psl.state('zoomed')
     psl.resizable(0,1)
-    psl.iconbitmap(r"images/icon.ico")
+    psl.iconbitmap(r"images/1.ico")
 
-    serch_img = ImageTk.PhotoImage(Image.open("images/search.png"))
-    uparow = ImageTk.PhotoImage(Image.open("images/uparrow.png"))
-    downarrow = ImageTk.PhotoImage(Image.open("images/downarrow.png"))
-    blankarrow = ImageTk.PhotoImage(Image.open("images/blankarrow.png"))
-    close = ImageTk.PhotoImage(Image.open("images/closeeye.png"))
-    open = ImageTk.PhotoImage(Image.open("images/openeye.png"))
+    serch_img = ImageTk.PhotoImage(Image.open("images/2.png"))
+    uparow = ImageTk.PhotoImage(Image.open("images/3.png"))
+    downarrow = ImageTk.PhotoImage(Image.open("images/4.png"))
+    blankarrow = ImageTk.PhotoImage(Image.open("images/5.png"))
+    close = ImageTk.PhotoImage(Image.open("images/6.png"))
+    open_e = ImageTk.PhotoImage(Image.open("images/7.png"))
+    
 
     maincanva = Canvas(psl, width = 1920, height=1)
     maincanva.place(relx= 0, rely= 0.25)
     
+    iclick = 0
+
     ########## SEARCH BOX ###############################
     search_ent = Entry(psl, font=('',15, 'bold'), bg='#26242f', fg='white', borderwidth=2, width=30)
     search_ent.place(relx=0.375, rely=0.03)
@@ -144,17 +186,17 @@ def ui(uid):
             indent_lbl = Label(master_frm, text='                        ', font=('',12), fg='white', bg='#26242f')
             uname_l = Label(master_frm, text=uls[i][1], font=('',12), fg='white', bg='#26242f')
             indent_lbl1= Label(master_frm, text='                        ', font=('',12), fg='white', bg='#26242f')
-            pass_ent = Entry(master_frm, font=('',12), fg='black', borderwidth=1)
-            showpass_btn = Button(master_frm, image=close, borderwidth=0, bg='#26242f')
+            pass_ent = Entry(master_frm, font=('',12), fg='black', borderwidth=1, show='•')
             
+
             site_lbl.grid(row=i+1, column=2, padx=10, pady=10, sticky=W)
             indent_lbl.grid(row=i+1, column=3, padx=10, pady=10, sticky=W)
             uname_l.grid(row=i+1, column=4, padx=30, pady=10, sticky=W)
             indent_lbl1.grid(row=i+1, column=5, padx=10, pady=10, sticky=W)
             pass_ent.grid(row=i+1, column=6, padx=120, pady=10)
-            showpass_btn.grid(row=i+1, column=7, pady=10)
+            
 
-            pass_ent.insert(0,('•'*p_len))
+            pass_ent.insert(0,(p))
             pass_ent.configure(state='readonly')
 
             can1 = Canvas(psl, height=1080, width=1)
@@ -167,10 +209,11 @@ def ui(uid):
     adddata_btn = Button(master_frm, text='Add entry...', font=('',11, 'bold'), fg='white', bg='#26242f', activebackground='#26242f') 
     deletedata_btn = Button(master_frm, text="Delete data!!", font=('',12), fg='white', bg='grey', relief='raised',
                 activebackground='grey', borderwidth=2)    
-
+    showpass_btn = Button(master_frm, image=close, borderwidth=0, bg='#26242f', activebackground='#26242f',command=showpass)
+    
     adddata_btn.grid(row=j, column=2, padx=10, pady=10)
     deletedata_btn.grid(row=j+1, column=7, padx=0, pady=10)
-
+    showpass_btn.grid(row=1, column=7, rowspan=len(uls), padx=10, pady=10)
 
     out_btn = Button(psl, text='Sign Out', bg='#26242f', fg='white', borderwidth=0, font=('',12), command=signout)
     out_btn.place(relx=0.95, rely=0.95)
@@ -188,7 +231,7 @@ def login_page():
     lpg.config(bg="#26242f")
     lpg.geometry("400x300")
     lpg.resizable(0,0)
-    lpg.iconbitmap(r"images/icon.ico")
+    lpg.iconbitmap(r"images/1.ico")
 
     passkey = StringVar()
     cbvar = IntVar(value=0)
@@ -245,7 +288,7 @@ def login_page():
                         break
             pass_ls = []
 
-    bk_arrow = ImageTk.PhotoImage(Image.open("images/backarrow.png"))
+    bk_arrow = ImageTk.PhotoImage(Image.open("images/10.png"))
     ################# STYLES ##########################################
     cb_style = ttk.Style()
     cb_style.configure('R.TCheckbutton', foreground='white', background='#26242f')
@@ -286,12 +329,12 @@ def signup_page():
     spg.config(bg='#26242f')
     spg.geometry("600x600")
     spg.resizable(0,0)
-    spg.iconbitmap(r"images/icon.ico")
+    spg.iconbitmap(r"images/1.ico")
     
     passkey = StringVar()
     repasskey = StringVar()
     cbvar = IntVar(value=0)
-    bk_arrow = ImageTk.PhotoImage(Image.open("images/backarrow.png"))
+    bk_arrow = ImageTk.PhotoImage(Image.open("images/10.png"))
 
     def signup():
 
@@ -449,7 +492,7 @@ def rootw():
     root = Tk()
     root.config(bg="#26242f")
     root.title("Password Manager")
-    root.iconbitmap(r"images/icon.ico")
+    root.iconbitmap(r"images/1.ico")
     root.geometry("300x300")
     root.resizable(0,0)
 
