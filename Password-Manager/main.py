@@ -4,6 +4,7 @@ from tkinter import *
 from PIL import ImageTk, Image
 from tkinter import messagebox  
 import tkinter.ttk as ttk
+from os import system
 ########################## CHECKING AND CREATING DATABASE #############################
 mycur.execute('SHOW SCHEMAS;')
 db_ls = []
@@ -52,6 +53,7 @@ def ipass_ui():
 def ui(uid):
     def signout():
         psl.destroy()
+        open('cache.txt', 'w')
         rootw()
     
     def showpass():
@@ -102,16 +104,13 @@ def ui(uid):
     global psl
     global pass_btn
     psl = Tk()
-    psl.title("Sign Up")
+    psl.title("Passwords")
     psl.config(bg='#26242f')
     psl.state('zoomed')
     psl.resizable(0,1)
     psl.iconbitmap(r"images/1.ico")
 
     serch_img = ImageTk.PhotoImage(Image.open("images/2.png"))
-    uparow = ImageTk.PhotoImage(Image.open("images/3.png"))
-    downarrow = ImageTk.PhotoImage(Image.open("images/4.png"))
-    blankarrow = ImageTk.PhotoImage(Image.open("images/5.png"))
     close = ImageTk.PhotoImage(Image.open("images/6.png"))
     open_e = ImageTk.PhotoImage(Image.open("images/7.png"))
     
@@ -133,33 +132,22 @@ def ui(uid):
     site_frm = Frame(psl, width = 20, background='#26242f')
     site_frm.place(relx=0.05, rely=0.15)
 
-    site_head = Button(site_frm, text='Website', bg='#26242f', fg='white', activebackground='#26242f',
-        borderwidth=0, font=('',12,'bold underline'))
-    site_head.grid(row=1, column=1, padx=10, pady=20, sticky=W)
-    btn1 = Button(site_frm, image=blankarrow, bg='#26242f', activebackground='#26242f', borderwidth=0)
-    btn1.grid(row=1, column=2, columnspan=2)
+    site_head = Label(site_frm, text='Website', bg='#26242f', fg='white', borderwidth=0, font=('',12,'bold underline'))
+    site_head.grid(row=1, column=1, padx=10, pady=20)
 
     ########## USER NAME HEAD ###############################
     uname_frm = Frame(psl, width = 20, background='#26242f')
     uname_frm.place(relx=0.25, rely=0.15 )
 
-    uname_head = Button(uname_frm, text='Username', bg='#26242f', fg='white', activebackground='#26242f',
-        borderwidth=0, font=('',12,'bold underline'))
-    uname_head.grid(row=1, column=1, padx=10, pady=20, sticky=W)
-    btn2 = Button(uname_frm, image=blankarrow, bg='#26242f', activebackground='#26242f', borderwidth=0)
-
-    btn2.grid(row=1, column=2)
+    uname_head = Label(uname_frm, text='Username', bg='#26242f', fg='white', borderwidth=0, font=('',12,'bold underline'))
+    uname_head.grid(row=1, column=1, padx=10, pady=20)
 
     ########## PASSWORD HEAD ###############################
     pass_frm = Frame(psl, width = 20, background='#26242f')
     pass_frm.place(relx=0.5, rely=0.15 )
 
-    pass_head = Button(pass_frm, text='Password', bg='#26242f', fg='white', activebackground='#26242f',
-        borderwidth=0, font=('',12,'bold underline'))
-    pass_head.grid(row=1, column=1, padx=10, pady=20, sticky=W)
-    btn3 = Button(pass_frm, image=blankarrow, bg='#26242f', activebackground='#26242f', borderwidth=0)
-
-    btn3.grid(row=1, column=2)
+    pass_head = Label(pass_frm, text='Password', bg='#26242f', fg='white', borderwidth=0, font=('',12,'bold underline'))
+    pass_head.grid(row=1, column=1, padx=10, pady=20)
 
     ########## MAIN FRAME ###############################
     master_frm = Frame(psl, background='#26242f')
@@ -213,8 +201,15 @@ def ui(uid):
     
     adddata_btn.grid(row=j, column=2, padx=10, pady=10)
     deletedata_btn.grid(row=j+1, column=7, padx=0, pady=10)
-    showpass_btn.grid(row=1, column=7, rowspan=len(uls), padx=10, pady=10)
+    
 
+    if len(uls) == 0:
+        showpass_btn.configure(state='disabled')
+        #showpass_btn.grid(row=1, column=7, padx=10, pady=10)
+    else:
+        showpass_btn.grid(row=1, column=7, rowspan=5, padx=10, pady=10)
+
+    status_frm = Frame()   
     out_btn = Button(psl, text='Sign Out', bg='#26242f', fg='white', borderwidth=0, font=('',12), command=signout)
     out_btn.place(relx=0.95, rely=0.95)
 
@@ -249,7 +244,7 @@ def login_page():
         else:
             pass_ent.config(show='*')
 
-    def login():
+    def login(*event):
         global lpg
         mydb = sqlc.connect(host='localhost', user='root', passwd='root',)
         mycur = mydb.cursor()
@@ -298,6 +293,7 @@ def login_page():
     usern_lbl = Label(lpg, text="Username:", font=('', 14), bg='#26242f', fg="white")
     pass_lbl = Label(lpg, text="Password:", font=('', 14), bg='#26242f', fg="white")
     pass_ent = Entry(lpg, textvariable=passkey, show="*", font=('', 14), bg='#26242f', fg="white")
+    pass_ent.bind("<Return>",login)
     in_btn = Button(lpg, text="Sign In",command=login, font=('', 14), width=20, bg='#26242f', fg="white")
     showpass_cb = ttk.Checkbutton(lpg, text="Show Password", variable=cbvar, onvalue=1, offvalue=0, command=shbtn, style='R.TCheckbutton' )
     bk_btn = Button(lpg, image=bk_arrow, command=lbk_rootw, activebackground='#26242f', borderwidth=0, bg='#26242f')
@@ -327,7 +323,7 @@ def signup_page():
     spg = Tk()
     spg.title("Sign Up")
     spg.config(bg='#26242f')
-    spg.geometry("600x600")
+    spg.geometry("400x600")
     spg.resizable(0,0)
     spg.iconbitmap(r"images/1.ico")
     
@@ -336,7 +332,7 @@ def signup_page():
     cbvar = IntVar(value=0)
     bk_arrow = ImageTk.PhotoImage(Image.open("images/10.png"))
 
-    def signup():
+    def signup(*event):
 
         def upass_ui():
             insintousers(str(f_name_ent.get()), str(l_name_ent.get()), str(u_name_ent.get()), str(email_ent.get()), str(upass_ent.get()) )
@@ -344,7 +340,10 @@ def signup_page():
             okres = messagebox.showinfo("Reload Required", "Click ok to reload.")
             if okres == 'ok':
                 spg.destroy()
-                rootw()
+                system("python password-manager/main.py")
+                
+                
+                
 
             f_name_ent.delete(0, END)
             l_name_ent.delete(0, END)
@@ -365,15 +364,15 @@ def signup_page():
 
         if urepass_ent.get() != upass_ent.get():
             messagebox.showerror("Password Mismatch","PLease make sure that your passwords match.")
-        elif len(upass_ent.get()) < 10:
-            messagebox.showerror("Password Not Satisfying Requirements","The password should be atleast a minimum of 10 characters.")
+        elif len(upass_ent.get()) < 8:
+            messagebox.showerror("Password Not Satisfying Requirements","The password should be atleast a minimum of 8 characters.")
         
         else:
             upass_ui()
 
-    def unamec():
-        def emailc():
-            def otpc():
+    def unamec(*event):
+        def emailc(*event):
+            def otpc(*event):
                 global urepass_ent
                 global upass_ent
 
@@ -387,7 +386,6 @@ def signup_page():
 
                 js = eval(otp_ent.get())
                 if js == otp:
-                    cnt3_btn.destroy()
 
                     cb_style = ttk.Style()
                     cb_style.configure('R.TCheckbutton', foreground='white', background='#26242f')
@@ -400,6 +398,7 @@ def signup_page():
                     urepass_lbl = Label(spg, text='Re-Enter Password:', font=('',14), bg='#26242f', fg='white')
                     global urepass_ent
                     urepass_ent = Entry(spg, textvariable=repasskey, show="*", font=('', 14), bg='#26242f', fg="white")
+                    urepass_ent.bind("<Return>", signup)
                     global showpass_cb
                     showpass_cb = ttk.Checkbutton(spg, text="Show Password", variable=cbvar, onvalue=1, offvalue=0, 
                         command=cbshow, style='R.TCheckbutton' )
@@ -423,19 +422,16 @@ def signup_page():
                 if ress == False:
                     messagebox.showinfo("Duplicate Found", "This is email address is assosiated with another user.")
                 else:
-                    cnt2_btn.destroy()
                     otp = otpmail(email_ent.get())
                     print(otp)
                     global otp_lbl
                     otp_lbl = Label(spg, text='OTP:      ', font=('',14), bg='#26242f', fg='white')
                     global otp_ent
                     otp_ent = Entry(spg, font=('', 14), bg='#26242f', fg="white")
-                    global cnt3_btn
-                    cnt3_btn = Button(spg, text="Continue..", command=otpc, bg='#568943', fg='white')
+                    otp_ent.bind("<Return>", otpc)
 
                     otp_lbl.grid(row=7, column=1, padx=10, pady=10)
                     otp_ent.grid(row=7, column=2, padx=10, pady=10)
-                    cnt3_btn.grid(row=7, column=3, padx=10, pady=10)
 
         res = unamecheck(u_name_ent.get())
         if res == False:
@@ -451,12 +447,10 @@ def signup_page():
                 email_lbl = Label(spg, text='E-Mail:   ', font=('',14), bg='#26242f', fg='white')
                 global email_ent
                 email_ent = Entry(spg, font=('', 14), bg='#26242f', fg="white")
-                global cnt2_ent
-                cnt2_btn = Button(spg, text="Continue..", command=emailc, bg='#568943', fg='white')
+                email_ent.bind("<Return>", emailc)
 
                 email_lbl.grid(row=6, column=1, padx=10, pady=10)
                 email_ent.grid(row=6, column=2, padx=10, pady=10)
-                cnt2_btn.grid(row=6, column=3, padx=10, pady=10)
 
     global f_name_ent
     f_name_lbl = Label(spg, text="First Name:", font=('', 14), bg='#26242f', fg="white")
@@ -467,8 +461,7 @@ def signup_page():
     global u_name_ent
     u_name_lbl = Label(spg, text='Create Username:', font=('',14), bg='#26242f', fg='white')
     u_name_ent = Entry(spg, font=('', 14), bg='#26242f', fg="white")
-    global cnt1_btn
-    cnt1_btn = Button(spg, text="Continue..", command=unamec, bg='#568943', fg='white')
+    u_name_ent.bind("<Return>", unamec)
     
     bk_btn = Button(spg, image=bk_arrow, command=sbk_rootw, activebackground='#26242f', borderwidth=0, bg='#26242f')
 
@@ -479,7 +472,6 @@ def signup_page():
     f_name_ent.grid(row=3, column=2, padx=10, pady=10)
     l_name_ent.grid(row=4, column=2, padx=10, pady=10)
     u_name_ent.grid(row=5, column=2, padx=10, pady=10)
-    cnt1_btn.grid(row=5, column=3, padx=10, pady=10, ipadx=45)
     bk_btn.grid(row=1, column=1, padx=10, pady=20)
 
     spg.mainloop()
