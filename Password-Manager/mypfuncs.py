@@ -65,6 +65,7 @@ def encrypt(strg : str):
             str_ls[i_pos] = charst_crypt[c_pos]
         else:
             pass        
+    
     strg = ''.join(str_ls)
     return strg      
 
@@ -78,6 +79,7 @@ def decrypt(strg : str):
             str_ls[i_pos] = charst[c_pos]
         else:
             pass
+    
     strg = ''.join(str_ls)
     return strg
 
@@ -106,6 +108,7 @@ def unamecheck(strg):
     mycur.execute("USE myp;")
     username_ls = []
     mycur.execute("SELECT userName FROM myp_users;")
+    
     for i in mycur:
         username_ls.extend(i)
     if strg in username_ls:
@@ -136,7 +139,7 @@ def generate_strongpass():
     print(f"""Here you go, this password will take about 500 thousand years for a computer to crack it:
     {decrypt(gen_pass)}""")
     pyperclip.copy(decrypt(gen_pass))
-    print("Also the password is already copied to your clipboard🙂")
+
 
 def generate_vstrongpass():
     #generates a very strong password of 16 digits
@@ -145,16 +148,3 @@ def generate_vstrongpass():
     print(f"""Here you go, this password will take about 1 trillion years for a computer to crack it:
     {decrypt(gen_pass)}""")
     pyperclip.copy(decrypt(gen_pass))
-    print("Also the password is already copied to your clipboard🙂")
-
-def generate_pass():
-    #combination of the above two functions
-    print("""How secure do you want your password to be?
-    1. STRONG
-    2. VERY STRONG""")
-    opt_ps = int(input())
-    if opt_ps == 1:
-        generate_strongpass()
-    elif opt_ps == 2:
-        generate_vstrongpass()
-    return gen_pass
