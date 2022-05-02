@@ -131,20 +131,3 @@ def emailcheck(strg):
         return False
     else:
         return True
-
-def generate_strongpass():
-    # generates a strong password of 12 digits
-    global gen_pass
-    gen_pass = encrypt(password(12))
-    print(f"""Here you go, this password will take about 500 thousand years for a computer to crack it:
-    {decrypt(gen_pass)}""")
-    pyperclip.copy(decrypt(gen_pass))
-
-
-def generate_vstrongpass():
-    #generates a very strong password of 16 digits
-    global gen_pass
-    gen_pass = encrypt(password(16))
-    print(f"""Here you go, this password will take about 1 trillion years for a computer to crack it:
-    {decrypt(gen_pass)}""")
-    pyperclip.copy(decrypt(gen_pass))

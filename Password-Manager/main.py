@@ -2,6 +2,7 @@ import io
 from tkinter.font import BOLD
 from urllib.request import urlopen
 
+from numpy import pad
 from database import *          #####IMPORTING OUR COUSTOM MODULES
 from mypfuncs import *     
 from tkinter import *   
@@ -53,6 +54,238 @@ p2, p3, p4, p5, p6, p7, p8, p9, p10 = urlopen(img2_url), urlopen(img3_url), urlo
 
 img2, img3, img4, img5, img6, img7, img8, img9, img10 = io.BytesIO(p2.read()), io.BytesIO(p3.read()), io.BytesIO(p4.read()), io.BytesIO(p5.read()), io.BytesIO(p6.read()), io.BytesIO(p7.read()), io.BytesIO(p8.read()), io.BytesIO(p9.read()), io.BytesIO(p10.read())
 
+########################## CLASS ###############################
+
+class passwordmenu:
+    def __init__(self, root, uid, close, open_e):
+        global iclick
+        global len_1
+        mycur.execute("USE myp;")
+
+        self.main_frame = Frame(root, width=1340, height=650, background="#26242f", borderwidth=0)
+        self.main_frame.grid(row=1, column=0)
+
+        self.main_canvas = Canvas(self.main_frame, borderwidth=0, background="#26242f", width=1340, height=650)
+        self.main_canvas.pack(side=LEFT, fill=BOTH, expand=YES)
+        
+        self.scroll = Scrollbar(self.main_frame, orient=VERTICAL, command=self.main_canvas.yview, bg='#26242f',highlightthickness=0, troughcolor='#26242f')
+        self.scroll.pack(side=RIGHT, fill=Y)
+
+        self.main_canvas.configure(yscrollcommand=self.scroll.set)
+        self.main_canvas.bind('<Configure>', lambda e: self.main_canvas.configure(scrollregion= self.main_canvas.bbox("all")))
+
+
+        self.second_frame = Frame(self.main_canvas, borderwidth=0, background="#26242f", width=1340, height=650)
+        self.main_canvas.create_window((0,0), window=self.second_frame)
+        
+        self.num_header = Label(self.second_frame, text="Id", font=('', 14, BOLD), bg='#26242f', fg="white")
+        self.site_header = Label(self.second_frame, text='Website', font=('',14, BOLD), bg='#26242f', fg='white')
+        self.indent_header = Label(self.second_frame, text='', font=('                        ',14), bg='#26242f', fg='white')
+        self.uname_header = Label(self.second_frame, text='Username', font=('',14,BOLD), bg='#26242f', fg='white')
+        self.indent_header2 = Label(self.second_frame, text='', font=('                        ',14), bg='#26242f', fg='white')
+        self.pass_header = Label(self.second_frame, text='Password', font=('',14, BOLD), bg='#26242f', fg='white')
+        
+        self.num_header.grid(row=0, column=1, padx=20, pady=10, sticky=E)
+        self.site_header.grid(row=0, column=2, padx=10, pady=10, sticky=W)
+        self.indent_header.grid(row=0, column=3, padx=10, pady=10, sticky=W)
+        self.uname_header.grid(row=0, column=4, padx=30, pady=10, sticky=W)
+        self.indent_header2.grid(row=0, column=5, padx=10, pady=10, sticky=W)
+        self.pass_header.grid(row=0, column=6, padx=120, pady=10)
+
+        iclick = 0
+
+        mycur.execute("SELECT passId FROM myp_data WHERE userId="+str(uid))
+        self.uiddata = mycur.fetchall()
+        self.uidls = []
+        for i in self.uiddata:
+            self.uidls.extend(i)
+
+        self.uls = []
+        
+        for uidn in self.uidls:
+            mycur.execute("SELECT website, loginName, loginPass, passId FROM myp_data WHERE passId="+str(uidn))
+            for data in (mycur.fetchall()):
+                self.uls.append(data)
+
+            for i in range(len(self.uls)):
+                self.p = decrypt(str(self.uls[i][2]))
+                self.p_len=len(str(self.uls[i][2]))
+
+                self.num_lbl = Label(self.second_frame, text=i+1, font=('', 12), fg='white', bg='#26242f', borderwidth=0)
+                self.site_lbl = Label(self.second_frame, text=self.uls[i][0], font=('',12), fg='white', bg='#26242f', borderwidth=0)
+                self.indent_lbl = Label(self.second_frame, text='                        ', font=('',12), fg='white', bg='#26242f')
+                self.uname_l = Label(self.second_frame, text=self.uls[i][1], font=('',12), fg='white', bg='#26242f')
+                self.indent_lbl1= Label(self.second_frame, text='                        ', font=('',12), fg='white', bg='#26242f')
+                self.pass_ent = Entry(self.second_frame, font=('',12), fg='black', borderwidth=1, show='•')
+                
+                self.num_lbl.grid(row=i+1, column=1, padx=20, pady=10, sticky=E)
+                self.site_lbl.grid(row=i+1, column=2, padx=10, pady=10, sticky=W)
+                self.indent_lbl.grid(row=i+1, column=3, padx=10, pady=10, sticky=W)
+                self.uname_l.grid(row=i+1, column=4, padx=30, pady=10, sticky=W)
+                self.indent_lbl1.grid(row=i+1, column=5, padx=10, pady=10, sticky=W)
+                self.pass_ent.grid(row=i+1, column=6, padx=120, pady=10)
+                
+
+                self.pass_ent.insert(0,(self.p))
+                self.pass_ent.configure(state='readonly')
+
+        len_1 = (len(self.uls) + 2)
+
+        self.showpass_btn = Button(self.second_frame, image=close, borderwidth=0, bg='#26242f', activebackground='#26242f',
+            command=lambda: showpass(open_e))
+
+        if len(self.uls) == 0:
+            self.showpass_btn.configure(state='disabled')
+        else:
+            self.showpass_btn.grid(row=1, column=7, rowspan=5, padx=10, pady=10)
+    
+        def showpass(open_e):
+                
+            mycur.execute("SELECT masterPass FROM myp_users WHERE userId = " + str(uid) )
+            mc_ls = []
+                
+            for i in mycur.fetchall():
+                mc_ls.extend(i)
+
+            global iclick
+            iclick += 1
+
+            if iclick%2 == 0:
+                self.showpass_btn.configure(image=close)
+                self.uidls1 = []
+                for i in self.uiddata:
+                    self.uidls1.extend(i)
+
+                self.uls1 = []
+
+                for uidn in self.uidls:
+                    mycur.execute("SELECT website, loginName, loginPass, passId FROM myp_data WHERE passId="+str(uidn))
+                    for data in (mycur.fetchall()):
+                        self.uls1.append(data)
+                    for i in range(len(self.uls)):
+                        p2 = decrypt(str(self.uls[i][2]))
+                        text1 = Entry(self.second_frame, font=('',12), fg='black', show='•')
+                        text1.grid(row=i+1, column=6, padx=120, pady=10)
+                        text1.insert(0,(p2))
+                        text1.configure(state='readonly')    
+            else:
+
+                def mc_check(e):
+                    if hashcrypt(str(ent.get())) == str(mc_ls[0]):
+                        self.showpass_btn.configure(image=open_e)
+
+                        self.uidls1 = []
+                        for i in self.uiddata:
+                            self.uidls1.extend(i)
+
+                        self.uls1 = []
+
+                        for uidn in self.uidls:
+                            mycur.execute("SELECT website, loginName, loginPass, passId FROM myp_data WHERE passId="+str(uidn))
+                            for data in (mycur.fetchall()):
+                                self.uls1.append(data)
+                            for i in range(len(self.uls)):
+                                p1 = decrypt(str(self.uls[i][2]))
+                                text2 = Entry(self.second_frame, font=('',12), fg='black')
+                                text2.grid(row=i+1, column=6, padx=120, pady=10)
+                                text2.insert(0,(p1))
+                                text2.configure(state='readonly')
+                        masterc.destroy()
+                    else:
+                        messagebox.showerror("Wrong Password", 'Enter the correct password')
+                        
+                masterc = Toplevel()
+                masterc.title("Verification")
+                masterc.iconbitmap('1.ico')
+                masterc.configure(bg='#26242f')
+                
+                lbl = Label(masterc, text = 'Enter Master Password: ', font=('', 13), fg='white', bg='#26242f')
+                lbl.grid(row=1, column=1, padx=10, pady=10)
+
+                ent = Entry(masterc, font=('',13), fg='white', bg='#26242f', show='•')
+                ent.grid(row=1, column=2, padx=10, pady=10)
+
+                ent.bind("<Return>", mc_check)
+
+                masterc.mainloop()
+
+class addedit:
+    def __init__(self, uid, psl, open_e, close, addr, editr, *oid):
+        
+        def adds():
+            web = str(site_ent.get())
+            un = str(usern_ent.get())
+            ps = str(pass_ent.get())
+            reps = str(repass_ent.get())
+            mps = str(mpass_ent.get())
+
+            if reps == ps:
+                mycur.execute(f"SELECT masterPass FROM myp_users WHERE userId = "+ str(uid))
+                pass_ls = []
+                for i in mycur:
+                    pass_ls.extend(i)
+                        
+                if hashcrypt(mps) == str(pass_ls[0]):
+                    insintodata(web, un, ps, uid)
+                    mydb.commit()
+                    messagebox.showinfo("Success", "Data added successfully")
+                    passwordmenu(psl, uid, close, open_e)
+                    adk.destroy()
+                else:
+                    messagebox.showerror("Wrong password", "Please enter correct Master Password")
+            else:
+                messagebox.showerror("Unsuccessful","Passwords don't match!")
+
+        def edits():
+            messagebox.showerror("Unsuccessful","Test")
+        
+
+        adk = Toplevel()
+        adk.title("Add Data")
+        adk.iconbitmap('1.ico')
+        adk.configure(bg='#26242f')
+
+        site_lbl = Label(adk, text="Website:", font=('', 13), bg="#26242f", fg='white')
+        site_lbl.grid(row=1, column=1, padx=10, pady=10, sticky=W)
+
+        site_ent = Entry(adk, bg='#26242f', fg='white', font=('',13))
+        site_ent.grid(row=1, column=2, padx=10, pady=10)
+            
+        usern_lbl = Label(adk, text="Username:", font=('', 13), bg="#26242f", fg='white')
+        usern_lbl.grid(row=2, column=1, padx=10, pady=10, sticky=W)
+
+        usern_ent = Entry(adk, bg='#26242f', fg='white', font=('',13))
+        usern_ent.grid(row=2, column=2, padx=10, pady=10)
+
+        pass_lbl = Label(adk, text="Password:", font=('', 13), bg="#26242f", fg='white')
+        pass_lbl.grid(row=3, column=1, padx=10, pady=10, sticky=W)
+
+        pass_ent = Entry(adk, bg='#26242f', fg='white', font=('',13))
+        pass_ent.grid(row=3, column=2, padx=10, pady=10)
+
+        repass_lbl = Label(adk, text="Re-Enter Password:", font=('', 13), bg="#26242f", fg='white')
+        repass_lbl.grid(row=4, column=1, padx=10, pady=10, sticky=W)
+
+        repass_ent = Entry(adk, bg='#26242f', fg='white', font=('',13))
+        repass_ent.grid(row=4, column=2, padx=10, pady=10)
+
+        mpass_lbl = Label(adk, text="Master Password:", font=('', 13), bg="#26242f", fg='white')
+        mpass_lbl.grid(row=5, column=1, padx=10, pady=10, sticky=W)
+
+        mpass_ent = Entry(adk, bg='#26242f', fg='white', font=('',13), show='•')
+        mpass_ent.grid(row=5, column=2, padx=10, pady=10)
+        addedit_btn = Button(adk, text='none', font=('',13), bg='#26242f', fg='white')
+        addedit_btn.grid(row=6, column=1, columnspan=2, padx=10, pady=20)
+
+        if (editr == 'yes') and (addr == 'no'):
+            addedit_btn.configure(command=edits, text="Edit")
+        elif (addr == 'yes') and (editr == 'no'):
+            addedit_btn.configure(command=adds, text='Add')
+
+        adk.mainloop()
+
+        
+
 ########################## FUNCTOINS ###############################
 def lbk_rootw():
         global lpg
@@ -74,55 +307,62 @@ def ui(uid):
         psl.destroy()
         open('cache.txt', 'w')
         rootw()
-    
-    def showpass():
-        global iclick
-        iclick += 1
-
-        if iclick%2 == 0:
-            showpass_btn.configure(image=close)
-            uidls1 = []
-            for i in uiddata:
-                uidls1.extend(i)
-
-            uls1 = []
-
-            for uidn in uidls:
-                mycur.execute("SELECT website, loginName, loginPass, passId FROM myp_data WHERE passId="+str(uidn))
-                for data in (mycur.fetchall()):
-                    uls1.append(data)
-                for i in range(len(uls)):
-                    p2 = decrypt(str(uls[i][2]))
-                    text1 = Entry(second_frame, font=('',12), fg='black', show='•')
-                    text1.grid(row=i+1, column=6, padx=120, pady=10)
-                    text1.insert(0,(p2))
-                    text1.configure(state='readonly')    
-        else:
-            showpass_btn.configure(image=open_e)
-
-            uidls1 = []
-            for i in uiddata:
-                uidls1.extend(i)
-
-            uls1 = []
-
-            for uidn in uidls:
-                mycur.execute("SELECT website, loginName, loginPass, passId FROM myp_data WHERE passId="+str(uidn))
-                for data in (mycur.fetchall()):
-                    uls1.append(data)
-                for i in range(len(uls)):
-                    p1 = decrypt(str(uls[i][2]))
-                    text2 = Entry(second_frame, font=('',12), fg='black')
-                    text2.grid(row=i+1, column=6, padx=120, pady=10)
-                    text2.insert(0,(p1))
-                    text2.configure(state='readonly')
                     
     def deletedata():
+        global dele
+        def delete(e):
+            mycur.execute("SELECT passId FROM myp_data WHERE userId = "+str(uid))
+            passids = mycur.fetchall()
+            passid_ls = []
+            for i in passids:
+                passid_ls.extend(i)
+            
+            passid_dict = {}
+
+            for j in range(len(passid_ls)):
+                passid_dict[j+1] = passid_ls[j]
+
+            try:
+                passid_int = int(ent.get())
+                if passid_int not in passid_dict.keys():
+                    messagebox.showerror("Enter proper Id", "Enter only Id's that are visible on the menu.")
+                    ddk.destroy()
+                else:
+                    global dele
+                    dele = passid_dict[passid_int]
+                    mycur.execute("DELETE FROM myp_data WHERE passId = "+str(dele))
+                    mydb.commit()
+                    passwordmenu(psl, uid, close, open_e)
+                    ddk.destroy()
+
+            except ValueError:
+                messagebox.showerror("Invalid Entry", "Please enter only numbers.")
+                ddk.destroy()
+
         ddk = Tk()
         ddk.title("Delete Data")
+        ddk.iconbitmap("1.ico")
+        ddk.configure(bg='#26242f')
+
+        lbl = Label(ddk, text= 'Enter the Id : ', font=('', 13), bg='#26242f', fg='white')
+        lbl.grid(row=1, column=1, padx=10, pady=10)
+
+        ent = Entry(ddk, bg='#26242f', fg='white', font=('',13))
+        ent.grid(row=1, column=2, padx=10, pady=10)
+
+        ent.bind("<Return>", delete)
+
         ddk.mainloop()
 
-                
+    y = 'yes'
+    n = 'no'
+
+    def editdata():
+        addedit(uid, psl, open_e, close, n, y, dele)
+
+    def adddata():
+        addedit(uid, psl, open_e, close, y, n)
+
     global iclick
     global psl
     global pass_btn
@@ -132,97 +372,25 @@ def ui(uid):
     psl.state('zoomed')
     psl.iconbitmap("1.ico")
 
-    serch_img = ImageTk.PhotoImage(Image.open(img2))
     close = ImageTk.PhotoImage(Image.open(img6))
-    open_e = ImageTk.PhotoImage(Image.open(img7))
-    
-
-    main_frame = Frame(psl, width=1340, height=650, background="#26242f", borderwidth=0)
-    main_frame.grid(row=1, column=0)
-
-    main_canvas = Canvas(main_frame, borderwidth=0, background="#26242f", width=1340, height=650)
-    main_canvas.pack(side=LEFT, fill=BOTH, expand=YES)
-    
-    scroll = Scrollbar(main_frame, orient=VERTICAL, command=main_canvas.yview, bg='#26242f',highlightthickness=0, troughcolor='#26242f')
-    scroll.pack(side=RIGHT, fill=Y)
-
-    main_canvas.configure(yscrollcommand=scroll.set)
-    main_canvas.bind('<Configure>', lambda e: main_canvas.configure(scrollregion= main_canvas.bbox("all")))
-
-
-    second_frame = Frame(main_canvas, borderwidth=0, background="#26242f", width=1340, height=650)
-    main_canvas.create_window((0,0), window=second_frame)
-    
-    num_header = Label(second_frame, text="Id", font=('', 14, BOLD), bg='#26242f', fg="white")
-    site_header = Label(second_frame, text='Website', font=('',14, BOLD), bg='#26242f', fg='white')
-    indent_header = Label(second_frame, text='', font=('                        ',14), bg='#26242f', fg='white')
-    uname_header = Label(second_frame, text='Username', font=('',14,BOLD), bg='#26242f', fg='white')
-    indent_header2 = Label(second_frame, text='', font=('                        ',14), bg='#26242f', fg='white')
-    pass_header = Label(second_frame, text='Password', font=('',14, BOLD), bg='#26242f', fg='white')
-    
-    num_header.grid(row=0, column=1, padx=20, pady=10, sticky=E)
-    site_header.grid(row=0, column=2, padx=10, pady=10, sticky=W)
-    indent_header.grid(row=0, column=3, padx=10, pady=10, sticky=W)
-    uname_header.grid(row=0, column=4, padx=30, pady=10, sticky=W)
-    indent_header2.grid(row=0, column=5, padx=10, pady=10, sticky=W)
-    pass_header.grid(row=0, column=6, padx=120, pady=10)
-
-    iclick = 0
-
-    mycur.execute("SELECT passId FROM myp_data WHERE userId="+str(uid))
-    uiddata = mycur.fetchall()
-    uidls = []
-    for i in uiddata:
-        uidls.extend(i)
-
-    uls = []
-    
-    for uidn in uidls:
-        mycur.execute("SELECT website, loginName, loginPass, passId FROM myp_data WHERE passId="+str(uidn))
-        for data in (mycur.fetchall()):
-            uls.append(data)
-
-        for i in range(len(uls)):
-            p = decrypt(str(uls[i][2]))
-            p_len=len(str(uls[i][2]))
-
-            num_lbl = Label(second_frame, text=i+1, font=('', 12), fg='white', bg='#26242f', borderwidth=0)
-            site_lbl = Label(second_frame, text=uls[i][0], font=('',12), fg='white', bg='#26242f', borderwidth=0)
-            indent_lbl = Label(second_frame, text='                        ', font=('',12), fg='white', bg='#26242f')
-            uname_l = Label(second_frame, text=uls[i][1], font=('',12), fg='white', bg='#26242f')
-            indent_lbl1= Label(second_frame, text='                        ', font=('',12), fg='white', bg='#26242f')
-            pass_ent = Entry(second_frame, font=('',12), fg='black', borderwidth=1, show='•')
-            
-            num_lbl.grid(row=i+1, column=1, padx=20, pady=10, sticky=E)
-            site_lbl.grid(row=i+1, column=2, padx=10, pady=10, sticky=W)
-            indent_lbl.grid(row=i+1, column=3, padx=10, pady=10, sticky=W)
-            uname_l.grid(row=i+1, column=4, padx=30, pady=10, sticky=W)
-            indent_lbl1.grid(row=i+1, column=5, padx=10, pady=10, sticky=W)
-            pass_ent.grid(row=i+1, column=6, padx=120, pady=10)
-            
-
-            pass_ent.insert(0,(p))
-            pass_ent.configure(state='readonly')
-
-    j = (len(uls) + 1)
-        
-    showpass_btn = Button(second_frame, image=close, borderwidth=0, bg='#26242f', activebackground='#26242f',command=showpass)
-
-    if len(uls) == 0:
-        showpass_btn.configure(state='disabled')
-    else:
-        showpass_btn.grid(row=1, column=7, rowspan=5, padx=10, pady=10)
+    open_e = ImageTk.PhotoImage(Image.open(img7))    
+  
+    passwordmenu(psl, uid, close, open_e)
 
     status_frm = Frame(psl, background="#26242f", width = 1340, height=30)   
     
     out_btn = Button(status_frm, text='Sign Out', bg='#26242f', fg='white', borderwidth=0, font=('',12), command=signout)
-    adddata_btn = Button(status_frm, text='Add entry...', font=('',12), fg='white', bg='#26242f',
-         activebackground='#26242f', borderwidth=0) 
-    deletedata_btn = Button(status_frm, text="Delete data!!", font=('',12), fg='white', bg='#26242f', borderwidth=0, command=deletedata)
+    adddata_btn = Button(status_frm, text='Add', font=('',12), fg='white', bg='#26242f', activebackground='#26242f', 
+        borderwidth=0, command=adddata)
+    editdata_btn = Button(status_frm, text='Edit', font=('',12), fg='white', bg='#26242f', activebackground='#26242f', 
+        borderwidth=0, command=editdata)
+    deletedata_btn = Button(status_frm, text="Delete data", font=('',12), fg='white', bg='#26242f', borderwidth=0, command=deletedata)
 
-    adddata_btn.grid(row=0, column=2, padx=10, pady=10)
-    deletedata_btn.grid(row=0, column=7, padx=0, pady=10)
-    out_btn.grid(row=0, column=10, padx=10, pady=10)
+    adddata_btn.grid(row=1, column=1, padx=10, sticky=W)
+    editdata_btn.grid(row=1, column=2, padx=10, sticky=W)
+    deletedata_btn.grid(row=1, column=5, padx=10, sticky=E)
+    out_btn.grid(row=1, column=6, padx=10, sticky=E)
+
 
     status_frm.grid(row=2, column=0, sticky=W)
 
@@ -355,8 +523,6 @@ def signup_page():
                 system("python password-manager/main.py")
                 
                 
-                
-
             f_name_ent.delete(0, END)
             l_name_ent.delete(0, END)
             u_name_ent.delete(0, END)
