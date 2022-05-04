@@ -1,14 +1,9 @@
 import mysql.connector as sqlc
 from mypfuncs import *
-from pwinput import pwinput
-import os
-import sys
-import smtplib, ssl, email
+import smtplib, ssl
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import random
-import time
-from tabulate import tabulate
 
 ##################################### CONNECTING MySQL ################################
 
@@ -88,8 +83,8 @@ def otpmail(receivermail):
     part = MIMEText(html, "html")
     msg.attach(part)
 
-    #context = ssl.create_defa=ult_context()
-    with smtplib.SMTP_SSL('smtp.gmail.com', 465) as server:  #, context=context 
+    context = ssl.create_default_context()
+    with smtplib.SMTP_SSL('smtp.gmail.com', 465, context=context) as server: 
         server.login('manageyourpass91@gmail.com','Acc3ssGr@nted')
         server.send_message(msg)
         server.quit()

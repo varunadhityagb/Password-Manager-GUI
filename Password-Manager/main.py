@@ -1,8 +1,6 @@
 import io
-from re import M
 from tkinter.font import BOLD
 from urllib.request import urlopen
-
 from database import *          #####IMPORTING OUR COUSTOM MODULES
 from mypfuncs import *     
 from tkinter import *   
@@ -10,6 +8,8 @@ from PIL import ImageTk, Image
 from tkinter import messagebox  
 import tkinter.ttk as ttk
 from os import system
+import csv
+from tkinter import filedialog
 ########################## CHECKING AND CREATING DATABASE #############################
 mycur.execute('SHOW SCHEMAS;')
 db_ls = []
@@ -219,7 +219,7 @@ class addedit:
     def __init__(self, uid, psl, open_e, close, addr, editr):
         
         def adds():
-            web = str(site_ent.get())
+            web = 'https://' + str(site_ent.get())
             un = str(usern_ent.get())
             ps = encrypt(str(pass_ent.get()))
             reps = encrypt(str(repass_ent.get()))
@@ -243,7 +243,7 @@ class addedit:
                 messagebox.showerror("Unsuccessful","Passwords don't match!")
 
         def edits():
-            web = str(site_ent.get())
+            web = 'https://' + str(site_ent.get())
             un = str(usern_ent.get())
             ps = encrypt(str(pass_ent.get()))
             reps = encrypt(str(repass_ent.get()))
@@ -476,6 +476,129 @@ def ui(uid):
     def adddata():
         addedit(str(uid), psl, open_e, close, y, n)
 
+    def mstrchange():
+        cbvar = IntVar(value=0)
+
+        def shbtn():
+            if (cbvar.get())== 1:
+                omp_ent.config(show='')
+                nmp_ent.config(show='')
+            else:
+                omp_ent.config(show='•')
+                nmp_ent.config(show='•')
+
+        def mc_check(*e):
+            if hashcrypt(str(omp_ent.get())) == str(pass_ls[0]):
+                nps = hashcrypt(str(nmp_ent.get()))
+                mycur.execute("UPDATE myp_users SET masterPass = '" + nps + "' WHERE userId = " + str(uid))
+                mydb.commit()
+            else:
+                messagebox.showerror("Wrong OLD Password", 'Enter the correct password')
+
+        mycur.execute(f"SELECT masterPass FROM myp_users WHERE userId = "+ str(uid))
+        pass_ls = []
+        for i in mycur:
+            pass_ls.extend(i)
+        
+        mstc = Toplevel()
+        mstc.title("Confirmation")
+        mstc.iconbitmap("1.ico")
+        mstc.configure(bg='#26242f')
+
+        cb_style = ttk.Style()
+        cb_style.configure('R.TCheckbutton', foreground='white', background='#26242f')
+
+        omp_lbl = Label(mstc, text="Old Master Password :", font=('',13), bg='#26242f', fg='white')
+        omp_lbl.grid(row=1, column=1, padx=10, pady=10)
+
+        omp_ent = Entry(mstc, font=('',13), fg="white", bg="#26242f", show='•')
+        omp_ent.grid(row=1, column=2, padx=10, pady=10)
+
+        nmp_lbl = Label(mstc, text="New Master Password :", font=('',13), bg='#26242f', fg='white')
+        nmp_lbl.grid(row=2, column=1, padx=10, pady=10)
+
+        nmp_ent = Entry(mstc, font=('',13), fg="white", bg="#26242f", show='•')
+        nmp_ent.grid(row=2, column=2, padx=10, pady=10)
+        nmp_ent.bind("<Return>", mc_check)
+
+        showpass_cb = ttk.Checkbutton(mstc, text="Show Password", variable=cbvar, onvalue=1, offvalue=0, command=shbtn, style='R.TCheckbutton')
+        showpass_cb.grid(row=3, column=2)
+
+        change_btn = Button(mstc, text='Change', font=('',13), bg='#26242f', fg='white', command=mc_check)
+        change_btn.grid(row=4, column=1, columnspan=2, padx=10, pady=10)
+
+    def imp_data():
+        pass
+            
+    def exp_data():
+        psl.filename = filedialog.askdirectory(title="Select a file")
+        mycur.execute("SELECT SUBSTR(website, 9)'name', website, loginName FROM myp_data WHERE userId = " + str(uid) )
+        ls = mycur.fetchall()
+        for i in range(len(ls)):
+            globals()[f'expd{i+1}'] = list(ls[i]) 
+        
+        
+        mycur.execute("SELECT loginPass FROM myp_data WHERE userId = " + str(uid))
+        pls = mycur.fetchall()
+        pls_ = []
+        for i in pls:
+            pls_.extend(i)
+        for i in range(len(pls_)):
+            globals()[f'expd{i+1}'].insert(3, decrypt(str(pls_[i])))
+        
+        file = open(psl.filename+'/export.csv', "w", newline='')
+        csv_w = csv.writer(file)
+        ls = ('name', 'url', 'username', 'password')
+        csv_w.writerow(ls)
+        file.close()
+
+        file = open(psl.filename+'/export.csv', "a+", newline='')
+        csv_w = csv.writer(file)
+        for i in range(len(pls_)):
+            csv_w.writerow(globals()[f'expd{i+1}'])
+        file.close()
+
+    def deluser():
+        def mc_check(e):
+            if hashcrypt(str(ent.get())) == str(pass_ls[0]):
+                des.destroy()
+                mycur.execute("SELECT passId FROM myp_data WHERE userId = " + str(uid))
+                dells = []
+                for i in (mycur.fetchall()):
+                    dells.extend(i)
+                if dells != []:  
+                    for pid in dells:
+                        mycur.execute(" DELETE FROM myp_data WHERE passId = " + str(pid))
+                    mydb.commit()
+                else:
+                    pass
+                mycur.execute("DELETE FROM myp_users WHERE userId = " + str(uid))
+                mydb.commit()
+                psl.destroy()
+                open('cache.txt', 'w')
+                system("python password-manager/main.py")
+            else:
+                messagebox.showerror("Wrong Password", 'Enter the correct password')
+
+        mycur.execute(f"SELECT masterPass FROM myp_users WHERE userId = "+ str(uid))
+        pass_ls = []
+        for i in mycur:
+            pass_ls.extend(i)
+
+        des = Toplevel()
+        des.title("Confirmation")
+        des.iconbitmap("1.ico")
+        des.configure(bg='#26242f')
+
+        lbl = Label(des, text= 'Master Password :', font=('', 13), bg='#26242f', fg='white')
+        lbl.grid(row=1, column=1, padx=10, pady=10)
+
+        ent = Entry(des, bg='#26242f', fg='white', font=('',13), show='•')
+        ent.grid(row=1, column=2, padx=10, pady=10)
+
+        ent.bind("<Return>", mc_check)
+
+
     global iclick
     global psl
     global pass_btn
@@ -494,12 +617,12 @@ def ui(uid):
     psl.config(menu=menu)
 
     more = Menu(menu)
-    more.add_command(label='Change Master Password', command=None)
+    more.add_command(label='Change Master Password', command=mstrchange)
     more.add_separator()
-    more.add_command(label='Import data', command=None)
-    more.add_command(label='Export data', command=None)
+    more.add_command(label='Import data', command=imp_data)
+    more.add_command(label='Export data', command=exp_data)
     more.add_separator()
-    more.add_command(label='Delete User!!', command=None)
+    more.add_command(label='Delete User!!', command=deluser)
     
     
     menu.add_command(label='Add data', command=adddata)
@@ -513,102 +636,106 @@ def ui(uid):
     psl.mainloop()
 
 def login_page():
-    root.destroy()
-    global lpg
-    global user
-    lpg = Tk()
-    lpg.title("Login")
-    lpg.config(bg="#26242f")
-    lpg.geometry("400x300")
-    lpg.resizable(0,0)
-    lpg.iconbitmap("1.ico")
-
-    passkey = StringVar()
-    cbvar = IntVar(value=0)
     mycur.execute("SELECT userName FROM myp_users") 
     data_ls = mycur.fetchall()
     ls = ['Select a Username']
 
     for i in data_ls:
         ls.extend(i)
-    
 
-    def shbtn():
-        if (cbvar.get())== 1:
-            pass_ent.config(show='')
-        else:
-            pass_ent.config(show='•')
-
-    def login(*event):
+    if ls == ['Select a Username']:
+        messagebox.showinfo("Sign Up Please", "Create your account.")
+    else:     
+        root.destroy()
         global lpg
-        mydb = sqlc.connect(host='localhost', user='root', passwd='root',)
-        mycur = mydb.cursor()
+        global user
+        lpg = Tk()
+        lpg.title("Login")
+        lpg.config(bg="#26242f")
+        lpg.geometry("400x300")
+        lpg.resizable(0,0)
+        lpg.iconbitmap("1.ico")
 
-        mycur.execute("USE myp;")
+        passkey = StringVar()
+        cbvar = IntVar(value=0)
         
-        uname_srch = usern_dm.get()
-        if uname_srch == 'Select a Username':
-            messagebox.showerror("User Not Selected", "Select an user from the dropdown menu.")
+
+        def shbtn():
+            if (cbvar.get())== 1:
+                pass_ent.config(show='')
+            else:
+                pass_ent.config(show='•')
+
+        def login(*event):
+            global lpg
+            mydb = sqlc.connect(host='localhost', user='root', passwd='root',)
+            mycur = mydb.cursor()
+
+            mycur.execute("USE myp;")
+            
+            uname_srch = usern_dm.get()
+            if uname_srch == 'Select a Username':
+                messagebox.showerror("User Not Selected", "Select an user from the dropdown menu.")
+            else:
+                mycur.execute(f"SELECT userId FROM myp_users WHERE userName = '{uname_srch}';")   
+                user_ls = []
+                for i in mycur:
+                        user_ls.extend(i)
+
+                global user
+                user = user_ls[0]
+                with open("cache.txt",'a') as fileerite:
+                    fileerite.write(str(user))
+                    fileerite.write('\n')
+
+                mycur.execute(f"SELECT masterPass FROM myp_users WHERE userName = '{uname_srch}';")
+                pass_ls = []
+                for i in mycur:
+                    pass_ls.extend(i)
+
+                ch = False
+                while ch == False:
+                    masterPass_check_hash = hashcrypt(passkey.get())
+                    if masterPass_check_hash == pass_ls[0]:
+                        ch == True
+                        ipass_ui()
+                    else:
+                        msgbox = messagebox.showwarning("ERROR","WRONG PASSWORD!!")
+                        if msgbox == 'ok':
+                            break
+                pass_ls = []
+
+        bk_arrow = ImageTk.PhotoImage(Image.open(img10))
+        ################# STYLES ##########################################
+        cb_style = ttk.Style()
+        cb_style.configure('R.TCheckbutton', foreground='white', background='#26242f')
+        
+        ###WIDGETS
+        usern_lbl = Label(lpg, text="Username:", font=('', 14), bg='#26242f', fg="white")
+        pass_lbl = Label(lpg, text="Password:", font=('', 14), bg='#26242f', fg="white")
+        pass_ent = Entry(lpg, textvariable=passkey, show="•", font=('', 14), bg='#26242f', fg="white")
+        pass_ent.bind("<Return>",login)
+        in_btn = Button(lpg, text="Sign In",command=login, font=('', 14), width=20, bg='#26242f', fg="white")
+        showpass_cb = ttk.Checkbutton(lpg, text="Show Password", variable=cbvar, onvalue=1, offvalue=0, command=shbtn, style='R.TCheckbutton' )
+        bk_btn = Button(lpg, image=bk_arrow, command=lbk_rootw, activebackground='#26242f', borderwidth=0, bg='#26242f')
+
+        #SHOWING THEM
+        usern_lbl.place(relx=0.2, rely=0.3, anchor=CENTER)
+        pass_lbl.place(relx=0.2, rely=0.45, anchor=CENTER)
+        pass_ent.place(relx=0.7, rely=0.45, anchor=CENTER)
+        showpass_cb.place(relx=0.85, rely=0.55, anchor=CENTER)
+        in_btn.place(relx=0.5, rely=0.7, anchor=CENTER)
+        bk_btn.place(relx=0.1, rely=0.1, anchor=CENTER)
+
+        if ls == []:
+            response = messagebox.showinfo("Info","No users found!!")
+            Label(lpg, text=response).pack()
         else:
-            mycur.execute(f"SELECT userId FROM myp_users WHERE userName = '{uname_srch}';")   
-            user_ls = []
-            for i in mycur:
-                    user_ls.extend(i)
+            usern_dm = ttk.Combobox(lpg, value=ls, font=('',14))
+            usern_dm.current(0)
+            usern_dm.place(relx=0.7, rely=0.3, anchor=CENTER)
 
-            global user
-            user = user_ls[0]
-            with open("cache.txt",'a') as fileerite:
-                fileerite.write(str(user))
-                fileerite.write('\n')
-
-            mycur.execute(f"SELECT masterPass FROM myp_users WHERE userName = '{uname_srch}';")
-            pass_ls = []
-            for i in mycur:
-                pass_ls.extend(i)
-
-            ch = False
-            while ch == False:
-                masterPass_check_hash = hashcrypt(passkey.get())
-                if masterPass_check_hash == pass_ls[0]:
-                    ch == True
-                    ipass_ui()
-                else:
-                    msgbox = messagebox.showwarning("ERROR","WRONG PASSWORD!!")
-                    if msgbox == 'ok':
-                        break
-            pass_ls = []
-
-    bk_arrow = ImageTk.PhotoImage(Image.open(img10))
-    ################# STYLES ##########################################
-    cb_style = ttk.Style()
-    cb_style.configure('R.TCheckbutton', foreground='white', background='#26242f')
-    
-    ###WIDGETS
-    usern_lbl = Label(lpg, text="Username:", font=('', 14), bg='#26242f', fg="white")
-    pass_lbl = Label(lpg, text="Password:", font=('', 14), bg='#26242f', fg="white")
-    pass_ent = Entry(lpg, textvariable=passkey, show="•", font=('', 14), bg='#26242f', fg="white")
-    pass_ent.bind("<Return>",login)
-    in_btn = Button(lpg, text="Sign In",command=login, font=('', 14), width=20, bg='#26242f', fg="white")
-    showpass_cb = ttk.Checkbutton(lpg, text="Show Password", variable=cbvar, onvalue=1, offvalue=0, command=shbtn, style='R.TCheckbutton' )
-    bk_btn = Button(lpg, image=bk_arrow, command=lbk_rootw, activebackground='#26242f', borderwidth=0, bg='#26242f')
-
-    #SHOWING THEM
-    usern_lbl.place(relx=0.2, rely=0.3, anchor=CENTER)
-    pass_lbl.place(relx=0.2, rely=0.45, anchor=CENTER)
-    pass_ent.place(relx=0.7, rely=0.45, anchor=CENTER)
-    showpass_cb.place(relx=0.85, rely=0.55, anchor=CENTER)
-    in_btn.place(relx=0.5, rely=0.7, anchor=CENTER)
-    bk_btn.place(relx=0.1, rely=0.1, anchor=CENTER)
-
-    if ls == []:
-        response = messagebox.showinfo("Info","No users found!!")
-        Label(lpg, text=response).pack()
-    else:
-        usern_dm = ttk.Combobox(lpg, value=ls, font=('',14))
-        usern_dm.current(0)
-        usern_dm.place(relx=0.7, rely=0.3, anchor=CENTER)
-
-    lpg.mainloop()
+        lpg.mainloop()
     
 def signup_page():
     root.destroy()
