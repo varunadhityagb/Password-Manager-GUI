@@ -1,4 +1,5 @@
 import io
+from re import M
 from tkinter.font import BOLD
 from urllib.request import urlopen
 
@@ -67,10 +68,10 @@ class passwordmenu:
         global len_1
         mycur.execute("USE myp;")
 
-        self.main_frame = Frame(root, width=1340, height=650, background="#26242f", borderwidth=0)
+        self.main_frame = Frame(root, width=1340, height=670, background="#26242f", borderwidth=0)
         self.main_frame.grid(row=1, column=0)
 
-        self.main_canvas = Canvas(self.main_frame, borderwidth=0, background="#26242f", width=1340, height=650)
+        self.main_canvas = Canvas(self.main_frame, borderwidth=0, background="#26242f", width=1340, height=670)
         self.main_canvas.pack(side=LEFT, fill=BOTH, expand=YES)
         
         self.scroll = Scrollbar(self.main_frame, orient=VERTICAL, command=self.main_canvas.yview, bg='#26242f',highlightthickness=0, troughcolor='#26242f')
@@ -80,7 +81,7 @@ class passwordmenu:
         self.main_canvas.bind('<Configure>', lambda e: self.main_canvas.configure(scrollregion= self.main_canvas.bbox("all")))
 
 
-        self.second_frame = Frame(self.main_canvas, borderwidth=0, background="#26242f", width=1340, height=650)
+        self.second_frame = Frame(self.main_canvas, borderwidth=0, background="#26242f", width=1340, height=670)
         self.main_canvas.create_window((0,0), window=self.second_frame)
         
         self.num_header = Label(self.second_frame, text="Id", font=('', 14, BOLD), bg='#26242f', fg="white")
@@ -367,6 +368,9 @@ class addedit:
                         
                 except ValueError:
                     messagebox.showerror("Invalid Entry", "Please enter only numbers.")
+                    edid.destroy()
+                    adk.destroy()
+
                 
 
 
@@ -485,23 +489,24 @@ def ui(uid):
     open_e = ImageTk.PhotoImage(Image.open(img7))    
   
     passwordmenu(psl, str(uid), close, open_e)
+   
+    menu = Menu(psl, fg='white', background='#26242f', font=('', 20))
+    psl.config(menu=menu)
 
-    status_frm = Frame(psl, background="#26242f", width = 1340, height=30)   
+    more = Menu(menu)
+    more.add_command(label='Change Master Password', command=None)
+    more.add_separator()
+    more.add_command(label='Import data', command=None)
+    more.add_command(label='Export data', command=None)
+    more.add_separator()
+    more.add_command(label='Delete User!!', command=None)
     
-    out_btn = Button(status_frm, text='Sign Out', bg='#26242f', fg='white', borderwidth=0, font=('',12), command=signout)
-    adddata_btn = Button(status_frm, text='Add Data', font=('',12), fg='white', bg='#26242f', activebackground='#26242f', 
-        borderwidth=0, command=adddata)
-    editdata_btn = Button(status_frm, text='Edit Data', font=('',12), fg='white', bg='#26242f', activebackground='#26242f', 
-        borderwidth=0, command=editdata)
-    deletedata_btn = Button(status_frm, text="Delete data", font=('',12), fg='white', bg='#26242f', borderwidth=0, command=deletedata)
-
-    adddata_btn.grid(row=1, column=1, padx=10, sticky=W)
-    editdata_btn.grid(row=1, column=2, padx=10, sticky=W)
-    deletedata_btn.grid(row=1, column=5, padx=10, sticky=E)
-    out_btn.grid(row=1, column=6, padx=10, sticky=E)
-
-
-    status_frm.grid(row=0, column=0, sticky=W)
+    
+    menu.add_command(label='Add data', command=adddata)
+    menu.add_command(label='Edit data', command=editdata)
+    menu.add_command(label='Delte data', command=deletedata)
+    menu.add_command(label='Sign out', command=signout)
+    menu.add_cascade(label='•••', menu=more)
 
 
 
@@ -532,7 +537,7 @@ def login_page():
         if (cbvar.get())== 1:
             pass_ent.config(show='')
         else:
-            pass_ent.config(show='*')
+            pass_ent.config(show='•')
 
     def login(*event):
         global lpg
@@ -581,7 +586,7 @@ def login_page():
     ###WIDGETS
     usern_lbl = Label(lpg, text="Username:", font=('', 14), bg='#26242f', fg="white")
     pass_lbl = Label(lpg, text="Password:", font=('', 14), bg='#26242f', fg="white")
-    pass_ent = Entry(lpg, textvariable=passkey, show="*", font=('', 14), bg='#26242f', fg="white")
+    pass_ent = Entry(lpg, textvariable=passkey, show="•", font=('', 14), bg='#26242f', fg="white")
     pass_ent.bind("<Return>",login)
     in_btn = Button(lpg, text="Sign In",command=login, font=('', 14), width=20, bg='#26242f', fg="white")
     showpass_cb = ttk.Checkbutton(lpg, text="Show Password", variable=cbvar, onvalue=1, offvalue=0, command=shbtn, style='R.TCheckbutton' )
@@ -612,7 +617,7 @@ def signup_page():
     spg = Tk()
     spg.title("Sign Up")
     spg.config(bg='#26242f')
-    spg.geometry("400x600")
+    spg.geometry("600x600")
     spg.resizable(0,0)
     spg.iconbitmap("1.ico")
     
@@ -668,8 +673,8 @@ def signup_page():
                         upass_ent.config(show='')
                         urepass_ent.config(show='')
                     else:
-                        upass_ent.config(show='*')
-                        urepass_ent.config(show='*')
+                        upass_ent.config(show='•')
+                        urepass_ent.config(show='•')
 
                 js = eval(otp_ent.get())
                 if js == otp:
@@ -680,11 +685,11 @@ def signup_page():
                     global upass_lbl
                     upass_lbl = Label(spg, text='Master Password:', font=('',14), bg='#26242f', fg='white')
                     global upass_ent
-                    upass_ent = Entry(spg, textvariable=passkey, show="*", font=('', 14), bg='#26242f', fg="white")
+                    upass_ent = Entry(spg, textvariable=passkey, show="•", font=('', 14), bg='#26242f', fg="white")
                     global urepass_lbl
                     urepass_lbl = Label(spg, text='Re-Enter Password:', font=('',14), bg='#26242f', fg='white')
                     global urepass_ent
-                    urepass_ent = Entry(spg, textvariable=repasskey, show="*", font=('', 14), bg='#26242f', fg="white")
+                    urepass_ent = Entry(spg, textvariable=repasskey, show="•", font=('', 14), bg='#26242f', fg="white")
                     urepass_ent.bind("<Return>", signup)
                     global showpass_cb
                     showpass_cb = ttk.Checkbutton(spg, text="Show Password", variable=cbvar, onvalue=1, offvalue=0, 
