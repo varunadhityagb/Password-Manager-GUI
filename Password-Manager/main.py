@@ -562,32 +562,36 @@ def ui(uid):
         
             
     def exp_data():
-        psl.filedir = filedialog.askdirectory(title="Select a folder")
         mycur.execute("SELECT SUBSTR(website, 9)'name', website, loginName FROM myp_data WHERE userId = " + str(uid) )
         ls = mycur.fetchall()
-        for i in range(len(ls)):
-            globals()[f'expd{i+1}'] = list(ls[i]) 
-        
-        
-        mycur.execute("SELECT loginPass FROM myp_data WHERE userId = " + str(uid))
-        pls = mycur.fetchall()
-        pls_ = []
-        for i in pls:
-            pls_.extend(i)
-        for i in range(len(pls_)):
-            globals()[f'expd{i+1}'].insert(3, decrypt(str(pls_[i])))
-        
-        file = open(psl.filedir+'/export.csv', "w", newline='')
-        csv_w = csv.writer(file)
-        ls = ('name', 'url', 'username', 'password')
-        csv_w.writerow(ls)
-        file.close()
 
-        file = open(psl.filedir+'/export.csv', "a+", newline='')
-        csv_w = csv.writer(file)
-        for i in range(len(pls_)):
-            csv_w.writerow(globals()[f'expd{i+1}'])
-        file.close()
+        if ls == []:
+            messagebox.showinfo("Nothing to Export", "No data found")
+        else:
+            psl.filedir = filedialog.askdirectory(title="Select a folder")
+            for i in range(len(ls)):
+                globals()[f'expd{i+1}'] = list(ls[i]) 
+            
+            
+            mycur.execute("SELECT loginPass FROM myp_data WHERE userId = " + str(uid))
+            pls = mycur.fetchall()
+            pls_ = []
+            for i in pls:
+                pls_.extend(i)
+            for i in range(len(pls_)):
+                globals()[f'expd{i+1}'].insert(3, decrypt(str(pls_[i])))
+            
+            file = open(psl.filedir+'/export.csv', "w", newline='')
+            csv_w = csv.writer(file)
+            ls = ('name', 'url', 'username', 'password')
+            csv_w.writerow(ls)
+            file.close()
+
+            file = open(psl.filedir+'/export.csv', "a+", newline='')
+            csv_w = csv.writer(file)
+            for i in range(len(pls_)):
+                csv_w.writerow(globals()[f'expd{i+1}'])
+            file.close()
 
     def deluser():
         def mc_check(e):
