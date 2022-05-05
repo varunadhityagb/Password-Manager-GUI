@@ -1,6 +1,8 @@
 import io
 from tkinter.font import BOLD
 from urllib.request import urlopen
+
+from requests import FileModeWarning
 from database import *          #####IMPORTING OUR COUSTOM MODULES
 from mypfuncs import *     
 from tkinter import *   
@@ -68,20 +70,24 @@ class passwordmenu:
         global len_1
         mycur.execute("USE myp;")
 
-        self.main_frame = Frame(root, width=1340, height=670, background="#26242f", borderwidth=0)
+        self.main_frame = Frame(root, width=1340, height=650, background="#26242f", borderwidth=0)
         self.main_frame.grid(row=1, column=0)
 
-        self.main_canvas = Canvas(self.main_frame, borderwidth=0, background="#26242f", width=1340, height=670)
+        self.main_canvas = Canvas(self.main_frame, borderwidth=0, background="#26242f", width=1340, height=650)
         self.main_canvas.pack(side=LEFT, fill=BOTH, expand=YES)
         
-        self.scroll = Scrollbar(self.main_frame, orient=VERTICAL, command=self.main_canvas.yview, bg='#26242f',highlightthickness=0, troughcolor='#26242f')
-        self.scroll.pack(side=RIGHT, fill=Y)
+        self.hscroll = ttk.Scrollbar(root, orient=HORIZONTAL, command=self.main_canvas.xview)
+        self.hscroll.grid(row=2, column=0, sticky=EW)
+
+        self.scroll = ttk.Scrollbar(root, orient=VERTICAL, command=self.main_canvas.yview)
+        self.scroll.grid(row=1, column=2, sticky=NS)
 
         self.main_canvas.configure(yscrollcommand=self.scroll.set)
+        self.main_canvas.configure(xscrollcommand=self.hscroll.set)
         self.main_canvas.bind('<Configure>', lambda e: self.main_canvas.configure(scrollregion= self.main_canvas.bbox("all")))
 
 
-        self.second_frame = Frame(self.main_canvas, borderwidth=0, background="#26242f", width=1340, height=670)
+        self.second_frame = Frame(self.main_canvas, borderwidth=0, background="#26242f", width=1340, height=650)
         self.main_canvas.create_window((0,0), window=self.second_frame)
         
         self.num_header = Label(self.second_frame, text="Id", font=('', 14, BOLD), bg='#26242f', fg="white")
@@ -528,10 +534,35 @@ def ui(uid):
         change_btn.grid(row=4, column=1, columnspan=2, padx=10, pady=10)
 
     def imp_data():
-        pass
+        psl.filename = filedialog.askopenfile(title="Select a file", filetypes=(("CSV Files", "*.csv"), ("All Files", "*.*")))
+        m = str(psl.filename).split()
+        m.remove('<_io.TextIOWrapper')
+        m.remove("encoding='cp1252'>")
+        m.remove("mode='r'")
+        n = ' '.join(m)
+        final_path = n.split('=')[1]
+        final_path = final_path.replace("'", "")
+        final_path = final_path.strip()
+        
+        file = open(final_path, "r")
+        csv_r = csv.reader(file)
+        ls = []
+        for i in csv_r:
+            ls.append(i)
+        ls.remove(['name', 'url', 'username', 'password'])
+        for i in range(len(ls)):
+            web = ls[i][1]
+            logn = ls[i][2]
+            logp = encrypt(str(ls[i][3]))
+            insintodata(web, logn, logp, uid)
+        messagebox.showinfo("Success","Successfuly imported!!")
+        messagebox.showinfo('Reload Required', "Click Ok to reload")
+        psl.destroy()
+        system("python password-manager/main.py")
+        
             
     def exp_data():
-        psl.filename = filedialog.askdirectory(title="Select a file")
+        psl.filedir = filedialog.askdirectory(title="Select a folder")
         mycur.execute("SELECT SUBSTR(website, 9)'name', website, loginName FROM myp_data WHERE userId = " + str(uid) )
         ls = mycur.fetchall()
         for i in range(len(ls)):
@@ -546,13 +577,13 @@ def ui(uid):
         for i in range(len(pls_)):
             globals()[f'expd{i+1}'].insert(3, decrypt(str(pls_[i])))
         
-        file = open(psl.filename+'/export.csv', "w", newline='')
+        file = open(psl.filedir+'/export.csv', "w", newline='')
         csv_w = csv.writer(file)
         ls = ('name', 'url', 'username', 'password')
         csv_w.writerow(ls)
         file.close()
 
-        file = open(psl.filename+'/export.csv', "a+", newline='')
+        file = open(psl.filedir+'/export.csv', "a+", newline='')
         csv_w = csv.writer(file)
         for i in range(len(pls_)):
             csv_w.writerow(globals()[f'expd{i+1}'])
@@ -562,6 +593,10 @@ def ui(uid):
         def mc_check(e):
             if hashcrypt(str(ent.get())) == str(pass_ls[0]):
                 des.destroy()
+                mycur.execute("SELECT email FROM myp_users WHERE userId = " + str(uid))
+                els = mycur.fetchall()
+                for i in els:
+                    byemail(i[0])
                 mycur.execute("SELECT passId FROM myp_data WHERE userId = " + str(uid))
                 dells = []
                 for i in (mycur.fetchall()):
@@ -577,6 +612,7 @@ def ui(uid):
                 psl.destroy()
                 open('cache.txt', 'w')
                 system("python password-manager/main.py")
+            
             else:
                 messagebox.showerror("Wrong Password", 'Enter the correct password')
 
