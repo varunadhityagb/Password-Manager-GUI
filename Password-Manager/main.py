@@ -558,7 +558,7 @@ def ui(uid):
         messagebox.showinfo("Success","Successfuly imported!!")
         messagebox.showinfo('Reload Required', "Click Ok to reload")
         psl.destroy()
-        system("python password-manager/main.py")
+        system("python main.py")
         
             
     def exp_data():
@@ -615,7 +615,7 @@ def ui(uid):
                 mydb.commit()
                 psl.destroy()
                 open('cache.txt', 'w')
-                system("python password-manager/main.py")
+                system("python main.py")
             
             else:
                 messagebox.showerror("Wrong Password", 'Enter the correct password')
@@ -801,7 +801,7 @@ def signup_page():
             okres = messagebox.showinfo("Reload Required", "Click ok to reload.")
             if okres == 'ok':
                 spg.destroy()
-                system("python password-manager/main.py")
+                system("python main.py")
                 
                 
             f_name_ent.delete(0, END)
