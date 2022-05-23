@@ -110,7 +110,7 @@ def unamecheck(strg):
     
     for i in mycur:
         username_ls.extend(i)
-    if strg in username_ls:
+    if (strg.upper() in username_ls) or (strg.lower() in username_ls) :
         return False
     else:
         return True

@@ -1,16 +1,13 @@
-import io
 from tkinter.font import BOLD
-from urllib.request import urlopen
-
-from requests import FileModeWarning
 from database import *          #####IMPORTING OUR COUSTOM MODULES
 from mypfuncs import *     
 from tkinter import *   
-from PIL import ImageTk, Image
+from PIL import ImageTk, Image, ImageSequence
 from tkinter import messagebox  
 import tkinter.ttk as ttk
 from os import system
 import csv
+from time import *
 from tkinter import filedialog
 ########################## CHECKING AND CREATING DATABASE #############################
 mycur.execute('SHOW SCHEMAS;')
@@ -39,29 +36,6 @@ else:
     pass
 ##############################################################################
 open('cache.txt', 'a')
-shp_count = 0
-
-img1_url = "https://raw.githubusercontent.com/VarunAdhityaGB/Password-Manager-GUI/main/images/1.ico"
-img2_url = "https://raw.githubusercontent.com/VarunAdhityaGB/Password-Manager-GUI/main/images/2.png"
-img3_url = "https://raw.githubusercontent.com/VarunAdhityaGB/Password-Manager-GUI/main/images/3.png"
-img4_url = "https://raw.githubusercontent.com/VarunAdhityaGB/Password-Manager-GUI/main/images/4.png"
-img5_url = "https://raw.githubusercontent.com/VarunAdhityaGB/Password-Manager-GUI/main/images/5.png"
-img6_url = "https://raw.githubusercontent.com/VarunAdhityaGB/Password-Manager-GUI/main/images/6.png"
-img7_url = "https://raw.githubusercontent.com/VarunAdhityaGB/Password-Manager-GUI/main/images/7.png"
-img8_url = "https://raw.githubusercontent.com/VarunAdhityaGB/Password-Manager-GUI/main/images/8.png"
-img9_url = "https://raw.githubusercontent.com/VarunAdhityaGB/Password-Manager-GUI/main/images/9.png"
-img10_url = "https://raw.githubusercontent.com/VarunAdhityaGB/Password-Manager-GUI/main/images/10.png"
-
-p2, p3, p4, p5, p6, p7, p8, p9, p10 = urlopen(img2_url), urlopen(img3_url), urlopen(img4_url), urlopen(img5_url), urlopen(img6_url), urlopen(img7_url), urlopen(img8_url), urlopen(img9_url), urlopen(img10_url)
-
-img2, img3, img4, img5, img6, img7, img8, img9, img10 = io.BytesIO(p2.read()), io.BytesIO(p3.read()), io.BytesIO(p4.read()), io.BytesIO(p5.read()), io.BytesIO(p6.read()), io.BytesIO(p7.read()), io.BytesIO(p8.read()), io.BytesIO(p9.read()), io.BytesIO(p10.read())
-
-icon = requests.get(img1_url)
-
-ic_f = open("1.ico", 'wb')
-ic_f.write(icon.content)
-ic_f.close()
-
 ########################## CLASS ###############################
 
 class passwordmenu:
@@ -208,7 +182,7 @@ class passwordmenu:
                         
                 masterc = Toplevel()
                 masterc.title("Verification")
-                masterc.iconbitmap('1.ico')
+                masterc.iconbitmap('images\\1.ico')
                 masterc.configure(bg='#26242f')
                 
                 lbl = Label(masterc, text = 'Enter Master Password: ', font=('', 13), fg='white', bg='#26242f')
@@ -309,7 +283,7 @@ class addedit:
 
         adk = Toplevel()
         adk.title("Add Data")
-        adk.iconbitmap('1.ico')
+        adk.iconbitmap('images\\1.ico')
         adk.configure(bg='#26242f')
 
         site_lbl = Label(adk, text="Website:", font=('', 13), bg="#26242f", fg='white')
@@ -382,7 +356,7 @@ class addedit:
 
             edid = Toplevel()
             edid.title("Edit Data")
-            edid.iconbitmap("1.ico")
+            edid.iconbitmap("images\\1.ico")
             edid.configure(bg='#26242f')
             
             id_lbl = Label(edid, text= 'Enter the Id : ', font=('', 13), bg='#26242f', fg='white')
@@ -460,7 +434,7 @@ def ui(uid):
 
         ddk = Tk()
         ddk.title("Delete Data")
-        ddk.iconbitmap("1.ico")
+        ddk.iconbitmap("images\\1.ico")
         ddk.configure(bg='#26242f')
 
         lbl = Label(ddk, text= 'Enter the Id : ', font=('', 13), bg='#26242f', fg='white')
@@ -508,7 +482,7 @@ def ui(uid):
         
         mstc = Toplevel()
         mstc.title("Confirmation")
-        mstc.iconbitmap("1.ico")
+        mstc.iconbitmap("images\\1.ico")
         mstc.configure(bg='#26242f')
 
         cb_style = ttk.Style()
@@ -627,7 +601,7 @@ def ui(uid):
 
         des = Toplevel()
         des.title("Confirmation")
-        des.iconbitmap("1.ico")
+        des.iconbitmap("images\\1.ico")
         des.configure(bg='#26242f')
 
         lbl = Label(des, text= 'Master Password :', font=('', 13), bg='#26242f', fg='white')
@@ -646,10 +620,10 @@ def ui(uid):
     psl.title("Passwords")
     psl.config(bg='#26242f')
     psl.state('zoomed')
-    psl.iconbitmap("1.ico")
+    psl.iconbitmap("images\\1.ico")
 
-    close = ImageTk.PhotoImage(Image.open(img6))
-    open_e = ImageTk.PhotoImage(Image.open(img7))    
+    close = ImageTk.PhotoImage(Image.open("images\\2.png"))
+    open_e = ImageTk.PhotoImage(Image.open("images\\3.png"))    
   
     passwordmenu(psl, str(uid), close, open_e)
    
@@ -694,7 +668,7 @@ def login_page():
         lpg.config(bg="#26242f")
         lpg.geometry("400x300")
         lpg.resizable(0,0)
-        lpg.iconbitmap("1.ico")
+        lpg.iconbitmap("images\\1.ico")
 
         passkey = StringVar()
         cbvar = IntVar(value=0)
@@ -745,7 +719,7 @@ def login_page():
                             break
                 pass_ls = []
 
-        bk_arrow = ImageTk.PhotoImage(Image.open(img10))
+        bk_arrow = ImageTk.PhotoImage(Image.open("C:\\Users\\WELCOME\\OneDrive - SKEC&T\\Password-Manager-GUI\\images\\4.png"))
         ################# STYLES ##########################################
         cb_style = ttk.Style()
         cb_style.configure('R.TCheckbutton', foreground='white', background='#26242f')
@@ -786,12 +760,12 @@ def signup_page():
     spg.config(bg='#26242f')
     spg.geometry("600x600")
     spg.resizable(0,0)
-    spg.iconbitmap("1.ico")
+    spg.iconbitmap("images\\1.ico")
     
     passkey = StringVar()
     repasskey = StringVar()
     cbvar = IntVar(value=0)
-    bk_arrow = ImageTk.PhotoImage(Image.open(img10))
+    bk_arrow = ImageTk.PhotoImage(Image.open("images\\4.png"))
 
     def signup(*event):
 
@@ -822,7 +796,7 @@ def signup_page():
             
 
         if urepass_ent.get() != upass_ent.get():
-            messagebox.showerror("Password Mismatch","PLease make sure that your passwords match.")
+            messagebox.showerror("Password Mismatch","Please make sure that your passwords match.")
         elif len(upass_ent.get()) < 8:
             messagebox.showerror("Password Not Satisfying Requirements","The password should be atleast a minimum of 8 characters.")
         
@@ -874,6 +848,7 @@ def signup_page():
                     messagebox.showerror("Wrong OTP", "The entered otp is wrong.\nPlease check again.")
 
             res = emailvalidation(email_ent.get())
+            
             if res == False:
                 messagebox.showerror("Invalid E-Mail", "This is not an valid e-mail address.")
             else:
@@ -893,7 +868,7 @@ def signup_page():
                     otp_ent.grid(row=7, column=2, padx=10, pady=10)
 
         res = unamecheck(u_name_ent.get())
-        
+
         if res == False:
             messagebox.showerror("Duplicate found", "This username already exits!")
         else:
@@ -944,7 +919,7 @@ def rootw():
     root = Tk()
     root.config(bg="#26242f")
     root.title("Password Manager")
-    root.iconbitmap("1.ico")
+    root.iconbitmap("images\\1.ico")
     root.geometry("300x300")
     root.resizable(0,0)
 
