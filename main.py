@@ -775,8 +775,7 @@ def signup_page():
             okres = messagebox.showinfo("Reload Required", "Click ok to reload.")
             if okres == 'ok':
                 spg.destroy()
-                system("python main.py")
-                
+                system("python main.py") 
                 
             f_name_ent.delete(0, END)
             l_name_ent.delete(0, END)
@@ -848,7 +847,7 @@ def signup_page():
                     messagebox.showerror("Wrong OTP", "The entered otp is wrong.\nPlease check again.")
 
             res = emailvalidation(email_ent.get())
-            
+
             if res == False:
                 messagebox.showerror("Invalid E-Mail", "This is not an valid e-mail address.")
             else:
