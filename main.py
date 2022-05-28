@@ -236,7 +236,7 @@ class addedit:
                     pass_ls.extend(i)
                         
                 if hashcrypt(mps) == str(pass_ls[0]):
-                    mycur.execute("UPDATE myp_data SET website = '" + web + "', loginName = '" + un + "' WHERE passId = " + str(ele))
+                    mycur.execute("UPDATE myp_data SET website = '" + web + "', loginName = '" + un + "', loginPass = '" + ps + "' WHERE passId = " + str(ele))
                     mydb.commit()
                     messagebox.showinfo("Success", "Data edited successfully")
                     passwordmenu(psl, str(uid), close, open_e)
@@ -257,7 +257,7 @@ class addedit:
             pass_ent.delete(0, END)
             repass_ent.delete(0, END)
 
-            site_ent.insert(0, str(editdata[0]))
+            site_ent.insert(0, str(editdata[0][8:]))
             usern_ent.insert(0, str(editdata[1]))
             pass_ent.insert(0, decrypt(str(editdata[2])))
             repass_ent.insert(0, decrypt(str(editdata[2])))
@@ -327,25 +327,34 @@ class addedit:
             def editing(*event):
                 try:
                     passid_int = int(id_ent.get())
-                    if passid_int not in passid_dict.keys():
-                        messagebox.showerror("Enter proper Id", "Enter only Id's that are visible on the menu.")
-                        edid.destroy()
+                    passid = ent.get()
+                    mycur.execute(f"SELECT masterPass FROM myp_users WHERE userId = "+ str(uid))
+                    pass_ls = []
+                    for i in mycur:
+                        pass_ls.extend(i)
+
+                    if hashcrypt(passid) == str(pass_ls[0]):
+                        if passid_int not in passid_dict.keys():
+                            messagebox.showerror("Enter proper Id", "Enter only Id's that are visible on the menu.")
+                            edid.destroy()
+                        else:
+                            global ele
+                            ele = passid_dict[passid_int]
+                            mycur.execute("SELECT website, loginName, loginPass FROM myp_data WHERE passId="+ str(ele))
+                            editdata = []
+                            for i in mycur.fetchall():
+                                editdata.extend(i)
+                            edid.destroy()
+                            adk.focus_force
+                            site_ent.insert(0, str(editdata[0][8:]))
+                            usern_ent.insert(0, str(editdata[1]))
+                            pass_ent.insert(0, decrypt(str(editdata[2])))
+                            repass_ent.insert(0, decrypt(str(editdata[2])))
+                            Label(adk, text="(Master Password cannot be edited here. Enter the correct Master Password)", font=('', 12), 
+                                bg="#26242f", fg='white').grid(row=7, column=1, columnspan=2, pady=20)
                     else:
-                        global ele
-                        ele = passid_dict[passid_int]
-                        mycur.execute("SELECT website, loginName, loginPass FROM myp_data WHERE passId="+ str(ele))
-                        editdata = []
-                        for i in mycur.fetchall():
-                            editdata.extend(i)
-                        edid.destroy()
-                        adk.focus_force
-                        site_ent.insert(0, str(editdata[0]))
-                        usern_ent.insert(0, str(editdata[1]))
-                        pass_ent.insert(0, decrypt(str(editdata[2])))
-                        repass_ent.insert(0, decrypt(str(editdata[2])))
-                        Label(adk, text="(Master Password cannot be edited here. Enter the correct Master Password)", font=('', 12), 
-                            bg="#26242f", fg='white').grid(row=7, column=1, columnspan=2, pady=20)
-                        
+                        messagebox.showerror("Wrong password", "Please enter correct Master Password")
+
                 except ValueError:
                     messagebox.showerror("Invalid Entry", "Please enter only numbers.")
                     edid.destroy()
@@ -359,11 +368,16 @@ class addedit:
             edid.iconbitmap("images\\1.ico")
             edid.configure(bg='#26242f')
             
+            lbl = Label(edid, text = 'Enter Master Password: ', font=('', 13), fg='white', bg='#26242f')
+            ent = Entry(edid, font=('',13), fg='white', bg='#26242f', show='•')
+
             id_lbl = Label(edid, text= 'Enter the Id : ', font=('', 13), bg='#26242f', fg='white')
             id_ent = Entry(edid,  bg='#26242f', fg='white', font=('',13))
 
-            id_lbl.grid(row=1, column=1, padx=10, pady=10)
-            id_ent.grid(row=1, column=2, padx=10, pady=10)
+            lbl.grid(row=1, column=1, padx=10, pady=10)
+            ent.grid(row=1, column=2, padx=10, pady=10)
+            id_lbl.grid(row=2, column=1, padx=10, pady=10)
+            id_ent.grid(row=2, column=2, padx=10, pady=10)
 
             id_ent.bind("<Return>", editing)
 
@@ -378,7 +392,30 @@ class addedit:
         
         adk.mainloop()
 
-        
+class loading_screen:
+    def __init__(self, root, time):
+        global top
+        top = Toplevel()
+        top.overrideredirect(1)
+        x = root.winfo_x()
+        y = root.winfo_y()
+        top.geometry("+%d+%d" %(x+500,y+200))
+        top.lift()
+        top.after(time, lambda: top.destroy())
+        frameCnt = 20
+        frames = [PhotoImage(file='images/5.gif',format = 'gif -index %i' %(i)) for i in range(frameCnt)]
+
+        def update(ind):
+
+            frame = frames[ind]
+            ind += 1
+            if ind == frameCnt:
+                ind = 0
+            label.configure(image=frame)
+            top.after(100, update, ind)
+        label = Label(top)
+        label.pack()
+        top.after(0, update, 0)
 
 ########################## FUNCTOINS ###############################
 def lbk_rootw():
@@ -846,7 +883,9 @@ def signup_page():
                 else:
                     messagebox.showerror("Wrong OTP", "The entered otp is wrong.\nPlease check again.")
 
+            loading_screen(spg, 6000)
             res = emailvalidation(email_ent.get())
+            
 
             if res == False:
                 messagebox.showerror("Invalid E-Mail", "This is not an valid e-mail address.")
