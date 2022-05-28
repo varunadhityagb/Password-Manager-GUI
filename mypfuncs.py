@@ -4,6 +4,7 @@ import random
 from string import ascii_letters, ascii_uppercase, digits, ascii_lowercase, punctuation
 from hashlib import *
 import requests
+from tkinter import messagebox
 #ProjectbyVarunAdhityaGB
 ######################## CONNECTING SQL ###############################################
 mydb = sqlc.connect(host='localhost', user='root', passwd='root',)
@@ -58,6 +59,7 @@ def encrypt(strg : str):
     # takes input a string and returns a encryted passwd
     str_ls = list(strg)
     for i in str_ls:
+        
         if i in charst:
             i_pos = str_ls.index(i)
             c_pos = charst.index(i)
@@ -72,6 +74,7 @@ def decrypt(strg : str):
     ## takes input a string and returns a encryted passwd
     str_ls = list(strg)
     for i in str_ls:
+
         if i in charst:
             i_pos = str_ls.index(i)
             c_pos = charst_crypt.index(i)
@@ -91,17 +94,22 @@ def hashcrypt(var: str):
 
 def emailvalidation(strg):
     # this functions checks whether the e-mail really exists with a help of a tool by isitrealemail.com 
-    api_key = '00209c5b-b82b-4c80-8db2-5621a90ff038'
-    email = strg
-    response = requests.get("https://isitarealemail.com/api/email/validate", params= {'email': email}, headers= {'Authorization': "Bearer" + api_key})
-    status = response.json()['status']
-    if status == "valid":
-        return True
-    elif status == "invalid":
-        return False
-    else:
-        print('limit exeeded')
+    try:
+        api_key = '00209c5b-b82b-4c80-8db2-5621a90ff038'
+        email = strg
+        response = requests.get("https://isitarealemail.com/api/email/validate", params= {'email': email}, headers= {'Authorization': "Bearer" + api_key})
+        status = response.json()['status']
+        if status == "valid":
+            return True
+        elif status == "invalid":
+            return False
+        else:
+            messagebox.showerror("Sorry for the inconvenience", "Please try tommorow🙏🏼")
+            
+    except Exception:
+            messagebox.showerror("Network", "Please ensure that you are connected to the internet.")
 
+            
 def unamecheck(strg):
     # this finction checks whether this username already exists, if it exeist it tell the user to try a different username        
     mycur.execute("USE myp;")

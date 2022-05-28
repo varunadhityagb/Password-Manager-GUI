@@ -30,7 +30,7 @@ def createTbls():
 
     mycur.execute('''CREATE TABLE myp_data (
         passId INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
-        website VARCHAR(225),
+        website VARCHAR(625),
         loginName VARCHAR(225) NOT NULL,
         loginPass VARCHAR(225) NOT NULL,
         userId INT NOT NULL); ''')

@@ -2,7 +2,7 @@ from tkinter.font import BOLD
 from database import *          #####IMPORTING OUR COUSTOM MODULES
 from mypfuncs import *     
 from tkinter import *   
-from PIL import ImageTk, Image, ImageSequence
+from PIL import ImageTk, Image
 from tkinter import messagebox  
 import tkinter.ttk as ttk
 from os import system
@@ -110,7 +110,6 @@ class passwordmenu:
                 self.uname_l.grid(row=i+1, column=4, padx=30, pady=10, sticky=W)
                 self.indent_lbl1.grid(row=i+1, column=5, padx=10, pady=10, sticky=W)
                 self.pass_ent.grid(row=i+1, column=6, padx=120, pady=10)
-                
 
                 self.pass_ent.insert(0,(self.p))
                 self.pass_ent.configure(state='readonly')
@@ -432,7 +431,6 @@ def ipass_ui():
     lpg.destroy()
     ui(user)
 
-
 def ui(uid):
     def signout():
         psl.destroy()
@@ -584,7 +582,6 @@ def ui(uid):
         messagebox.showinfo('Reload Required', "Click Ok to reload")
         psl.destroy()
         system("python main.py")
-        
             
     def exp_data():
         mycur.execute("SELECT SUBSTR(website, 9)'name', website, loginName FROM myp_data WHERE userId = " + str(uid) )
@@ -596,7 +593,6 @@ def ui(uid):
             psl.filedir = filedialog.askdirectory(title="Select a folder")
             for i in range(len(ls)):
                 globals()[f'expd{i+1}'] = list(ls[i]) 
-            
             
             mycur.execute("SELECT loginPass FROM myp_data WHERE userId = " + str(uid))
             pls = mycur.fetchall()
@@ -641,12 +637,12 @@ def ui(uid):
                 psl.destroy()
                 open('cache.txt', 'w')
                 system("python main.py")
-            
             else:
                 messagebox.showerror("Wrong Password", 'Enter the correct password')
 
         mycur.execute(f"SELECT masterPass FROM myp_users WHERE userId = "+ str(uid))
         pass_ls = []
+        
         for i in mycur:
             pass_ls.extend(i)
 
@@ -662,7 +658,6 @@ def ui(uid):
         ent.grid(row=1, column=2, padx=10, pady=10)
 
         ent.bind("<Return>", mc_check)
-
 
     global iclick
     global psl
@@ -689,14 +684,11 @@ def ui(uid):
     more.add_separator()
     more.add_command(label='Delete User!!', command=deluser)
     
-    
     menu.add_command(label='Add data', command=adddata)
     menu.add_command(label='Edit data', command=editdata)
     menu.add_command(label='Delte data', command=deletedata)
     menu.add_command(label='Sign out', command=signout)
     menu.add_cascade(label='•••', menu=more)
-
-
 
     psl.mainloop()
 
@@ -844,12 +836,10 @@ def signup_page():
             showpass_cb.destroy()
             email_lbl.destroy()
             
-
         if urepass_ent.get() != upass_ent.get():
             messagebox.showerror("Password Mismatch","Please make sure that your passwords match.")
         elif len(upass_ent.get()) < 8:
             messagebox.showerror("Password Not Satisfying Requirements","The password should be atleast a minimum of 8 characters.")
-        
         else:
             upass_ui()
 
@@ -900,7 +890,6 @@ def signup_page():
             loading_screen(spg, 6000)
             res = emailvalidation(email_ent.get())
             
-
             if res == False:
                 messagebox.showerror("Invalid E-Mail", "This is not an valid e-mail address.")
             else:
@@ -967,7 +956,7 @@ def signup_page():
 
 def rootw():
     global root
-    
+
     root = Tk()
     root.config(bg="#26242f")
     root.title("Password Manager")
