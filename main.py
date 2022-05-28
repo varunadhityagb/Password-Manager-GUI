@@ -454,16 +454,24 @@ def ui(uid):
         mydb.commit()    
         def delete(e):
             try:
-                passid_int = int(ent.get())
-                if passid_int not in passid_dict.keys():
-                    messagebox.showerror("Enter proper Id", "Enter only Id's that are visible on the menu.")
-                    ddk.destroy()
+                mycur.execute(f"SELECT masterPass FROM myp_users WHERE userId = "+ str(uid))
+                pass_ls = []
+                for i in mycur:
+                    pass_ls.extend(i)
+
+                if hashcrypt(ent_p.get()) == str(pass_ls[0]): 
+                    passid_int = int(ent.get())
+                    if passid_int not in passid_dict.keys():
+                        messagebox.showerror("Enter proper Id", "Enter only Id's that are visible on the menu.")
+                        ddk.destroy()
+                    else:
+                        dele = passid_dict[passid_int]
+                        mycur.execute("DELETE FROM myp_data WHERE passId = "+str(dele))
+                        mydb.commit()
+                        passwordmenu(psl, str(uid), close, open_e)
+                        ddk.destroy()
                 else:
-                    dele = passid_dict[passid_int]
-                    mycur.execute("DELETE FROM myp_data WHERE passId = "+str(dele))
-                    mydb.commit()
-                    passwordmenu(psl, str(uid), close, open_e)
-                    ddk.destroy()
+                    messagebox.showerror("Wrong password", "Please enter correct Master Password")
 
             except ValueError:
                 messagebox.showerror("Invalid Entry", "Please enter only numbers.")
@@ -475,10 +483,16 @@ def ui(uid):
         ddk.configure(bg='#26242f')
 
         lbl = Label(ddk, text= 'Enter the Id : ', font=('', 13), bg='#26242f', fg='white')
-        lbl.grid(row=1, column=1, padx=10, pady=10)
+        lbl.grid(row=2, column=1, padx=10, pady=10)
 
         ent = Entry(ddk, bg='#26242f', fg='white', font=('',13))
-        ent.grid(row=1, column=2, padx=10, pady=10)
+        ent.grid(row=2, column=2, padx=10, pady=10)
+
+        lbl_p = Label(ddk, text = 'Enter Master Password: ', font=('', 13), fg='white', bg='#26242f')
+        ent_p = Entry(ddk, font=('',13), fg='white', bg='#26242f', show='•')
+
+        lbl_p.grid(row=1, column=1, padx=10, pady=10)
+        ent_p.grid(row=1, column=2, padx=10, pady=10)
 
         ent.bind("<Return>", delete)
 
