@@ -24,5 +24,7 @@ It has the following features:
 
 This app can be used by individuals who want to securely manage their passwords
 
+### Not a UI guy?
+<a href="https://github.com/VarunAdhityaGB/Password-Manager" target="_blank">Check this out!!</a>
 
 ### Releasing soon.......
