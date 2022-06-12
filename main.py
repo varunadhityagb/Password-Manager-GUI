@@ -1,4 +1,5 @@
 import csv
+import requests
 import tkinter.ttk as ttk
 from os import system
 from time import *
@@ -606,6 +607,15 @@ class loading_screen:
 
 
 ########################## FUNCTOINS ###############################
+def internet_stat(url = "https://www.google.com/", timeout=3):
+    try:
+        r = requests.head(url=url, timeout=timeout)
+        return True
+    except requests.ConnectionError as e:
+        return False
+
+net_stat = internet_stat()
+
 def lbk_rootw():
     global lpg
     lpg.destroy()
@@ -731,6 +741,7 @@ def ui(uid):
                     + "' WHERE userId = "
                     + str(uid)
                 )
+                mstc.destroy()
                 mydb.commit()
             else:
                 messagebox.showerror("Wrong OLD Password", "Enter the correct password")
@@ -857,7 +868,10 @@ def ui(uid):
                 mycur.execute("SELECT email FROM myp_users WHERE userId = " + str(uid))
                 els = mycur.fetchall()
                 for i in els:
-                    byemail(i[0])
+                    if i == (None,):
+                        continue
+                    else:
+                        byemail(i[0])
                 mycur.execute("SELECT passId FROM myp_data WHERE userId = " + str(uid))
                 dells = []
                 for i in mycur.fetchall():
@@ -1094,13 +1108,22 @@ def signup_page():
 
     def signup(*event):
         def upass_ui():
-            insintousers(
-                str(f_name_ent.get()),
-                str(l_name_ent.get()),
-                str(u_name_ent.get()),
-                str(email_ent.get()),
-                str(upass_ent.get()),
-            )
+            intst = internet_stat()
+            if intst == True:
+                insintousers(
+                    firstName = str(f_name_ent.get()),
+                    lastName = str(l_name_ent.get()),
+                    userName = str(u_name_ent.get()),
+                    eMail = str(email_ent.get()),
+                    masterPass= str(upass_ent.get())
+                )
+            else:
+                insintousers_eno(
+                    firstName = str(f_name_ent.get()),
+                    lastName = str(l_name_ent.get()),
+                    userName = str(u_name_ent.get()),
+                    masterPass = str(upass_ent.get())
+                )
             messagebox.showinfo(
                 "Successfully Signed Up", "You have successfull created your account"
             )
@@ -1108,22 +1131,6 @@ def signup_page():
             if okres == "ok":
                 spg.destroy()
                 system("python main.py")
-
-            f_name_ent.delete(0, END)
-            l_name_ent.delete(0, END)
-            u_name_ent.delete(0, END)
-            upass_ent.delete(0, END)
-            urepass_ent.delete(0, END)
-            urepass_lbl.destroy()
-            upass_lbl.destroy()
-            upass_ent.destroy()
-            urepass_ent.destroy()
-            otp_ent.destroy()
-            otp_lbl.destroy()
-            email_ent.destroy()
-            up_btn.destroy()
-            showpass_cb.destroy()
-            email_lbl.destroy()
 
         if urepass_ent.get() != upass_ent.get():
             messagebox.showerror(
@@ -1138,22 +1145,157 @@ def signup_page():
             upass_ui()
 
     def unamec(*event):
-        def emailc(*event):
-            def otpc(*event):
-                global urepass_ent
-                global upass_ent
+        def cbshow():
+            if (cbvar.get()) == 1:
+                upass_ent.config(show="")
+                urepass_ent.config(show="")
+            else:
+                upass_ent.config(show="•")
+                urepass_ent.config(show="•")
+        
+        if net_stat == True:    
+            def emailc(*event):
+                def otpc(*event):
+                    global urepass_ent
+                    global upass_ent
 
-                def cbshow():
-                    if (cbvar.get()) == 1:
-                        upass_ent.config(show="")
-                        urepass_ent.config(show="")
+                    js = eval(otp_ent.get())
+                    if js == otp:
+
+                        cb_style = ttk.Style()
+                        cb_style.configure(
+                            "R.TCheckbutton", foreground="white", background="#26242f"
+                        )
+
+                        global upass_lbl
+                        upass_lbl = Label(
+                            spg,
+                            text="Master Password:",
+                            font=("", 14),
+                            bg="#26242f",
+                            fg="white",
+                        )
+                        global upass_ent
+                        upass_ent = Entry(
+                            spg,
+                            textvariable=passkey,
+                            show="•",
+                            font=("", 14),
+                            bg="#26242f",
+                            fg="white",
+                        )
+                        global urepass_lbl
+                        urepass_lbl = Label(
+                            spg,
+                            text="Re-Enter Password:",
+                            font=("", 14),
+                            bg="#26242f",
+                            fg="white",
+                        )
+                        global urepass_ent
+                        urepass_ent = Entry(
+                            spg,
+                            textvariable=repasskey,
+                            show="•",
+                            font=("", 14),
+                            bg="#26242f",
+                            fg="white",
+                        )
+                        urepass_ent.bind("<Return>", signup)
+                        global showpass_cb
+                        showpass_cb = ttk.Checkbutton(
+                            spg,
+                            text="Show Password",
+                            variable=cbvar,
+                            onvalue=1,
+                            offvalue=0,
+                            command=cbshow,
+                            style="R.TCheckbutton",
+                        )
+                        global up_btn
+                        up_btn = Button(
+                            spg,
+                            text="Sign Up",
+                            command=signup,
+                            font=("", 14),
+                            width=20,
+                            bg="#568943",
+                            fg="white",
+                        )
+
+                        upass_lbl.grid(row=8, column=1, padx=10, pady=10)
+                        upass_ent.grid(row=8, column=2, padx=10, pady=10)
+                        urepass_lbl.grid(row=9, column=1, padx=10, pady=10)
+                        urepass_ent.grid(row=9, column=2, padx=10, pady=10)
+                        showpass_cb.grid(row=10, column=2, padx=10, sticky=E)
+                        up_btn.grid(
+                            row=11, column=1, columnspan=2, padx=10, pady=10, ipadx=100
+                        )
                     else:
-                        upass_ent.config(show="•")
-                        urepass_ent.config(show="•")
+                        messagebox.showerror(
+                            "Wrong OTP", "The entered otp is wrong.\nPlease check again."
+                        )
 
-                js = eval(otp_ent.get())
-                if js == otp:
+                loading_screen(spg, 6000)
+                res = emailvalidation(email_ent.get())
 
+                if res == False:
+                    messagebox.showerror(
+                        "Invalid E-Mail", "This is not an valid e-mail address."
+                    )
+                else:
+                    ress = emailcheck(email_ent.get())
+                    if ress == False:
+                        messagebox.showinfo(
+                            "Duplicate Found",
+                            "This is email address is assosiated with another user.",
+                        )
+                    else:
+                        otp = otpmail(email_ent.get())
+                        print(otp)
+                        global otp_lbl
+                        otp_lbl = Label(
+                            spg, text="OTP:      ", font=("", 14), bg="#26242f", fg="white"
+                        )
+                        global otp_ent
+                        otp_ent = Entry(spg, font=("", 14), bg="#26242f", fg="white")
+                        otp_ent.bind("<Return>", otpc)
+
+                        otp_lbl.grid(row=7, column=1, padx=10, pady=10)
+                        otp_ent.grid(row=7, column=2, padx=10, pady=10)
+
+            res = unamecheck(u_name_ent.get())
+
+            if res == False:
+                messagebox.showerror("Duplicate found", "This username already exits!")
+            else:
+                if f_name_ent.get() == "":
+                    messagebox.showerror("Fill Everything", "Please enter a First name.")
+                elif u_name_ent.get() == "":
+                    messagebox.showerror("Fill Everything", "Please enter a username.")
+                else:
+
+                    global email_lbl
+                    email_lbl = Label(
+                        spg, text="E-Mail:   ", font=("", 14), bg="#26242f", fg="white"
+                    )
+                    global email_ent
+                    email_ent = Entry(spg, font=("", 14), bg="#26242f", fg="white")
+                    email_ent.bind("<Return>", emailc)
+
+                    email_lbl.grid(row=6, column=1, padx=10, pady=10)
+                    email_ent.grid(row=6, column=2, padx=10, pady=10)
+        else:
+            res = unamecheck(u_name_ent.get())
+
+            if res == False:
+                messagebox.showerror("Duplicate found", "This username already exits!")
+            else:
+                if f_name_ent.get() == "":
+                    messagebox.showerror("Fill Everything", "Please enter a First name.")
+                elif u_name_ent.get() == "":
+                    messagebox.showerror("Fill Everything", "Please enter a username.")
+                else:
                     cb_style = ttk.Style()
                     cb_style.configure(
                         "R.TCheckbutton", foreground="white", background="#26242f"
@@ -1223,60 +1365,7 @@ def signup_page():
                     up_btn.grid(
                         row=11, column=1, columnspan=2, padx=10, pady=10, ipadx=100
                     )
-                else:
-                    messagebox.showerror(
-                        "Wrong OTP", "The entered otp is wrong.\nPlease check again."
-                    )
 
-            loading_screen(spg, 6000)
-            res = emailvalidation(email_ent.get())
-
-            if res == False:
-                messagebox.showerror(
-                    "Invalid E-Mail", "This is not an valid e-mail address."
-                )
-            else:
-                ress = emailcheck(email_ent.get())
-                if ress == False:
-                    messagebox.showinfo(
-                        "Duplicate Found",
-                        "This is email address is assosiated with another user.",
-                    )
-                else:
-                    otp = otpmail(email_ent.get())
-                    print(otp)
-                    global otp_lbl
-                    otp_lbl = Label(
-                        spg, text="OTP:      ", font=("", 14), bg="#26242f", fg="white"
-                    )
-                    global otp_ent
-                    otp_ent = Entry(spg, font=("", 14), bg="#26242f", fg="white")
-                    otp_ent.bind("<Return>", otpc)
-
-                    otp_lbl.grid(row=7, column=1, padx=10, pady=10)
-                    otp_ent.grid(row=7, column=2, padx=10, pady=10)
-
-        res = unamecheck(u_name_ent.get())
-
-        if res == False:
-            messagebox.showerror("Duplicate found", "This username already exits!")
-        else:
-            if f_name_ent.get() == "":
-                messagebox.showerror("Fill Everything", "Please enter a First name.")
-            elif u_name_ent.get() == "":
-                messagebox.showerror("Fill Everything", "Please enter a username.")
-            else:
-
-                global email_lbl
-                email_lbl = Label(
-                    spg, text="E-Mail:   ", font=("", 14), bg="#26242f", fg="white"
-                )
-                global email_ent
-                email_ent = Entry(spg, font=("", 14), bg="#26242f", fg="white")
-                email_ent.bind("<Return>", emailc)
-
-                email_lbl.grid(row=6, column=1, padx=10, pady=10)
-                email_ent.grid(row=6, column=2, padx=10, pady=10)
 
     global f_name_ent
     f_name_lbl = Label(spg, text="First Name:", font=("", 14), bg="#26242f", fg="white")

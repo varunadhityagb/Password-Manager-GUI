@@ -35,7 +35,7 @@ def createTbls():
             firstName VARCHAR(225) NOT NULL,
             lastName VARCHAR(225),
             userName VARCHAR(225) NOT NULL UNIQUE KEY,
-            eMail VARCHAR(225) NOT NULL UNIQUE KEY,
+            eMail VARCHAR(225) UNIQUE KEY,
             masterPass VARCHAR(225) NOT NULL); """
     )
 
@@ -49,13 +49,31 @@ def createTbls():
     )
 
 
-def insintousers(firstName, lastName, userName, eMail, masterPass):
+def insintousers(firstName, lastName, userName, masterPass, eMail):
     # this functions inserts data into the myp_user table
     mycur.execute("USE myp;")
     global passu
     passu = hashcrypt(masterPass)
     action = (
         f"""INSERT INTO myp_users (firstName, lastName, userName, eMail, masterPass)
+        VALUES ("""
+        + "TRIM('" + firstName + "'), "
+        + "TRIM('" + lastName + "'), '"
+        + str(userName)+ "', '"
+        + str(eMail) + "', '"
+        + passu
+        + "');"
+    )
+    mycur.execute(action)
+    mydb.commit()
+
+def insintousers_eno(firstName, lastName, userName, masterPass):
+    # this functions inserts data into the myp_user table
+    mycur.execute("USE myp;")
+    global passu
+    passu = hashcrypt(masterPass)
+    action = (
+        f"""INSERT INTO myp_users (firstName, lastName, userName, masterPass)
         VALUES ("""
         + "TRIM('"
         + firstName
@@ -64,8 +82,6 @@ def insintousers(firstName, lastName, userName, eMail, masterPass):
         + lastName
         + "'), '"
         + userName
-        + "', '"
-        + eMail
         + "', '"
         + passu
         + "');"
