@@ -115,6 +115,8 @@ def otpmail(receivermail):
             <br>
             Thank you for trying our password manager.
             Hope you like our product.
+
+            Please ignore if otp not requested🙏🏼.
             </p>
         </body>
     </html>"""
@@ -124,7 +126,7 @@ def otpmail(receivermail):
 
     context = ssl.create_default_context()
     with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as server:
-        server.login("manageyourpass91@gmail.com", "Acc3ssGr@nted")
+        server.login("manageyourpass91@gmail.com", "mokktrqhxujqrrtd")
         server.send_message(msg)
         server.quit()
     return otp
@@ -155,11 +157,9 @@ def byemail(receivermail):
     part = MIMEText(html, "html")
     msg.attach(part)
 
-    # context = ssl.create_default_context()
-    with smtplib.SMTP_SSL(
-        "smtp.gmail.com",
-        465,
-    ) as server:  # context=context
-        server.login("manageyourpass91@gmail.com", "Acc3ssGr@nted")
+    context = ssl.create_default_context()
+    with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as server: 
+        server.login("manageyourpass91@gmail.com", "mokktrqhxujqrrtd")
         server.send_message(msg)
         server.quit()
+

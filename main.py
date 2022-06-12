@@ -950,7 +950,7 @@ def login_page():
         lpg = Tk()
         lpg.title("Login")
         lpg.config(bg="#26242f")
-        lpg.geometry("400x300")
+        lpg.geometry("450x300")
         lpg.resizable(0, 0)
         lpg.iconbitmap("images\\1.ico")
 
@@ -1083,7 +1083,7 @@ def signup_page():
     spg = Tk()
     spg.title("Sign Up")
     spg.config(bg="#26242f")
-    spg.geometry("600x600")
+    spg.geometry("450x600")
     spg.resizable(0, 0)
     spg.iconbitmap("images\\1.ico")
 
