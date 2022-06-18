@@ -8,7 +8,7 @@ This is a multi-user password manager program which allows users to store, gener
 
 It has the following features:
 
-•	Realtime e-mail validation with the help of www.isitarealemail.com.
+•	Realtime e-mail validation with the help of <a href="https://isitarealemail.com/" target="_blank">www.isitarealemail.com</a>
 
 •	Stores the password in the database in a custom encrypted format.
 
