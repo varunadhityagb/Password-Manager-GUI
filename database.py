@@ -22,33 +22,6 @@ mycur = mydb.cursor()
 global opt_lp
 
 
-def createDB():
-    mycur.execute("CREATE DATABASE myp;")
-
-
-def createTbls():
-    # CREATING TWO TABLES myp_users and myp_data having a comman row userId
-    mycur.execute("USE myp;")
-    mycur.execute(
-        """CREATE TABLE myp_users (
-            userId INT  UNSIGNED PRIMARY KEY AUTO_INCREMENT,
-            firstName VARCHAR(225) NOT NULL,
-            lastName VARCHAR(225),
-            userName VARCHAR(225) NOT NULL UNIQUE KEY,
-            eMail VARCHAR(225) UNIQUE KEY,
-            masterPass VARCHAR(225) NOT NULL); """
-    )
-
-    mycur.execute(
-        """CREATE TABLE myp_data (
-        passId INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
-        website VARCHAR(625),
-        loginName VARCHAR(225) NOT NULL,
-        loginPass VARCHAR(225) NOT NULL,
-        userId INT NOT NULL); """
-    )
-
-
 def insintousers(firstName, lastName, userName, masterPass, eMail):
     # this functions inserts data into the myp_user table
     mycur.execute("USE myp;")

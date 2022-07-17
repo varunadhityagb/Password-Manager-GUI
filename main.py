@@ -24,7 +24,7 @@ if "myp" in db_ls:
 elif "myp" in db_ls:
     mycur.execute("USE myp;")
 else:
-    createDB()
+    mycur.execute("CREATE DATABASE myp;")
     mycur.execute("USE myp;")
 
 ########################## CHECKING AND CREATING TABLES ###############################
@@ -34,7 +34,25 @@ tb_ls = []
 for i in mycur:
     tb_ls.extend(i)
 if tb_ls == []:
-    createTbls()
+    mycur.execute("USE myp;")
+    mycur.execute(
+        """CREATE TABLE myp_users (
+            userId INT  UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+            firstName VARCHAR(225) NOT NULL,
+            lastName VARCHAR(225),
+            userName VARCHAR(225) NOT NULL UNIQUE KEY,
+            eMail VARCHAR(225) UNIQUE KEY,
+            masterPass VARCHAR(225) NOT NULL); """
+    )
+
+    mycur.execute(
+        """CREATE TABLE myp_data (
+        passId INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+        website VARCHAR(625),
+        loginName VARCHAR(225) NOT NULL,
+        loginPass VARCHAR(225) NOT NULL,
+        userId INT NOT NULL); """
+    )
 else:
     pass
 ##############################################################################
@@ -261,7 +279,7 @@ class passwordmenu:
                         text1.configure(state="readonly")
             else:
 
-                def mc_check(e):
+                def mcp_check(e):
                     if hashcrypt(str(ent.get())) == str(mc_ls[0]):
                         self.showpass_btn.configure(image=open_e)
 
@@ -309,7 +327,7 @@ class passwordmenu:
                 ent = Entry(masterc, font=("", 13), fg="white", bg="#26242f", show="•")
                 ent.grid(row=1, column=2, padx=10, pady=10)
 
-                ent.bind("<Return>", mc_check)
+                ent.bind("<Return>", mcp_check)
 
                 masterc.mainloop()
 
@@ -1401,9 +1419,6 @@ def signup_page():
     spg.mainloop()
 
 
-########################## TKINTER MAIN ###############################
-
-
 def rootw():
     global root
 
@@ -1448,6 +1463,8 @@ def rootw():
 
     root.mainloop()
 
+
+########################## TKINTER MAIN ###############################
 
 check = open("cache.txt", "r", newline="\n")
 ls = check.readlines()
