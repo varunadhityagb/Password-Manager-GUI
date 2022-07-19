@@ -57,12 +57,21 @@ else:
     pass
 ##############################################################################
 open("cache.txt", "a")
+
+def passdget(uid):
+    mycur.execute(
+            f"SELECT masterPass FROM myp_users WHERE userId = " + str(uid)
+        )
+    pass_ls = []
+    for i in mycur:
+        pass_ls.extend(i)
+    return pass_ls
+
 ########################## CLASS ###############################
 
 
 class passwordmenu:
     def __init__(self, root, uid, close, open_e):
-        global iclick
         global len_1
         mycur.execute("USE myp;")
 
@@ -76,12 +85,12 @@ class passwordmenu:
         )
         self.main_canvas.pack(side=LEFT, fill=BOTH, expand=YES)
 
-        self.hscroll = ttk.Scrollbar(
+        self.hscroll = Scrollbar(
             root, orient=HORIZONTAL, command=self.main_canvas.xview
         )
         self.hscroll.grid(row=2, column=0, sticky=EW)
 
-        self.scroll = ttk.Scrollbar(
+        self.scroll = Scrollbar(
             root, orient=VERTICAL, command=self.main_canvas.yview
         )
         self.scroll.grid(row=1, column=2, sticky=NS)
@@ -149,8 +158,6 @@ class passwordmenu:
         self.uname_header.grid(row=0, column=4, padx=30, pady=10, sticky=W)
         self.indent_header2.grid(row=0, column=5, padx=10, pady=10, sticky=W)
         self.pass_header.grid(row=0, column=6, padx=120, pady=10)
-
-        iclick = 0
 
         mycur.execute("SELECT passId FROM myp_data WHERE userId=" + str(uid))
         self.uiddata = mycur.fetchall()
@@ -234,27 +241,20 @@ class passwordmenu:
             image=close,
             borderwidth=0,
             bg="#26242f",
-            activebackground="#26242f",
-            command=lambda: showpass(open_e),
+            activebackground="#26242f"
         )
+
+        self.showpass_btn.configure(command=lambda: showpass(open_e, self.showpass_btn))
 
         if len(self.uls) == 0:
             self.showpass_btn.configure(state="disabled")
         else:
             self.showpass_btn.grid(row=1, column=7, rowspan=5, padx=10, pady=10)
 
-        def showpass(open_e):
+        def showpass(open_e, widget):
 
-            mycur.execute("SELECT masterPass FROM myp_users WHERE userId = " + str(uid))
-            mc_ls = []
-
-            for i in mycur.fetchall():
-                mc_ls.extend(i)
-
-            global iclick
-            iclick += 1
-
-            if iclick % 2 == 0:
+            mc_ls = passdget(uid)
+            if widget.cget('image') == 'pyimage2':
                 self.showpass_btn.configure(image=close)
                 self.uidls1 = []
                 for i in self.uiddata:
@@ -277,7 +277,8 @@ class passwordmenu:
                         text1.grid(row=i + 1, column=6, padx=120, pady=10)
                         text1.insert(0, (p2))
                         text1.configure(state="readonly")
-            else:
+            
+            elif widget.cget('image') == 'pyimage1':
 
                 def mcp_check(e):
                     if hashcrypt(str(ent.get())) == str(mc_ls[0]):
@@ -309,6 +310,7 @@ class passwordmenu:
                         messagebox.showerror(
                             "Wrong Password", "Enter the correct password"
                         )
+                        masterc.destroy()
 
                 masterc = Toplevel()
                 masterc.title("Verification")
@@ -342,12 +344,7 @@ class addedit:
             mps = str(mpass_ent.get())
 
             if reps == ps:
-                mycur.execute(
-                    f"SELECT masterPass FROM myp_users WHERE userId = " + str(uid)
-                )
-                pass_ls = []
-                for i in mycur:
-                    pass_ls.extend(i)
+                pass_ls = passdget(uid)
 
                 if hashcrypt(mps) == str(pass_ls[0]):
                     insintodata(web, un, ps, str(uid))
@@ -361,62 +358,6 @@ class addedit:
                     )
             else:
                 messagebox.showerror("Unsuccessful", "Passwords don't match!")
-
-        def edits():
-            web = "https://" + str(site_ent.get())
-            un = str(usern_ent.get())
-            ps = encrypt(str(pass_ent.get()))
-            reps = encrypt(str(repass_ent.get()))
-            mps = str(mpass_ent.get())
-
-            if reps == ps:
-                mycur.execute(
-                    f"SELECT masterPass FROM myp_users WHERE userId = " + str(uid)
-                )
-                pass_ls = []
-                for i in mycur:
-                    pass_ls.extend(i)
-
-                if hashcrypt(mps) == str(pass_ls[0]):
-                    mycur.execute(
-                        "UPDATE myp_data SET website = '"
-                        + web
-                        + "', loginName = '"
-                        + un
-                        + "', loginPass = '"
-                        + ps
-                        + "' WHERE passId = "
-                        + str(ele)
-                    )
-                    mydb.commit()
-                    messagebox.showinfo("Success", "Data edited successfully")
-                    passwordmenu(psl, str(uid), close, open_e)
-                    adk.destroy()
-                else:
-                    messagebox.showerror(
-                        "Wrong password", "Please enter correct Master Password"
-                    )
-            else:
-                messagebox.showerror("Unsuccessful", "Passwords don't match!")
-
-        def revert():
-            mycur.execute(
-                "SELECT website, loginName, loginPass FROM myp_data WHERE passId="
-                + str(ele)
-            )
-            editdata = []
-            for i in mycur.fetchall():
-                editdata.extend(i)
-
-            site_ent.delete(0, END)
-            usern_ent.delete(0, END)
-            pass_ent.delete(0, END)
-            repass_ent.delete(0, END)
-
-            site_ent.insert(0, str(editdata[0][8:]))
-            usern_ent.insert(0, str(editdata[1]))
-            pass_ent.insert(0, decrypt(str(editdata[2])))
-            repass_ent.insert(0, decrypt(str(editdata[2])))
 
         def generpass():
             pass_ent.delete(0, END)
@@ -436,72 +377,12 @@ class addedit:
         for j in range(len(passid_ls)):
             passid_dict[j + 1] = passid_ls[j]
 
-        adk = Toplevel()
-        adk.title("Add Data")
-        adk.iconbitmap("images\\1.ico")
-        adk.configure(bg="#26242f")
-
-        site_lbl = Label(adk, text="Website:", font=("", 13), bg="#26242f", fg="white")
-        site_lbl.grid(row=1, column=1, padx=10, pady=10, sticky=W)
-
-        site_ent = Entry(adk, bg="#26242f", fg="white", font=("", 13))
-        site_ent.grid(row=1, column=2, padx=10, pady=10)
-
-        usern_lbl = Label(
-            adk, text="Username:", font=("", 13), bg="#26242f", fg="white"
-        )
-        usern_lbl.grid(row=2, column=1, padx=10, pady=10, sticky=W)
-
-        usern_ent = Entry(adk, bg="#26242f", fg="white", font=("", 13))
-        usern_ent.grid(row=2, column=2, padx=10, pady=10)
-
-        pass_lbl = Label(adk, text="Password:", font=("", 13), bg="#26242f", fg="white")
-        pass_lbl.grid(row=3, column=1, padx=10, pady=10, sticky=W)
-
-        pass_ent = Entry(adk, bg="#26242f", fg="white", font=("", 13))
-        pass_ent.grid(row=3, column=2, padx=10, pady=10)
-
-        repass_lbl = Label(
-            adk, text="Re-Enter Password:", font=("", 13), bg="#26242f", fg="white"
-        )
-        repass_lbl.grid(row=4, column=1, padx=10, pady=10, sticky=W)
-
-        repass_ent = Entry(adk, bg="#26242f", fg="white", font=("", 13))
-        repass_ent.grid(row=4, column=2, padx=10, pady=10)
-
-        mpass_lbl = Label(
-            adk, text="Master Password:", font=("", 13), bg="#26242f", fg="white"
-        )
-        mpass_lbl.grid(row=5, column=1, padx=10, pady=10, sticky=W)
-
-        mpass_ent = Entry(adk, bg="#26242f", fg="white", font=("", 13), show="•")
-        mpass_ent.grid(row=5, column=2, padx=10, pady=10)
-        addedit_btn = Button(adk, text="none", font=("", 13), bg="#26242f", fg="white")
-        addedit_btn.grid(row=6, column=1, columnspan=2, padx=10, pady=20)
-
         if (editr == "yes") and (addr == "no"):
-            adk.title("Edit Data")
-            addedit_btn.configure(command=edits, text="Save")
-            revert_btn = Button(
-                adk,
-                text="Revert",
-                font=("", 13),
-                bg="#26242f",
-                fg="white",
-                command=revert,
-            )
-            revert_btn.grid(row=6, column=2, padx=10, pady=20)
-
             def editing(*event):
                 try:
                     passid_int = int(id_ent.get())
                     passid = ent.get()
-                    mycur.execute(
-                        f"SELECT masterPass FROM myp_users WHERE userId = " + str(uid)
-                    )
-                    pass_ls = []
-                    for i in mycur:
-                        pass_ls.extend(i)
+                    pass_ls = passdget(uid)
 
                     if hashcrypt(passid) == str(pass_ls[0]):
                         if passid_int not in passid_dict.keys():
@@ -511,6 +392,117 @@ class addedit:
                             )
                             edid.destroy()
                         else:
+
+                            def edits():
+                                web = "https://" + str(site_ent.get())
+                                un = str(usern_ent.get())
+                                ps = encrypt(str(pass_ent.get()))
+                                reps = encrypt(str(repass_ent.get()))
+                                mps = str(mpass_ent.get())
+
+                                if reps == ps:
+                                    pass_ls = passdget(uid)
+
+                                    if hashcrypt(mps) == str(pass_ls[0]):
+                                        mycur.execute(
+                                            "UPDATE myp_data SET website = '"
+                                            + web
+                                            + "', loginName = '"
+                                            + un
+                                            + "', loginPass = '"
+                                            + ps
+                                            + "' WHERE passId = "
+                                            + str(ele)
+                                        )
+                                        mydb.commit()
+                                        messagebox.showinfo("Success", "Data edited successfully")
+                                        passwordmenu(psl, str(uid), close, open_e)
+                                        adk.destroy()
+                                    else:
+                                        messagebox.showerror(
+                                            "Wrong password", "Please enter correct Master Password"
+                                        )
+                                else:
+                                    messagebox.showerror("Unsuccessful", "Passwords don't match!")
+
+
+                            def revert():
+                                mycur.execute(
+                                    "SELECT website, loginName, loginPass FROM myp_data WHERE passId="
+                                    + str(ele)
+                                )
+                                editdata = []
+                                for i in mycur.fetchall():
+                                    editdata.extend(i)
+
+                                site_ent.delete(0, END)
+                                usern_ent.delete(0, END)
+                                pass_ent.delete(0, END)
+                                repass_ent.delete(0, END)
+
+                                site_ent.insert(0, str(editdata[0][8:]))
+                                usern_ent.insert(0, str(editdata[1]))
+                                pass_ent.insert(0, decrypt(str(editdata[2])))
+                                repass_ent.insert(0, decrypt(str(editdata[2])))
+
+                            adk = Toplevel()
+                            adk.title("Edit Data")
+                            adk.iconbitmap("images\\1.ico")
+                            adk.configure(bg="#26242f")
+
+                            site_lbl = Label(adk, text="Website:", font=("", 13), bg="#26242f", fg="white")
+                            site_lbl.grid(row=1, column=1, padx=10, pady=10, sticky=W)
+
+                            site_ent = Entry(adk, bg="#26242f", fg="white", font=("", 13))
+                            site_ent.grid(row=1, column=2, padx=10, pady=10)
+
+                            usern_lbl = Label(
+                                adk, text="Username:", font=("", 13), bg="#26242f", fg="white"
+                            )
+                            usern_lbl.grid(row=2, column=1, padx=10, pady=10, sticky=W)
+
+                            usern_ent = Entry(adk, bg="#26242f", fg="white", font=("", 13))
+                            usern_ent.grid(row=2, column=2, padx=10, pady=10)
+
+                            pass_lbl = Label(adk, text="Password:", font=("", 13), bg="#26242f", fg="white")
+                            pass_lbl.grid(row=3, column=1, padx=10, pady=10, sticky=W)
+
+                            pass_ent = Entry(adk, bg="#26242f", fg="white", font=("", 13))
+                            pass_ent.grid(row=3, column=2, padx=10, pady=10)
+
+                            repass_lbl = Label(
+                                adk, text="Re-Enter Password:", font=("", 13), bg="#26242f", fg="white"
+                            )
+                            repass_lbl.grid(row=4, column=1, padx=10, pady=10, sticky=W)
+
+                            repass_ent = Entry(adk, bg="#26242f", fg="white", font=("", 13))
+                            repass_ent.grid(row=4, column=2, padx=10, pady=10)
+
+                            mpass_lbl = Label(
+                                adk, text="Master Password:", font=("", 13), bg="#26242f", fg="white"
+                            )
+                            mpass_lbl.grid(row=5, column=1, padx=10, pady=10, sticky=W)
+
+                            mpass_ent = Entry(adk, bg="#26242f", fg="white", font=("", 13), show="•")
+                            mpass_ent.grid(row=5, column=2, padx=10, pady=10)
+                            addedit_btn = Button(adk, font=("", 13), bg="#26242f", fg="white", command=edits, text="Save")
+                            addedit_btn.grid(row=6, column=1, columnspan=2, padx=10, pady=20)
+
+                            revert_btn = Button(
+                            adk,text="Revert", 
+                            font=("", 13), bg="#26242f", 
+                            fg="white", command=revert,
+                            )
+                            revert_btn.grid(row=6, column=2, padx=10, pady=20)
+                            
+                            Label(
+                                adk,
+                                text="(Master Password cannot be edited here. Enter the correct Master Password)",
+                                font=("", 12), bg="#26242f", fg="white",
+                            ).grid(row=7, column=1, columnspan=2, pady=20)
+
+                            adk.focus_force
+
                             global ele
                             ele = passid_dict[passid_int]
                             mycur.execute(
@@ -521,22 +513,16 @@ class addedit:
                             for i in mycur.fetchall():
                                 editdata.extend(i)
                             edid.destroy()
-                            adk.focus_force
                             site_ent.insert(0, str(editdata[0][8:]))
                             usern_ent.insert(0, str(editdata[1]))
                             pass_ent.insert(0, decrypt(str(editdata[2])))
                             repass_ent.insert(0, decrypt(str(editdata[2])))
-                            Label(
-                                adk,
-                                text="(Master Password cannot be edited here. Enter the correct Master Password)",
-                                font=("", 12),
-                                bg="#26242f",
-                                fg="white",
-                            ).grid(row=7, column=1, columnspan=2, pady=20)
+
                     else:
                         messagebox.showerror(
                             "Wrong password", "Please enter correct Master Password"
                         )
+                        edid.destroy()
 
                 except ValueError:
                     messagebox.showerror("Invalid Entry", "Please enter only numbers.")
@@ -572,6 +558,49 @@ class addedit:
             edid.mainloop()
 
         elif (addr == "yes") and (editr == "no"):
+            adk = Toplevel()
+            adk.title("Add Data")
+            adk.iconbitmap("images\\1.ico")
+            adk.configure(bg="#26242f")
+
+            site_lbl = Label(adk, text="Website:", font=("", 13), bg="#26242f", fg="white")
+            site_lbl.grid(row=1, column=1, padx=10, pady=10, sticky=W)
+
+            site_ent = Entry(adk, bg="#26242f", fg="white", font=("", 13))
+            site_ent.grid(row=1, column=2, padx=10, pady=10)
+
+            usern_lbl = Label(
+                adk, text="Username:", font=("", 13), bg="#26242f", fg="white"
+            )
+            usern_lbl.grid(row=2, column=1, padx=10, pady=10, sticky=W)
+
+            usern_ent = Entry(adk, bg="#26242f", fg="white", font=("", 13))
+            usern_ent.grid(row=2, column=2, padx=10, pady=10)
+
+            pass_lbl = Label(adk, text="Password:", font=("", 13), bg="#26242f", fg="white")
+            pass_lbl.grid(row=3, column=1, padx=10, pady=10, sticky=W)
+
+            pass_ent = Entry(adk, bg="#26242f", fg="white", font=("", 13))
+            pass_ent.grid(row=3, column=2, padx=10, pady=10)
+
+            repass_lbl = Label(
+                adk, text="Re-Enter Password:", font=("", 13), bg="#26242f", fg="white"
+            )
+            repass_lbl.grid(row=4, column=1, padx=10, pady=10, sticky=W)
+
+            repass_ent = Entry(adk, bg="#26242f", fg="white", font=("", 13))
+            repass_ent.grid(row=4, column=2, padx=10, pady=10)
+
+            mpass_lbl = Label(
+                adk, text="Master Password:", font=("", 13), bg="#26242f", fg="white"
+            )
+            mpass_lbl.grid(row=5, column=1, padx=10, pady=10, sticky=W)
+
+            mpass_ent = Entry(adk, bg="#26242f", fg="white", font=("", 13), show="•")
+            mpass_ent.grid(row=5, column=2, padx=10, pady=10)
+            addedit_btn = Button(adk, text="none", font=("", 13), bg="#26242f", fg="white")
+            addedit_btn.grid(row=6, column=1, columnspan=2, padx=10, pady=20)
+            
             addedit_btn.configure(command=adds, text="Add")
             optional = Label(
                 adk,
@@ -591,7 +620,7 @@ class addedit:
             )
             gen_pass_btn.grid(row=3, column=3)
 
-        adk.mainloop()
+            adk.mainloop()
 
 
 class loading_screen:
@@ -656,8 +685,41 @@ def ui(uid):
         psl.destroy()
         open("cache.txt", "w")
         rootw()
+    
+    def delete(e):
+        try:
+            pass_ls = passdget(uid)
+            if hashcrypt(ent_p.get()) == str(pass_ls[0]):
+                passid_int = int(ent.get())
+                if passid_int not in passid_dict.keys():
+                    messagebox.showerror(
+                        "Enter proper Id",
+                        "Enter only Id's that are visible on the menu.",
+                    )
+                    ddk.destroy()
+                else:
+                    dele = passid_dict[passid_int]
+                    mycur.execute(
+                        "DELETE FROM myp_data WHERE passId = " + str(dele)
+                    )
+                    mydb.commit()
+                    passwordmenu(psl, str(uid), close, open_e)
+                    ddk.destroy()
+            else:
+                messagebox.showerror(
+                    "Wrong password", "Please enter correct Master Password"
+                )
+                ddk.destroy()
+
+        except ValueError:
+            messagebox.showerror("Invalid Entry", "Please enter only numbers.")
+            ddk.destroy()
 
     def deletedata():
+        global ent
+        global ent_p
+        global passid_dict
+        global ddk
         mycur.execute("SELECT passId FROM myp_data WHERE userId = " + str(uid))
         passids = mycur.fetchall()
         passid_ls = []
@@ -669,41 +731,7 @@ def ui(uid):
         for j in range(len(passid_ls)):
             passid_dict[j + 1] = passid_ls[j]
 
-        mydb.commit()
-
-        def delete(e):
-            try:
-                mycur.execute(
-                    f"SELECT masterPass FROM myp_users WHERE userId = " + str(uid)
-                )
-                pass_ls = []
-                for i in mycur:
-                    pass_ls.extend(i)
-
-                if hashcrypt(ent_p.get()) == str(pass_ls[0]):
-                    passid_int = int(ent.get())
-                    if passid_int not in passid_dict.keys():
-                        messagebox.showerror(
-                            "Enter proper Id",
-                            "Enter only Id's that are visible on the menu.",
-                        )
-                        ddk.destroy()
-                    else:
-                        dele = passid_dict[passid_int]
-                        mycur.execute(
-                            "DELETE FROM myp_data WHERE passId = " + str(dele)
-                        )
-                        mydb.commit()
-                        passwordmenu(psl, str(uid), close, open_e)
-                        ddk.destroy()
-                else:
-                    messagebox.showerror(
-                        "Wrong password", "Please enter correct Master Password"
-                    )
-
-            except ValueError:
-                messagebox.showerror("Invalid Entry", "Please enter only numbers.")
-                ddk.destroy()
+        mydb.commit()    
 
         ddk = Tk()
         ddk.title("Delete Data")
@@ -730,6 +758,7 @@ def ui(uid):
 
         ddk.mainloop()
 
+    
     y = "yes"
     n = "no"
 
@@ -764,10 +793,7 @@ def ui(uid):
             else:
                 messagebox.showerror("Wrong OLD Password", "Enter the correct password")
 
-        mycur.execute(f"SELECT masterPass FROM myp_users WHERE userId = " + str(uid))
-        pass_ls = []
-        for i in mycur:
-            pass_ls.extend(i)
+        pass_ls = passdget(uid)
 
         mstc = Toplevel()
         mstc.title("Confirmation")
@@ -846,39 +872,63 @@ def ui(uid):
         system("python main.py")
 
     def exp_data():
-        mycur.execute(
-            "SELECT SUBSTR(website, 9)'name', website, loginName FROM myp_data WHERE userId = "
-            + str(uid)
+        
+        def mc_check(*e):
+            if hashcrypt(str(ent.get())) == str(pass_ls[0]):
+                des.destroy()
+                mycur.execute(
+                    "SELECT SUBSTR(website, 9)'name', website, loginName FROM myp_data WHERE userId = "
+                    + str(uid)
+                )
+                ls = mycur.fetchall()
+
+                if ls == []:
+                    messagebox.showinfo("Nothing to Export", "No data found")
+                else:
+                    psl.filedir = filedialog.askdirectory(title="Select a folder")
+                    for i in range(len(ls)):
+                        globals()[f"expd{i+1}"] = list(ls[i])
+
+                    mycur.execute("SELECT loginPass FROM myp_data WHERE userId = " + str(uid))
+                    pls = mycur.fetchall()
+                    pls_ = []
+                    for i in pls:
+                        pls_.extend(i)
+                    for i in range(len(pls_)):
+                        globals()[f"expd{i+1}"].insert(3, decrypt(str(pls_[i])))
+
+                    file = open(psl.filedir + "/export.csv", "w", newline="")
+                    csv_w = csv.writer(file)
+                    ls = ("name", "url", "username", "password")
+                    csv_w.writerow(ls)
+                    file.close()
+
+                    file = open(psl.filedir + "/export.csv", "a+", newline="")
+                    csv_w = csv.writer(file)
+                    for i in range(len(pls_)):
+                        csv_w.writerow(globals()[f"expd{i+1}"])
+                    file.close() 
+            else:
+                messagebox.showerror("Wrong Password", "Enter the correct password")
+                des.destroy()
+
+        pass_ls = passdget(uid)
+
+        des = Toplevel()
+        des.title("Verification")
+        des.iconbitmap("images\\1.ico")
+        des.configure(bg="#26242f")
+
+        lbl = Label(
+            des, text="Master Password :", font=("", 13), bg="#26242f", fg="white"
         )
-        ls = mycur.fetchall()
+        lbl.grid(row=1, column=1, padx=10, pady=10)
 
-        if ls == []:
-            messagebox.showinfo("Nothing to Export", "No data found")
-        else:
-            psl.filedir = filedialog.askdirectory(title="Select a folder")
-            for i in range(len(ls)):
-                globals()[f"expd{i+1}"] = list(ls[i])
+        ent = Entry(des, bg="#26242f", fg="white", font=("", 13), show="•")
+        ent.grid(row=1, column=2, padx=10, pady=10)
 
-            mycur.execute("SELECT loginPass FROM myp_data WHERE userId = " + str(uid))
-            pls = mycur.fetchall()
-            pls_ = []
-            for i in pls:
-                pls_.extend(i)
-            for i in range(len(pls_)):
-                globals()[f"expd{i+1}"].insert(3, decrypt(str(pls_[i])))
-
-            file = open(psl.filedir + "/export.csv", "w", newline="")
-            csv_w = csv.writer(file)
-            ls = ("name", "url", "username", "password")
-            csv_w.writerow(ls)
-            file.close()
-
-            file = open(psl.filedir + "/export.csv", "a+", newline="")
-            csv_w = csv.writer(file)
-            for i in range(len(pls_)):
-                csv_w.writerow(globals()[f"expd{i+1}"])
-            file.close()
-
+        ent.bind("<Return>", mc_check)
+    
     def deluser():
         def mc_check(e):
             if hashcrypt(str(ent.get())) == str(pass_ls[0]):
@@ -909,12 +959,9 @@ def ui(uid):
                 system("python main.py")
             else:
                 messagebox.showerror("Wrong Password", "Enter the correct password")
+                des.destroy()
 
-        mycur.execute(f"SELECT masterPass FROM myp_users WHERE userId = " + str(uid))
-        pass_ls = []
-
-        for i in mycur:
-            pass_ls.extend(i)
+        pass_ls = passdget(uid)
 
         des = Toplevel()
         des.title("Confirmation")
@@ -931,7 +978,6 @@ def ui(uid):
 
         ent.bind("<Return>", mc_check)
 
-    global iclick
     global psl
     global pass_btn
     psl = Tk()
