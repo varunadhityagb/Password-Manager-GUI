@@ -12,7 +12,7 @@ import requests
 mydb = sqlc.connect(
     host="localhost",
     user="root",
-    passwd="root",
+    passwd="mysql",
 )
 mycur = mydb.cursor()
 
@@ -66,11 +66,11 @@ def password(n: int):
     elif num not in passwd_l:
         passwd_l.append(random.choice(num))
 
+    # shuffling the password
+    shuffle(passwd_l)
+
     # Joining the password
     passwd = "".join(passwd_l)
-
-    # shuffling the password
-    shuffle(passwd)
 
     return passwd
 

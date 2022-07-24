@@ -13,7 +13,7 @@ from mypfuncs import *
 mydb = sqlc.connect(
     host="localhost",
     user="root",
-    passwd="root",
+    passwd="mysql",
 )
 mycur = mydb.cursor()
 

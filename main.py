@@ -255,7 +255,7 @@ class passwordmenu:
 
             mc_ls = passdget(uid)
             if widget.cget('image') == 'pyimage2':
-                self.showpass_btn.configure(image=close)
+                widget.configure(image=close)
                 self.uidls1 = []
                 for i in self.uiddata:
                     self.uidls1.extend(i)
@@ -282,7 +282,7 @@ class passwordmenu:
 
                 def mcp_check(e):
                     if hashcrypt(str(ent.get())) == str(mc_ls[0]):
-                        self.showpass_btn.configure(image=open_e)
+                        widget.configure(image=open_e)
 
                         self.uidls1 = []
                         for i in self.uiddata:
@@ -311,6 +311,7 @@ class passwordmenu:
                             "Wrong Password", "Enter the correct password"
                         )
                         masterc.destroy()
+                    
 
                 masterc = Toplevel()
                 masterc.title("Verification")
@@ -677,7 +678,8 @@ def sbk_rootw():
 
 def ipass_ui():
     lpg.destroy()
-    ui(user)
+    system("python main.py")
+    psl.destroy()
 
 
 def ui(uid):
@@ -990,7 +992,7 @@ def ui(uid):
     open_e = ImageTk.PhotoImage(Image.open("images\\3.png"))
 
     passwordmenu(psl, str(uid), close, open_e)
-
+    
     menu = Menu(psl, fg="white", background="#26242f", font=("", 20))
     psl.config(menu=menu)
 
@@ -1046,7 +1048,7 @@ def login_page():
             mydb = sqlc.connect(
                 host="localhost",
                 user="root",
-                passwd="root",
+                passwd="mysql",
             )
             mycur = mydb.cursor()
 
@@ -1092,7 +1094,7 @@ def login_page():
 
         bk_arrow = ImageTk.PhotoImage(
             Image.open(
-                "C:\\Users\\WELCOME\\OneDrive - SKEC&T\\Password-Manager-GUI\\images\\4.png"
+                "images\\4.png"
             )
         )
         ################# STYLES ##########################################
