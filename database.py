@@ -13,7 +13,7 @@ from mypfuncs import *
 mydb = sqlc.connect(
     host="localhost",
     user="root",
-    passwd="mysql",
+    passwd=mysql_password,
 )
 mycur = mydb.cursor()
 
@@ -151,4 +151,3 @@ def byemail(receivermail):
         server.login("manageyourpass91@gmail.com", "mokktrqhxujqrrtd")
         server.send_message(msg)
         server.quit()
-

@@ -6,11 +6,10 @@ from time import *
 from tkinter import *
 from tkinter import filedialog, messagebox
 from tkinter.font import BOLD
-
-from PIL import Image, ImageTk
-
 from database import *
 from mypfuncs import *
+from PIL import Image, ImageTk
+
 
 ########################## CHECKING AND CREATING DATABASE #############################
 mycur.execute("SHOW SCHEMAS;")
@@ -57,6 +56,8 @@ else:
     pass
 ##############################################################################
 open("cache.txt", "a")
+
+mysql_password = open('sqlp.txt', 'r').read()
 
 def passdget(uid):
     mycur.execute(
@@ -1037,18 +1038,12 @@ def login_page():
         passkey = StringVar()
         cbvar = IntVar(value=0)
 
-        def shbtn():
-            if (cbvar.get()) == 1:
-                pass_ent.config(show="")
-            else:
-                pass_ent.config(show="•")
-
         def login(*event):
             global lpg
             mydb = sqlc.connect(
                 host="localhost",
                 user="root",
-                passwd="mysql",
+                passwd=mysql_password,
             )
             mycur = mydb.cursor()
 
@@ -1092,11 +1087,7 @@ def login_page():
                             break
                 pass_ls = []
 
-        bk_arrow = ImageTk.PhotoImage(
-            Image.open(
-                "images\\4.png"
-            )
-        )
+        bk_arrow = ImageTk.PhotoImage(Image.open("images\\4.png"))
         ################# STYLES ##########################################
         cb_style = ttk.Style()
         cb_style.configure("R.TCheckbutton", foreground="white", background="#26242f")
@@ -1125,7 +1116,7 @@ def login_page():
             variable=cbvar,
             onvalue=1,
             offvalue=0,
-            command=shbtn,
+            command=lambda: shbtn(cbvar, pass_ent),
             style="R.TCheckbutton",
         )
         bk_btn = Button(
