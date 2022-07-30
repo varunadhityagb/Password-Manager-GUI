@@ -29,16 +29,15 @@ def insintousers(firstName, lastName, userName, masterPass, eMail):
     passu = hashcrypt(masterPass)
     action = (
         f"""INSERT INTO myp_users (firstName, lastName, userName, eMail, masterPass)
-        VALUES ("""
-        + "TRIM('" + firstName + "'), "
+        VALUES (""" + "TRIM('" + firstName + "'), "
         + "TRIM('" + lastName + "'), '"
-        + str(userName)+ "', '"
+        + str(userName) + "', '"
         + str(eMail) + "', '"
-        + passu
-        + "');"
+        + passu + "');"
     )
     mycur.execute(action)
     mydb.commit()
+
 
 def insintousers_eno(firstName, lastName, userName, masterPass):
     # this functions inserts data into the myp_user table
@@ -48,16 +47,10 @@ def insintousers_eno(firstName, lastName, userName, masterPass):
     action = (
         f"""INSERT INTO myp_users (firstName, lastName, userName, masterPass)
         VALUES ("""
-        + "TRIM('"
-        + firstName
-        + "'), "
-        + "TRIM('"
-        + lastName
-        + "'), '"
-        + userName
-        + "', '"
-        + passu
-        + "');"
+        + "TRIM('" + firstName + "'), "
+        + "TRIM('" + lastName + "'), '" 
+        + userName + "', '" 
+        + passu + "');"
     )
     mycur.execute(action)
     mydb.commit()
@@ -147,7 +140,7 @@ def byemail(receivermail):
     msg.attach(part)
 
     context = ssl.create_default_context()
-    with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as server: 
+    with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as server:
         server.login("manageyourpass91@gmail.com", "mokktrqhxujqrrtd")
         server.send_message(msg)
         server.quit()

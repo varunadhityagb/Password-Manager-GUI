@@ -57,16 +57,16 @@ else:
 ##############################################################################
 open("cache.txt", "a")
 
-mysql_password = open('sqlp.txt', 'r').read()
+mysql_password = open("sqlp.txt", "r").read()
+
 
 def passdget(uid):
-    mycur.execute(
-            f"SELECT masterPass FROM myp_users WHERE userId = " + str(uid)
-        )
+    mycur.execute(f"SELECT masterPass FROM myp_users WHERE userId = " + str(uid))
     pass_ls = []
     for i in mycur:
         pass_ls.extend(i)
     return pass_ls
+
 
 ########################## CLASS ###############################
 
@@ -91,9 +91,7 @@ class passwordmenu:
         )
         self.hscroll.grid(row=2, column=0, sticky=EW)
 
-        self.scroll = Scrollbar(
-            root, orient=VERTICAL, command=self.main_canvas.yview
-        )
+        self.scroll = Scrollbar(root, orient=VERTICAL, command=self.main_canvas.yview)
         self.scroll.grid(row=1, column=2, sticky=NS)
 
         self.main_canvas.configure(yscrollcommand=self.scroll.set)
@@ -242,7 +240,7 @@ class passwordmenu:
             image=close,
             borderwidth=0,
             bg="#26242f",
-            activebackground="#26242f"
+            activebackground="#26242f",
         )
 
         self.showpass_btn.configure(command=lambda: showpass(open_e, self.showpass_btn))
@@ -255,7 +253,7 @@ class passwordmenu:
         def showpass(open_e, widget):
 
             mc_ls = passdget(uid)
-            if widget.cget('image') == 'pyimage2':
+            if widget.cget("image") == "pyimage2":
                 widget.configure(image=close)
                 self.uidls1 = []
                 for i in self.uiddata:
@@ -278,8 +276,8 @@ class passwordmenu:
                         text1.grid(row=i + 1, column=6, padx=120, pady=10)
                         text1.insert(0, (p2))
                         text1.configure(state="readonly")
-            
-            elif widget.cget('image') == 'pyimage1':
+
+            elif widget.cget("image") == "pyimage1":
 
                 def mcp_check(e):
                     if hashcrypt(str(ent.get())) == str(mc_ls[0]):
@@ -312,7 +310,6 @@ class passwordmenu:
                             "Wrong Password", "Enter the correct password"
                         )
                         masterc.destroy()
-                    
 
                 masterc = Toplevel()
                 masterc.title("Verification")
@@ -380,6 +377,7 @@ class addedit:
             passid_dict[j + 1] = passid_ls[j]
 
         if (editr == "yes") and (addr == "no"):
+
             def editing(*event):
                 try:
                     passid_int = int(id_ent.get())
@@ -417,16 +415,20 @@ class addedit:
                                             + str(ele)
                                         )
                                         mydb.commit()
-                                        messagebox.showinfo("Success", "Data edited successfully")
+                                        messagebox.showinfo(
+                                            "Success", "Data edited successfully"
+                                        )
                                         passwordmenu(psl, str(uid), close, open_e)
                                         adk.destroy()
                                     else:
                                         messagebox.showerror(
-                                            "Wrong password", "Please enter correct Master Password"
+                                            "Wrong password",
+                                            "Please enter correct Master Password",
                                         )
                                 else:
-                                    messagebox.showerror("Unsuccessful", "Passwords don't match!")
-
+                                    messagebox.showerror(
+                                        "Unsuccessful", "Passwords don't match!"
+                                    )
 
                             def revert():
                                 mycur.execute(
@@ -452,55 +454,103 @@ class addedit:
                             adk.iconbitmap("images\\1.ico")
                             adk.configure(bg="#26242f")
 
-                            site_lbl = Label(adk, text="Website:", font=("", 13), bg="#26242f", fg="white")
+                            site_lbl = Label(
+                                adk,
+                                text="Website:",
+                                font=("", 13),
+                                bg="#26242f",
+                                fg="white",
+                            )
                             site_lbl.grid(row=1, column=1, padx=10, pady=10, sticky=W)
 
-                            site_ent = Entry(adk, bg="#26242f", fg="white", font=("", 13))
+                            site_ent = Entry(
+                                adk, bg="#26242f", fg="white", font=("", 13)
+                            )
                             site_ent.grid(row=1, column=2, padx=10, pady=10)
 
                             usern_lbl = Label(
-                                adk, text="Username:", font=("", 13), bg="#26242f", fg="white"
+                                adk,
+                                text="Username:",
+                                font=("", 13),
+                                bg="#26242f",
+                                fg="white",
                             )
                             usern_lbl.grid(row=2, column=1, padx=10, pady=10, sticky=W)
 
-                            usern_ent = Entry(adk, bg="#26242f", fg="white", font=("", 13))
+                            usern_ent = Entry(
+                                adk, bg="#26242f", fg="white", font=("", 13)
+                            )
                             usern_ent.grid(row=2, column=2, padx=10, pady=10)
 
-                            pass_lbl = Label(adk, text="Password:", font=("", 13), bg="#26242f", fg="white")
+                            pass_lbl = Label(
+                                adk,
+                                text="Password:",
+                                font=("", 13),
+                                bg="#26242f",
+                                fg="white",
+                            )
                             pass_lbl.grid(row=3, column=1, padx=10, pady=10, sticky=W)
 
-                            pass_ent = Entry(adk, bg="#26242f", fg="white", font=("", 13))
+                            pass_ent = Entry(
+                                adk, bg="#26242f", fg="white", font=("", 13)
+                            )
                             pass_ent.grid(row=3, column=2, padx=10, pady=10)
 
                             repass_lbl = Label(
-                                adk, text="Re-Enter Password:", font=("", 13), bg="#26242f", fg="white"
+                                adk,
+                                text="Re-Enter Password:",
+                                font=("", 13),
+                                bg="#26242f",
+                                fg="white",
                             )
                             repass_lbl.grid(row=4, column=1, padx=10, pady=10, sticky=W)
 
-                            repass_ent = Entry(adk, bg="#26242f", fg="white", font=("", 13))
+                            repass_ent = Entry(
+                                adk, bg="#26242f", fg="white", font=("", 13)
+                            )
                             repass_ent.grid(row=4, column=2, padx=10, pady=10)
 
                             mpass_lbl = Label(
-                                adk, text="Master Password:", font=("", 13), bg="#26242f", fg="white"
+                                adk,
+                                text="Master Password:",
+                                font=("", 13),
+                                bg="#26242f",
+                                fg="white",
                             )
                             mpass_lbl.grid(row=5, column=1, padx=10, pady=10, sticky=W)
 
-                            mpass_ent = Entry(adk, bg="#26242f", fg="white", font=("", 13), show="•")
+                            mpass_ent = Entry(
+                                adk, bg="#26242f", fg="white", font=("", 13), show="•"
+                            )
                             mpass_ent.grid(row=5, column=2, padx=10, pady=10)
-                            addedit_btn = Button(adk, font=("", 13), bg="#26242f", fg="white", command=edits, text="Save")
-                            addedit_btn.grid(row=6, column=1, columnspan=2, padx=10, pady=20)
+                            addedit_btn = Button(
+                                adk,
+                                font=("", 13),
+                                bg="#26242f",
+                                fg="white",
+                                command=edits,
+                                text="Save",
+                            )
+                            addedit_btn.grid(
+                                row=6, column=1, columnspan=2, padx=10, pady=20
+                            )
 
                             revert_btn = Button(
-                            adk,text="Revert", 
-                            font=("", 13), bg="#26242f", 
-                            fg="white", command=revert,
+                                adk,
+                                text="Revert",
+                                font=("", 13),
+                                bg="#26242f",
+                                fg="white",
+                                command=revert,
                             )
                             revert_btn.grid(row=6, column=2, padx=10, pady=20)
-                            
+
                             Label(
                                 adk,
                                 text="(Master Password cannot be edited here. Enter the correct Master Password)",
-                                font=("", 12), bg="#26242f", fg="white",
+                                font=("", 12),
+                                bg="#26242f",
+                                fg="white",
                             ).grid(row=7, column=1, columnspan=2, pady=20)
 
                             adk.focus_force
@@ -565,7 +615,9 @@ class addedit:
             adk.iconbitmap("images\\1.ico")
             adk.configure(bg="#26242f")
 
-            site_lbl = Label(adk, text="Website:", font=("", 13), bg="#26242f", fg="white")
+            site_lbl = Label(
+                adk, text="Website:", font=("", 13), bg="#26242f", fg="white"
+            )
             site_lbl.grid(row=1, column=1, padx=10, pady=10, sticky=W)
 
             site_ent = Entry(adk, bg="#26242f", fg="white", font=("", 13))
@@ -579,7 +631,9 @@ class addedit:
             usern_ent = Entry(adk, bg="#26242f", fg="white", font=("", 13))
             usern_ent.grid(row=2, column=2, padx=10, pady=10)
 
-            pass_lbl = Label(adk, text="Password:", font=("", 13), bg="#26242f", fg="white")
+            pass_lbl = Label(
+                adk, text="Password:", font=("", 13), bg="#26242f", fg="white"
+            )
             pass_lbl.grid(row=3, column=1, padx=10, pady=10, sticky=W)
 
             pass_ent = Entry(adk, bg="#26242f", fg="white", font=("", 13))
@@ -600,9 +654,11 @@ class addedit:
 
             mpass_ent = Entry(adk, bg="#26242f", fg="white", font=("", 13), show="•")
             mpass_ent.grid(row=5, column=2, padx=10, pady=10)
-            addedit_btn = Button(adk, text="none", font=("", 13), bg="#26242f", fg="white")
+            addedit_btn = Button(
+                adk, text="none", font=("", 13), bg="#26242f", fg="white"
+            )
             addedit_btn.grid(row=6, column=1, columnspan=2, padx=10, pady=20)
-            
+
             addedit_btn.configure(command=adds, text="Add")
             optional = Label(
                 adk,
@@ -656,14 +712,16 @@ class loading_screen:
 
 
 ########################## FUNCTOINS ###############################
-def internet_stat(url = "https://www.google.com/", timeout=3):
+def internet_stat(url="https://www.google.com/", timeout=3):
     try:
         r = requests.head(url=url, timeout=timeout)
         return True
     except requests.ConnectionError as e:
         return False
 
+
 net_stat = internet_stat()
+
 
 def lbk_rootw():
     global lpg
@@ -688,7 +746,7 @@ def ui(uid):
         psl.destroy()
         open("cache.txt", "w")
         rootw()
-    
+
     def delete(e):
         try:
             pass_ls = passdget(uid)
@@ -702,9 +760,7 @@ def ui(uid):
                     ddk.destroy()
                 else:
                     dele = passid_dict[passid_int]
-                    mycur.execute(
-                        "DELETE FROM myp_data WHERE passId = " + str(dele)
-                    )
+                    mycur.execute("DELETE FROM myp_data WHERE passId = " + str(dele))
                     mydb.commit()
                     passwordmenu(psl, str(uid), close, open_e)
                     ddk.destroy()
@@ -734,7 +790,7 @@ def ui(uid):
         for j in range(len(passid_ls)):
             passid_dict[j + 1] = passid_ls[j]
 
-        mydb.commit()    
+        mydb.commit()
 
         ddk = Tk()
         ddk.title("Delete Data")
@@ -761,7 +817,6 @@ def ui(uid):
 
         ddk.mainloop()
 
-    
     y = "yes"
     n = "no"
 
@@ -875,7 +930,6 @@ def ui(uid):
         system("python main.py")
 
     def exp_data():
-        
         def mc_check(*e):
             if hashcrypt(str(ent.get())) == str(pass_ls[0]):
                 des.destroy()
@@ -892,7 +946,9 @@ def ui(uid):
                     for i in range(len(ls)):
                         globals()[f"expd{i+1}"] = list(ls[i])
 
-                    mycur.execute("SELECT loginPass FROM myp_data WHERE userId = " + str(uid))
+                    mycur.execute(
+                        "SELECT loginPass FROM myp_data WHERE userId = " + str(uid)
+                    )
                     pls = mycur.fetchall()
                     pls_ = []
                     for i in pls:
@@ -910,7 +966,7 @@ def ui(uid):
                     csv_w = csv.writer(file)
                     for i in range(len(pls_)):
                         csv_w.writerow(globals()[f"expd{i+1}"])
-                    file.close() 
+                    file.close()
             else:
                 messagebox.showerror("Wrong Password", "Enter the correct password")
                 des.destroy()
@@ -931,7 +987,7 @@ def ui(uid):
         ent.grid(row=1, column=2, padx=10, pady=10)
 
         ent.bind("<Return>", mc_check)
-    
+
     def deluser():
         def mc_check(e):
             if hashcrypt(str(ent.get())) == str(pass_ls[0]):
@@ -993,7 +1049,7 @@ def ui(uid):
     open_e = ImageTk.PhotoImage(Image.open("images\\3.png"))
 
     passwordmenu(psl, str(uid), close, open_e)
-    
+
     menu = Menu(psl, fg="white", background="#26242f", font=("", 20))
     psl.config(menu=menu)
 
@@ -1168,18 +1224,18 @@ def signup_page():
             intst = internet_stat()
             if intst == True:
                 insintousers(
-                    firstName = str(f_name_ent.get()),
-                    lastName = str(l_name_ent.get()),
-                    userName = str(u_name_ent.get()),
-                    eMail = str(email_ent.get()),
-                    masterPass= str(upass_ent.get())
+                    firstName=str(f_name_ent.get()),
+                    lastName=str(l_name_ent.get()),
+                    userName=str(u_name_ent.get()),
+                    eMail=str(email_ent.get()),
+                    masterPass=str(upass_ent.get()),
                 )
             else:
                 insintousers_eno(
-                    firstName = str(f_name_ent.get()),
-                    lastName = str(l_name_ent.get()),
-                    userName = str(u_name_ent.get()),
-                    masterPass = str(upass_ent.get())
+                    firstName=str(f_name_ent.get()),
+                    lastName=str(l_name_ent.get()),
+                    userName=str(u_name_ent.get()),
+                    masterPass=str(upass_ent.get()),
                 )
             messagebox.showinfo(
                 "Successfully Signed Up", "You have successfull created your account"
@@ -1209,8 +1265,9 @@ def signup_page():
             else:
                 upass_ent.config(show="•")
                 urepass_ent.config(show="•")
-        
-        if net_stat == True:    
+
+        if net_stat == True:
+
             def emailc(*event):
                 def otpc(*event):
                     global urepass_ent
@@ -1290,7 +1347,8 @@ def signup_page():
                         )
                     else:
                         messagebox.showerror(
-                            "Wrong OTP", "The entered otp is wrong.\nPlease check again."
+                            "Wrong OTP",
+                            "The entered otp is wrong.\nPlease check again.",
                         )
 
                 loading_screen(spg, 6000)
@@ -1312,7 +1370,11 @@ def signup_page():
                         print(otp)
                         global otp_lbl
                         otp_lbl = Label(
-                            spg, text="OTP:      ", font=("", 14), bg="#26242f", fg="white"
+                            spg,
+                            text="OTP:      ",
+                            font=("", 14),
+                            bg="#26242f",
+                            fg="white",
                         )
                         global otp_ent
                         otp_ent = Entry(spg, font=("", 14), bg="#26242f", fg="white")
@@ -1327,7 +1389,9 @@ def signup_page():
                 messagebox.showerror("Duplicate found", "This username already exits!")
             else:
                 if f_name_ent.get() == "":
-                    messagebox.showerror("Fill Everything", "Please enter a First name.")
+                    messagebox.showerror(
+                        "Fill Everything", "Please enter a First name."
+                    )
                 elif u_name_ent.get() == "":
                     messagebox.showerror("Fill Everything", "Please enter a username.")
                 else:
@@ -1349,7 +1413,9 @@ def signup_page():
                 messagebox.showerror("Duplicate found", "This username already exits!")
             else:
                 if f_name_ent.get() == "":
-                    messagebox.showerror("Fill Everything", "Please enter a First name.")
+                    messagebox.showerror(
+                        "Fill Everything", "Please enter a First name."
+                    )
                 elif u_name_ent.get() == "":
                     messagebox.showerror("Fill Everything", "Please enter a username.")
                 else:
@@ -1422,7 +1488,6 @@ def signup_page():
                     up_btn.grid(
                         row=11, column=1, columnspan=2, padx=10, pady=10, ipadx=100
                     )
-
 
     global f_name_ent
     f_name_lbl = Label(spg, text="First Name:", font=("", 14), bg="#26242f", fg="white")

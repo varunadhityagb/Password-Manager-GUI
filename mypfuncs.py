@@ -17,12 +17,13 @@ def shbtn(cbvar, pass_ent):
     else:
         pass_ent.config(show="•")
 
+
 global mysql_password
-mysql_password = ''
+mysql_password = ""
 try:
-    p1 = open('sqlp.txt', 'r')
+    p1 = open("sqlp.txt", "r")
 except:
-    p = open('sqlp.txt', "w+")
+    p = open("sqlp.txt", "w+")
 
     def mysql_passd():
         def mps_enter(*e):
@@ -33,27 +34,58 @@ except:
             getpass_sql.destroy()
 
         getpass_sql = Tk()
-        getpass_sql.config(bg = "#26242f")
+        getpass_sql.config(bg="#26242f")
         getpass_sql.title("MySQL Password")
         getpass_sql.geometry("550x150")
-        getpass_sql.resizable(0,0)
+        getpass_sql.resizable(0, 0)
         getpass_sql.iconbitmap("images\\1.ico")
 
         mps_cb_style = ttk.Style()
-        mps_cb_style.configure("R.TCheckbutton", foreground="white", background="#26242f")
+        mps_cb_style.configure(
+            "R.TCheckbutton", foreground="white", background="#26242f"
+        )
 
         mps_passkey = StringVar()
         mps_cbvar = IntVar(value=0)
 
-        mps_lbl = Label(getpass_sql, text="Enter your MySQL Password :", font=("", 14), bg="#26242f", fg="white")
-        mps_ent = Entry(getpass_sql, textvariable=mps_passkey, show="•", font=("", 14), bg="#26242f", fg="white")
-        mps_btn = Button(getpass_sql, text='Enter', font=("", 14), width =20, bg='#26242f', fg='white', command=mps_enter)
-        mps_showpass_cb = ttk.Checkbutton(getpass_sql, text="Show Password", variable=mps_cbvar, onvalue=1, offvalue=0, command=lambda: shbtn(mps_cbvar, mps_ent), style="R.TCheckbutton")
+        mps_lbl = Label(
+            getpass_sql,
+            text="Enter your MySQL Password :",
+            font=("", 14),
+            bg="#26242f",
+            fg="white",
+        )
+        mps_ent = Entry(
+            getpass_sql,
+            textvariable=mps_passkey,
+            show="•",
+            font=("", 14),
+            bg="#26242f",
+            fg="white",
+        )
+        mps_btn = Button(
+            getpass_sql,
+            text="Enter",
+            font=("", 14),
+            width=20,
+            bg="#26242f",
+            fg="white",
+            command=mps_enter,
+        )
+        mps_showpass_cb = ttk.Checkbutton(
+            getpass_sql,
+            text="Show Password",
+            variable=mps_cbvar,
+            onvalue=1,
+            offvalue=0,
+            command=lambda: shbtn(mps_cbvar, mps_ent),
+            style="R.TCheckbutton",
+        )
 
         mps_ent.bind("<Return>", mps_enter)
 
-        mps_lbl.grid(row=0, column= 0, padx=10, pady=10)
-        mps_ent.grid(row=0, column= 1, padx=10, pady=10)
+        mps_lbl.grid(row=0, column=0, padx=10, pady=10)
+        mps_ent.grid(row=0, column=1, padx=10, pady=10)
         mps_showpass_cb.grid(row=1, column=1, padx=10)
         mps_btn.grid(row=2, column=0, columnspan=2, pady=10, padx=10)
 
@@ -62,21 +94,21 @@ except:
     try:
         d = open("cache.txt", "r")
         da = p.read()
-        if da == '':
+        if da == "":
             mysql_passd()
         else:
             pass
-    except :
+    except:
         da = p.read()
-        if da == '':
+        if da == "":
             mysql_passd()
         else:
             pass
 
 try:
-    mysql_password = open('sqlp.txt','r').read()
+    mysql_password = open("sqlp.txt", "r").read()
 except:
-    mysql_password = 'mysql'
+    mysql_password = "mysql"
 
 ######################## CONNECTING SQL ###############################################
 try:
@@ -91,11 +123,16 @@ except:
 
 #########################   VARIABLES   ##################################################
 # characters
-lcase, ucase, num, alpha, pun = list(ascii_lowercase), list(ascii_uppercase),\
-     list(digits), list(ascii_letters), ['!','@','#','$','%','^','&','*','-','_','/']
-charst = lcase + ucase + num 
+lcase, ucase, num, alpha, pun = (
+    list(ascii_lowercase),
+    list(ascii_uppercase),
+    list(digits),
+    list(ascii_letters),
+    ["!", "@", "#", "$", "%", "^", "&", "*", "-", "_", "/"],
+)
+charst = lcase + ucase + num
 
-#defining encryption variables
+# defining encryption variables
 lcase_crypt = [
     'M','L','W','U','Z','C','H','A','N','J','O','P','I','S','T','D','G','K','X','E','B','Y','R','Q','V','F'
     ]
