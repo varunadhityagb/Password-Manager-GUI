@@ -3,9 +3,7 @@ import smtplib
 import ssl
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-
 import mysql.connector as sqlc
-
 from mypfuncs import *
 
 ##################################### CONNECTING MySQL ################################
@@ -14,7 +12,8 @@ mydb = sqlc.connect(
     host="localhost",
     user="root",
     passwd=mysql_password,
-)
+    )
+
 mycur = mydb.cursor()
 
 ##################################### FUNCTIONS ################################
@@ -62,14 +61,10 @@ def insintodata(website, loginName, loginPass, userId):
     action = (
         f"""INSERT INTO myp_data (website, loginName, loginPass, userId) 
         VALUES ('"""
-        + website
-        + "', '"
-        + loginName
-        + "', '"
-        + loginPass
-        + "', '"
-        + userId
-        + "');"
+        + website + "', '"
+        + loginName + "', '"
+        + loginPass + "', '"
+        + userId + "');"
     )
     mycur.execute(action)
     mydb.commit()
@@ -80,7 +75,6 @@ def otpmail(receivermail):
     global otp
     recmail = receivermail
     otp = random.randint(100000, 999999)
-
     msg = MIMEMultipart("alternative")
     msg["Subject"] = "OTP for Login"
     msg["From"] = "manageyourpass91@gmail.com"
@@ -105,7 +99,6 @@ def otpmail(receivermail):
 
     part = MIMEText(html, "html")
     msg.attach(part)
-
     context = ssl.create_default_context()
     with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as server:
         server.login("manageyourpass91@gmail.com", "mokktrqhxujqrrtd")
@@ -138,7 +131,6 @@ def byemail(receivermail):
 
     part = MIMEText(html, "html")
     msg.attach(part)
-
     context = ssl.create_default_context()
     with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as server:
         server.login("manageyourpass91@gmail.com", "mokktrqhxujqrrtd")
