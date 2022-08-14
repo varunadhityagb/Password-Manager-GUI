@@ -9,6 +9,7 @@ from tkinter.font import BOLD
 from database import *
 from mypfuncs import *
 from PIL import Image, ImageTk
+import webbrowser as wb
 
 
 ########################## CHECKING AND CREATING DATABASE #############################
@@ -73,6 +74,48 @@ def passdget(uid):
 
 class passwordmenu:
     def __init__(self, root, uid, close, open_e):
+
+        def openthat(*e):
+            mycur.execute("SELECT passId FROM myp_data WHERE userId = " + str(uid))
+            passids = mycur.fetchall()
+            passid_ls = []
+            for i in passids:
+                passid_ls.extend(i)
+
+            passid_dict = {}
+
+            for j in range(len(passid_ls)):
+                passid_dict[j + 1] = passid_ls[j]
+                
+            command = 'select website from myp_data where passId =' + str(passid_dict[int(ent.get())])
+            mycur.execute(command)
+            site_ls = []
+            for i in mycur:
+                site_ls.append(i)
+            site = str(site_ls[0])[2:-3]
+            print(site)
+            wb.open(site)
+            link_win.destroy()
+
+        def link_click():
+            global link_win
+            global ent
+            link_win = Toplevel()
+            link_win.config(bg="#26242f")
+            link_win.title("Password Manager")
+            link_win.iconbitmap("images\\1.ico")
+            link_win.geometry("400x50")
+            link_win.resizable(0, 0)
+
+            lbl = Label(link_win, text="Enter the ID: ", bg='#26242f', fg='white', font=("", 14))
+            ent = Entry(link_win, fg='black', font=("", 14), borderwidth=1)
+
+            lbl.grid(row=1, column=1, padx=10, pady=10)
+            ent.grid(row=1, column=2, padx=10, pady=10)
+            ent.bind('<Return>', openthat)
+
+            link_win.mainloop()
+
         global len_1
         mycur.execute("USE myp;")
 
@@ -186,13 +229,16 @@ class passwordmenu:
                     bg="#26242f",
                     borderwidth=0,
                 )
-                self.site_lbl = Label(
+                self.site_lbl = Button(
                     self.second_frame,
                     text=self.uls[i][0],
                     font=("", 12),
                     fg="white",
                     bg="#26242f",
+                    activebackground= '#26242f',
                     borderwidth=0,
+                    width=30,
+                    command=link_click,
                 )
                 self.indent_lbl = Label(
                     self.second_frame,
