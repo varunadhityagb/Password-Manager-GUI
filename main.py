@@ -757,7 +757,7 @@ class loading_screen:
         top.after(0, update, 0)
 
 
-########################## FUNCTOINS ###############################
+########################## FUNCTIONS ###############################
 def internet_stat(url="https://www.google.com/", timeout=3):
     try:
         r = requests.head(url=url, timeout=timeout)
@@ -1109,7 +1109,7 @@ def ui(uid):
 
     menu.add_command(label="Add data", command=adddata)
     menu.add_command(label="Edit data", command=editdata)
-    menu.add_command(label="Delte data", command=deletedata)
+    menu.add_command(label="Delete data", command=deletedata)
     menu.add_command(label="Sign out", command=signout)
     menu.add_cascade(label="•••", menu=more)
 
