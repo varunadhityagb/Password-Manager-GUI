@@ -34,7 +34,7 @@ except:
             getpass_sql.destroy()
 
         getpass_sql = Tk()
-        getpass_sql.config(bg="#26242f")
+        getpass_sql.config(bg="#1e1e1e")
         getpass_sql.title("MySQL Password")
         getpass_sql.geometry("550x150")
         getpass_sql.resizable(0, 0)
@@ -42,7 +42,7 @@ except:
 
         mps_cb_style = ttk.Style()
         mps_cb_style.configure(
-            "R.TCheckbutton", foreground="white", background="#26242f"
+            "R.TCheckbutton", foreground="white", background="#1e1e1e"
         )
 
         mps_passkey = StringVar()
@@ -52,7 +52,7 @@ except:
             getpass_sql,
             text="Enter your MySQL Password :",
             font=("", 14),
-            bg="#26242f",
+            bg="#1e1e1e",
             fg="white",
         )
         mps_ent = Entry(
@@ -60,7 +60,7 @@ except:
             textvariable=mps_passkey,
             show="•",
             font=("", 14),
-            bg="#26242f",
+            bg="#1e1e1e",
             fg="white",
         )
         mps_btn = Button(
@@ -68,7 +68,7 @@ except:
             text="Enter",
             font=("", 14),
             width=20,
-            bg="#26242f",
+            bg="#1e1e1e",
             fg="white",
             command=mps_enter,
         )

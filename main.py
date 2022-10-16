@@ -101,13 +101,13 @@ class passwordmenu:
             global link_win
             global ent
             link_win = Toplevel()
-            link_win.config(bg="#26242f")
+            link_win.config(bg="#1e1e1e")
             link_win.title("Password Manager")
             link_win.iconbitmap("images\\1.ico")
             link_win.geometry("400x50")
             link_win.resizable(0, 0)
 
-            lbl = Label(link_win, text="Enter the ID: ", bg='#26242f', fg='white', font=("", 14))
+            lbl = Label(link_win, text="Enter the ID: ", bg='#1e1e1e', fg='white', font=("", 14))
             ent = Entry(link_win, fg='black', font=("", 14), borderwidth=1)
 
             lbl.grid(row=1, column=1, padx=10, pady=10)
@@ -120,12 +120,12 @@ class passwordmenu:
         mycur.execute("USE myp;")
 
         self.main_frame = Frame(
-            root, width=1340, height=650, background="#26242f", borderwidth=0
+            root, width=1340, height=650, background="#1e1e1e", borderwidth=0
         )
         self.main_frame.grid(row=1, column=0)
 
         self.main_canvas = Canvas(
-            self.main_frame, borderwidth=0, background="#26242f", width=1340, height=650
+            self.main_frame, borderwidth=0, background="#1e1e1e", width=1340, height=650
         )
         self.main_canvas.pack(side=LEFT, fill=BOTH, expand=YES)
 
@@ -149,48 +149,48 @@ class passwordmenu:
         self.second_frame = Frame(
             self.main_canvas,
             borderwidth=0,
-            background="#26242f",
+            background="#1e1e1e",
             width=1340,
             height=650,
         )
         self.main_canvas.create_window((0, 0), window=self.second_frame)
 
         self.num_header = Label(
-            self.second_frame, text="Id", font=("", 14, BOLD), bg="#26242f", fg="white"
+            self.second_frame, text="Id", font=("", 14, BOLD), bg="#1e1e1e", fg="white"
         )
         self.site_header = Label(
             self.second_frame,
             text="Website",
             font=("", 14, BOLD),
-            bg="#26242f",
+            bg="#1e1e1e",
             fg="white",
         )
         self.indent_header = Label(
             self.second_frame,
             text="",
             font=("                        ", 14),
-            bg="#26242f",
+            bg="#1e1e1e",
             fg="white",
         )
         self.uname_header = Label(
             self.second_frame,
             text="Username",
             font=("", 14, BOLD),
-            bg="#26242f",
+            bg="#1e1e1e",
             fg="white",
         )
         self.indent_header2 = Label(
             self.second_frame,
             text="",
             font=("                        ", 14),
-            bg="#26242f",
+            bg="#1e1e1e",
             fg="white",
         )
         self.pass_header = Label(
             self.second_frame,
             text="Password",
             font=("", 14, BOLD),
-            bg="#26242f",
+            bg="#1e1e1e",
             fg="white",
         )
 
@@ -226,7 +226,7 @@ class passwordmenu:
                     text=i + 1,
                     font=("", 12),
                     fg="white",
-                    bg="#26242f",
+                    bg="#1e1e1e",
                     borderwidth=0,
                 )
                 self.site_lbl = Button(
@@ -234,8 +234,8 @@ class passwordmenu:
                     text=self.uls[i][0],
                     font=("", 12),
                     fg="white",
-                    bg="#26242f",
-                    activebackground= '#26242f',
+                    bg="#1e1e1e",
+                    activebackground= '#1e1e1e',
                     borderwidth=0,
                     width=30,
                     command=link_click,
@@ -245,21 +245,21 @@ class passwordmenu:
                     text="                        ",
                     font=("", 12),
                     fg="white",
-                    bg="#26242f",
+                    bg="#1e1e1e",
                 )
                 self.uname_l = Label(
                     self.second_frame,
                     text=self.uls[i][1],
                     font=("", 12),
                     fg="white",
-                    bg="#26242f",
+                    bg="#1e1e1e",
                 )
                 self.indent_lbl1 = Label(
                     self.second_frame,
                     text="                        ",
                     font=("", 12),
                     fg="white",
-                    bg="#26242f",
+                    bg="#1e1e1e",
                 )
                 self.pass_ent = Entry(
                     self.second_frame,
@@ -285,8 +285,8 @@ class passwordmenu:
             self.second_frame,
             image=close,
             borderwidth=0,
-            bg="#26242f",
-            activebackground="#26242f",
+            bg="#1e1e1e",
+            activebackground="#1e1e1e",
         )
 
         self.showpass_btn.configure(command=lambda: showpass(open_e, self.showpass_btn))
@@ -360,18 +360,18 @@ class passwordmenu:
                 masterc = Toplevel()
                 masterc.title("Verification")
                 masterc.iconbitmap("images\\1.ico")
-                masterc.configure(bg="#26242f")
+                masterc.configure(bg="#1e1e1e")
 
                 lbl = Label(
                     masterc,
                     text="Enter Master Password: ",
                     font=("", 13),
                     fg="white",
-                    bg="#26242f",
+                    bg="#1e1e1e",
                 )
                 lbl.grid(row=1, column=1, padx=10, pady=10)
 
-                ent = Entry(masterc, font=("", 13), fg="white", bg="#26242f", show="•")
+                ent = Entry(masterc, font=("", 13), fg="white", bg="#1e1e1e", show="•")
                 ent.grid(row=1, column=2, padx=10, pady=10)
 
                 ent.bind("<Return>", mcp_check)
@@ -498,19 +498,19 @@ class addedit:
                             adk = Toplevel()
                             adk.title("Edit Data")
                             adk.iconbitmap("images\\1.ico")
-                            adk.configure(bg="#26242f")
+                            adk.configure(bg="#1e1e1e")
 
                             site_lbl = Label(
                                 adk,
                                 text="Website:",
                                 font=("", 13),
-                                bg="#26242f",
+                                bg="#1e1e1e",
                                 fg="white",
                             )
                             site_lbl.grid(row=1, column=1, padx=10, pady=10, sticky=W)
 
                             site_ent = Entry(
-                                adk, bg="#26242f", fg="white", font=("", 13)
+                                adk, bg="#1e1e1e", fg="white", font=("", 13)
                             )
                             site_ent.grid(row=1, column=2, padx=10, pady=10)
 
@@ -518,13 +518,13 @@ class addedit:
                                 adk,
                                 text="Username:",
                                 font=("", 13),
-                                bg="#26242f",
+                                bg="#1e1e1e",
                                 fg="white",
                             )
                             usern_lbl.grid(row=2, column=1, padx=10, pady=10, sticky=W)
 
                             usern_ent = Entry(
-                                adk, bg="#26242f", fg="white", font=("", 13)
+                                adk, bg="#1e1e1e", fg="white", font=("", 13)
                             )
                             usern_ent.grid(row=2, column=2, padx=10, pady=10)
 
@@ -532,13 +532,13 @@ class addedit:
                                 adk,
                                 text="Password:",
                                 font=("", 13),
-                                bg="#26242f",
+                                bg="#1e1e1e",
                                 fg="white",
                             )
                             pass_lbl.grid(row=3, column=1, padx=10, pady=10, sticky=W)
 
                             pass_ent = Entry(
-                                adk, bg="#26242f", fg="white", font=("", 13)
+                                adk, bg="#1e1e1e", fg="white", font=("", 13)
                             )
                             pass_ent.grid(row=3, column=2, padx=10, pady=10)
 
@@ -546,13 +546,13 @@ class addedit:
                                 adk,
                                 text="Re-Enter Password:",
                                 font=("", 13),
-                                bg="#26242f",
+                                bg="#1e1e1e",
                                 fg="white",
                             )
                             repass_lbl.grid(row=4, column=1, padx=10, pady=10, sticky=W)
 
                             repass_ent = Entry(
-                                adk, bg="#26242f", fg="white", font=("", 13)
+                                adk, bg="#1e1e1e", fg="white", font=("", 13)
                             )
                             repass_ent.grid(row=4, column=2, padx=10, pady=10)
 
@@ -560,19 +560,19 @@ class addedit:
                                 adk,
                                 text="Master Password:",
                                 font=("", 13),
-                                bg="#26242f",
+                                bg="#1e1e1e",
                                 fg="white",
                             )
                             mpass_lbl.grid(row=5, column=1, padx=10, pady=10, sticky=W)
 
                             mpass_ent = Entry(
-                                adk, bg="#26242f", fg="white", font=("", 13), show="•"
+                                adk, bg="#1e1e1e", fg="white", font=("", 13), show="•"
                             )
                             mpass_ent.grid(row=5, column=2, padx=10, pady=10)
                             addedit_btn = Button(
                                 adk,
                                 font=("", 13),
-                                bg="#26242f",
+                                bg="#1e1e1e",
                                 fg="white",
                                 command=edits,
                                 text="Save",
@@ -585,7 +585,7 @@ class addedit:
                                 adk,
                                 text="Revert",
                                 font=("", 13),
-                                bg="#26242f",
+                                bg="#1e1e1e",
                                 fg="white",
                                 command=revert,
                             )
@@ -595,7 +595,7 @@ class addedit:
                                 adk,
                                 text="(Master Password cannot be edited here. Enter the correct Master Password)",
                                 font=("", 12),
-                                bg="#26242f",
+                                bg="#1e1e1e",
                                 fg="white",
                             ).grid(row=7, column=1, columnspan=2, pady=20)
 
@@ -630,21 +630,21 @@ class addedit:
             edid = Toplevel()
             edid.title("Edit Data")
             edid.iconbitmap("images\\1.ico")
-            edid.configure(bg="#26242f")
+            edid.configure(bg="#1e1e1e")
 
             lbl = Label(
                 edid,
                 text="Enter Master Password: ",
                 font=("", 13),
                 fg="white",
-                bg="#26242f",
+                bg="#1e1e1e",
             )
-            ent = Entry(edid, font=("", 13), fg="white", bg="#26242f", show="•")
+            ent = Entry(edid, font=("", 13), fg="white", bg="#1e1e1e", show="•")
 
             id_lbl = Label(
-                edid, text="Enter the Id : ", font=("", 13), bg="#26242f", fg="white"
+                edid, text="Enter the Id : ", font=("", 13), bg="#1e1e1e", fg="white"
             )
-            id_ent = Entry(edid, bg="#26242f", fg="white", font=("", 13))
+            id_ent = Entry(edid, bg="#1e1e1e", fg="white", font=("", 13))
 
             lbl.grid(row=1, column=1, padx=10, pady=10)
             ent.grid(row=1, column=2, padx=10, pady=10)
@@ -659,49 +659,49 @@ class addedit:
             adk = Toplevel()
             adk.title("Add Data")
             adk.iconbitmap("images\\1.ico")
-            adk.configure(bg="#26242f")
+            adk.configure(bg="#1e1e1e")
 
             site_lbl = Label(
-                adk, text="Website:", font=("", 13), bg="#26242f", fg="white"
+                adk, text="Website:", font=("", 13), bg="#1e1e1e", fg="white"
             )
             site_lbl.grid(row=1, column=1, padx=10, pady=10, sticky=W)
 
-            site_ent = Entry(adk, bg="#26242f", fg="white", font=("", 13))
+            site_ent = Entry(adk, bg="#1e1e1e", fg="white", font=("", 13))
             site_ent.grid(row=1, column=2, padx=10, pady=10)
 
             usern_lbl = Label(
-                adk, text="Username:", font=("", 13), bg="#26242f", fg="white"
+                adk, text="Username:", font=("", 13), bg="#1e1e1e", fg="white"
             )
             usern_lbl.grid(row=2, column=1, padx=10, pady=10, sticky=W)
 
-            usern_ent = Entry(adk, bg="#26242f", fg="white", font=("", 13))
+            usern_ent = Entry(adk, bg="#1e1e1e", fg="white", font=("", 13))
             usern_ent.grid(row=2, column=2, padx=10, pady=10)
 
             pass_lbl = Label(
-                adk, text="Password:", font=("", 13), bg="#26242f", fg="white"
+                adk, text="Password:", font=("", 13), bg="#1e1e1e", fg="white"
             )
             pass_lbl.grid(row=3, column=1, padx=10, pady=10, sticky=W)
 
-            pass_ent = Entry(adk, bg="#26242f", fg="white", font=("", 13))
+            pass_ent = Entry(adk, bg="#1e1e1e", fg="white", font=("", 13))
             pass_ent.grid(row=3, column=2, padx=10, pady=10)
 
             repass_lbl = Label(
-                adk, text="Re-Enter Password:", font=("", 13), bg="#26242f", fg="white"
+                adk, text="Re-Enter Password:", font=("", 13), bg="#1e1e1e", fg="white"
             )
             repass_lbl.grid(row=4, column=1, padx=10, pady=10, sticky=W)
 
-            repass_ent = Entry(adk, bg="#26242f", fg="white", font=("", 13))
+            repass_ent = Entry(adk, bg="#1e1e1e", fg="white", font=("", 13))
             repass_ent.grid(row=4, column=2, padx=10, pady=10)
 
             mpass_lbl = Label(
-                adk, text="Master Password:", font=("", 13), bg="#26242f", fg="white"
+                adk, text="Master Password:", font=("", 13), bg="#1e1e1e", fg="white"
             )
             mpass_lbl.grid(row=5, column=1, padx=10, pady=10, sticky=W)
 
-            mpass_ent = Entry(adk, bg="#26242f", fg="white", font=("", 13), show="•")
+            mpass_ent = Entry(adk, bg="#1e1e1e", fg="white", font=("", 13), show="•")
             mpass_ent.grid(row=5, column=2, padx=10, pady=10)
             addedit_btn = Button(
-                adk, text="none", font=("", 13), bg="#26242f", fg="white"
+                adk, text="none", font=("", 13), bg="#1e1e1e", fg="white"
             )
             addedit_btn.grid(row=6, column=1, columnspan=2, padx=10, pady=20)
 
@@ -710,7 +710,7 @@ class addedit:
                 adk,
                 text="(Generating Password is completely optioal.)",
                 font=("", 12),
-                bg="#26242f",
+                bg="#1e1e1e",
                 fg="white",
             )
             optional.grid(row=7, column=1, padx=10, pady=10)
@@ -718,7 +718,7 @@ class addedit:
                 adk,
                 text="Generate Password",
                 font=("", 13),
-                bg="#26242f",
+                bg="#1e1e1e",
                 fg="white",
                 command=generpass,
             )
@@ -841,20 +841,20 @@ def ui(uid):
         ddk = Tk()
         ddk.title("Delete Data")
         ddk.iconbitmap("images\\1.ico")
-        ddk.configure(bg="#26242f")
+        ddk.configure(bg="#1e1e1e")
 
         lbl = Label(
-            ddk, text="Enter the Id : ", font=("", 13), bg="#26242f", fg="white"
+            ddk, text="Enter the Id : ", font=("", 13), bg="#1e1e1e", fg="white"
         )
         lbl.grid(row=2, column=1, padx=10, pady=10)
 
-        ent = Entry(ddk, bg="#26242f", fg="white", font=("", 13))
+        ent = Entry(ddk, bg="#1e1e1e", fg="white", font=("", 13))
         ent.grid(row=2, column=2, padx=10, pady=10)
 
         lbl_p = Label(
-            ddk, text="Enter Master Password: ", font=("", 13), fg="white", bg="#26242f"
+            ddk, text="Enter Master Password: ", font=("", 13), fg="white", bg="#1e1e1e"
         )
-        ent_p = Entry(ddk, font=("", 13), fg="white", bg="#26242f", show="•")
+        ent_p = Entry(ddk, font=("", 13), fg="white", bg="#1e1e1e", show="•")
 
         lbl_p.grid(row=1, column=1, padx=10, pady=10)
         ent_p.grid(row=1, column=2, padx=10, pady=10)
@@ -902,25 +902,25 @@ def ui(uid):
         mstc = Toplevel()
         mstc.title("Confirmation")
         mstc.iconbitmap("images\\1.ico")
-        mstc.configure(bg="#26242f")
+        mstc.configure(bg="#1e1e1e")
 
         cb_style = ttk.Style()
-        cb_style.configure("R.TCheckbutton", foreground="white", background="#26242f")
+        cb_style.configure("R.TCheckbutton", foreground="white", background="#1e1e1e")
 
         omp_lbl = Label(
-            mstc, text="Old Master Password :", font=("", 13), bg="#26242f", fg="white"
+            mstc, text="Old Master Password :", font=("", 13), bg="#1e1e1e", fg="white"
         )
         omp_lbl.grid(row=1, column=1, padx=10, pady=10)
 
-        omp_ent = Entry(mstc, font=("", 13), fg="white", bg="#26242f", show="•")
+        omp_ent = Entry(mstc, font=("", 13), fg="white", bg="#1e1e1e", show="•")
         omp_ent.grid(row=1, column=2, padx=10, pady=10)
 
         nmp_lbl = Label(
-            mstc, text="New Master Password :", font=("", 13), bg="#26242f", fg="white"
+            mstc, text="New Master Password :", font=("", 13), bg="#1e1e1e", fg="white"
         )
         nmp_lbl.grid(row=2, column=1, padx=10, pady=10)
 
-        nmp_ent = Entry(mstc, font=("", 13), fg="white", bg="#26242f", show="•")
+        nmp_ent = Entry(mstc, font=("", 13), fg="white", bg="#1e1e1e", show="•")
         nmp_ent.grid(row=2, column=2, padx=10, pady=10)
         nmp_ent.bind("<Return>", mc_check)
 
@@ -939,7 +939,7 @@ def ui(uid):
             mstc,
             text="Change",
             font=("", 13),
-            bg="#26242f",
+            bg="#1e1e1e",
             fg="white",
             command=mc_check,
         )
@@ -1022,14 +1022,14 @@ def ui(uid):
         des = Toplevel()
         des.title("Verification")
         des.iconbitmap("images\\1.ico")
-        des.configure(bg="#26242f")
+        des.configure(bg="#1e1e1e")
 
         lbl = Label(
-            des, text="Master Password :", font=("", 13), bg="#26242f", fg="white"
+            des, text="Master Password :", font=("", 13), bg="#1e1e1e", fg="white"
         )
         lbl.grid(row=1, column=1, padx=10, pady=10)
 
-        ent = Entry(des, bg="#26242f", fg="white", font=("", 13), show="•")
+        ent = Entry(des, bg="#1e1e1e", fg="white", font=("", 13), show="•")
         ent.grid(row=1, column=2, padx=10, pady=10)
 
         ent.bind("<Return>", mc_check)
@@ -1071,14 +1071,14 @@ def ui(uid):
         des = Toplevel()
         des.title("Confirmation")
         des.iconbitmap("images\\1.ico")
-        des.configure(bg="#26242f")
+        des.configure(bg="#1e1e1e")
 
         lbl = Label(
-            des, text="Master Password :", font=("", 13), bg="#26242f", fg="white"
+            des, text="Master Password :", font=("", 13), bg="#1e1e1e", fg="white"
         )
         lbl.grid(row=1, column=1, padx=10, pady=10)
 
-        ent = Entry(des, bg="#26242f", fg="white", font=("", 13), show="•")
+        ent = Entry(des, bg="#1e1e1e", fg="white", font=("", 13), show="•")
         ent.grid(row=1, column=2, padx=10, pady=10)
 
         ent.bind("<Return>", mc_check)
@@ -1087,7 +1087,7 @@ def ui(uid):
     global pass_btn
     psl = Tk()
     psl.title("Passwords")
-    psl.config(bg="#26242f")
+    psl.config(bg="#1e1e1e")
     psl.state("zoomed")
     psl.iconbitmap("images\\1.ico")
 
@@ -1096,7 +1096,7 @@ def ui(uid):
 
     passwordmenu(psl, str(uid), close, open_e)
 
-    menu = Menu(psl, fg="white", background="#26242f", font=("", 20))
+    menu = Menu(psl, fg="white", background="#1e1e1e", font=("", 20))
     psl.config(menu=menu)
 
     more = Menu(menu)
@@ -1132,7 +1132,7 @@ def login_page():
         global user
         lpg = Tk()
         lpg.title("Login")
-        lpg.config(bg="#26242f")
+        lpg.config(bg="#1e1e1e")
         lpg.geometry("450x300")
         lpg.resizable(0, 0)
         lpg.iconbitmap("images\\1.ico")
@@ -1192,15 +1192,15 @@ def login_page():
         bk_arrow = ImageTk.PhotoImage(Image.open("images\\4.png"))
         ################# STYLES ##########################################
         cb_style = ttk.Style()
-        cb_style.configure("R.TCheckbutton", foreground="white", background="#26242f")
+        cb_style.configure("R.TCheckbutton", foreground="white", background="#1e1e1e")
 
         ###WIDGETS
         usern_lbl = Label(
-            lpg, text="Username:", font=("", 14), bg="#26242f", fg="white"
+            lpg, text="Username:", font=("", 14), bg="#1e1e1e", fg="white"
         )
-        pass_lbl = Label(lpg, text="Password:", font=("", 14), bg="#26242f", fg="white")
+        pass_lbl = Label(lpg, text="Password:", font=("", 14), bg="#1e1e1e", fg="white")
         pass_ent = Entry(
-            lpg, textvariable=passkey, show="•", font=("", 14), bg="#26242f", fg="white"
+            lpg, textvariable=passkey, show="•", font=("", 14), bg="#1e1e1e", fg="white"
         )
         pass_ent.bind("<Return>", login)
         in_btn = Button(
@@ -1209,7 +1209,7 @@ def login_page():
             command=login,
             font=("", 14),
             width=20,
-            bg="#26242f",
+            bg="#1e1e1e",
             fg="white",
         )
         showpass_cb = ttk.Checkbutton(
@@ -1225,9 +1225,9 @@ def login_page():
             lpg,
             image=bk_arrow,
             command=lbk_rootw,
-            activebackground="#26242f",
+            activebackground="#1e1e1e",
             borderwidth=0,
-            bg="#26242f",
+            bg="#1e1e1e",
         )
 
         # SHOWING THEM
@@ -1255,7 +1255,7 @@ def signup_page():
 
     spg = Tk()
     spg.title("Sign Up")
-    spg.config(bg="#26242f")
+    spg.config(bg="#1e1e1e")
     spg.geometry("450x600")
     spg.resizable(0, 0)
     spg.iconbitmap("images\\1.ico")
@@ -1324,7 +1324,7 @@ def signup_page():
 
                         cb_style = ttk.Style()
                         cb_style.configure(
-                            "R.TCheckbutton", foreground="white", background="#26242f"
+                            "R.TCheckbutton", foreground="white", background="#1e1e1e"
                         )
 
                         global upass_lbl
@@ -1332,7 +1332,7 @@ def signup_page():
                             spg,
                             text="Master Password:",
                             font=("", 14),
-                            bg="#26242f",
+                            bg="#1e1e1e",
                             fg="white",
                         )
                         global upass_ent
@@ -1341,7 +1341,7 @@ def signup_page():
                             textvariable=passkey,
                             show="•",
                             font=("", 14),
-                            bg="#26242f",
+                            bg="#1e1e1e",
                             fg="white",
                         )
                         global urepass_lbl
@@ -1349,7 +1349,7 @@ def signup_page():
                             spg,
                             text="Re-Enter Password:",
                             font=("", 14),
-                            bg="#26242f",
+                            bg="#1e1e1e",
                             fg="white",
                         )
                         global urepass_ent
@@ -1358,7 +1358,7 @@ def signup_page():
                             textvariable=repasskey,
                             show="•",
                             font=("", 14),
-                            bg="#26242f",
+                            bg="#1e1e1e",
                             fg="white",
                         )
                         urepass_ent.bind("<Return>", signup)
@@ -1419,11 +1419,11 @@ def signup_page():
                             spg,
                             text="OTP:      ",
                             font=("", 14),
-                            bg="#26242f",
+                            bg="#1e1e1e",
                             fg="white",
                         )
                         global otp_ent
-                        otp_ent = Entry(spg, font=("", 14), bg="#26242f", fg="white")
+                        otp_ent = Entry(spg, font=("", 14), bg="#1e1e1e", fg="white")
                         otp_ent.bind("<Return>", otpc)
 
                         otp_lbl.grid(row=7, column=1, padx=10, pady=10)
@@ -1444,10 +1444,10 @@ def signup_page():
 
                     global email_lbl
                     email_lbl = Label(
-                        spg, text="E-Mail:   ", font=("", 14), bg="#26242f", fg="white"
+                        spg, text="E-Mail:   ", font=("", 14), bg="#1e1e1e", fg="white"
                     )
                     global email_ent
-                    email_ent = Entry(spg, font=("", 14), bg="#26242f", fg="white")
+                    email_ent = Entry(spg, font=("", 14), bg="#1e1e1e", fg="white")
                     email_ent.bind("<Return>", emailc)
 
                     email_lbl.grid(row=6, column=1, padx=10, pady=10)
@@ -1467,7 +1467,7 @@ def signup_page():
                 else:
                     cb_style = ttk.Style()
                     cb_style.configure(
-                        "R.TCheckbutton", foreground="white", background="#26242f"
+                        "R.TCheckbutton", foreground="white", background="#1e1e1e"
                     )
 
                     global upass_lbl
@@ -1475,7 +1475,7 @@ def signup_page():
                         spg,
                         text="Master Password:",
                         font=("", 14),
-                        bg="#26242f",
+                        bg="#1e1e1e",
                         fg="white",
                     )
                     global upass_ent
@@ -1484,7 +1484,7 @@ def signup_page():
                         textvariable=passkey,
                         show="•",
                         font=("", 14),
-                        bg="#26242f",
+                        bg="#1e1e1e",
                         fg="white",
                     )
                     global urepass_lbl
@@ -1492,7 +1492,7 @@ def signup_page():
                         spg,
                         text="Re-Enter Password:",
                         font=("", 14),
-                        bg="#26242f",
+                        bg="#1e1e1e",
                         fg="white",
                     )
                     global urepass_ent
@@ -1501,7 +1501,7 @@ def signup_page():
                         textvariable=repasskey,
                         show="•",
                         font=("", 14),
-                        bg="#26242f",
+                        bg="#1e1e1e",
                         fg="white",
                     )
                     urepass_ent.bind("<Return>", signup)
@@ -1536,25 +1536,25 @@ def signup_page():
                     )
 
     global f_name_ent
-    f_name_lbl = Label(spg, text="First Name:", font=("", 14), bg="#26242f", fg="white")
-    f_name_ent = Entry(spg, font=("", 14), bg="#26242f", fg="white")
+    f_name_lbl = Label(spg, text="First Name:", font=("", 14), bg="#1e1e1e", fg="white")
+    f_name_ent = Entry(spg, font=("", 14), bg="#1e1e1e", fg="white")
     global l_name_ent
-    l_name_lbl = Label(spg, text="Last Name:", font=("", 14), bg="#26242f", fg="white")
-    l_name_ent = Entry(spg, font=("", 14), bg="#26242f", fg="white")
+    l_name_lbl = Label(spg, text="Last Name:", font=("", 14), bg="#1e1e1e", fg="white")
+    l_name_ent = Entry(spg, font=("", 14), bg="#1e1e1e", fg="white")
     global u_name_ent
     u_name_lbl = Label(
-        spg, text="Create Username:", font=("", 14), bg="#26242f", fg="white"
+        spg, text="Create Username:", font=("", 14), bg="#1e1e1e", fg="white"
     )
-    u_name_ent = Entry(spg, font=("", 14), bg="#26242f", fg="white")
+    u_name_ent = Entry(spg, font=("", 14), bg="#1e1e1e", fg="white")
     u_name_ent.bind("<Return>", unamec)
 
     bk_btn = Button(
         spg,
         image=bk_arrow,
         command=sbk_rootw,
-        activebackground="#26242f",
+        activebackground="#1e1e1e",
         borderwidth=0,
-        bg="#26242f",
+        bg="#1e1e1e",
     )
 
     f_name_lbl.grid(row=3, column=1, padx=10, pady=10)
@@ -1573,7 +1573,7 @@ def rootw():
     global root
 
     root = Tk()
-    root.config(bg="#26242f")
+    root.config(bg="#1e1e1e")
     root.title("Password Manager")
     root.iconbitmap("images\\1.ico")
     root.geometry("300x300")
@@ -1583,7 +1583,7 @@ def rootw():
         root,
         text="Sign In",
         command=login_page,
-        bg="#26242f",
+        bg="#1e1e1e",
         fg="white",
         width=10,
         font=("", 14),
@@ -1592,7 +1592,7 @@ def rootw():
         root,
         text="Sign Up",
         command=signup_page,
-        bg="#26242f",
+        bg="#1e1e1e",
         fg="white",
         width=10,
         font=("", 14),
@@ -1601,7 +1601,7 @@ def rootw():
         root,
         text="Exit",
         command=root.destroy,
-        bg="#26242f",
+        bg="#1e1e1e",
         fg="white",
         width=10,
         font=("", 14),
