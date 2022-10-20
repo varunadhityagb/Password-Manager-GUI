@@ -34,10 +34,11 @@ except:
             getpass_sql.destroy()
 
         getpass_sql = Tk()
+        getpass_sql.wm_attributes("-topmost", True)
         getpass_sql.config(bg="#1e1e1e")
         getpass_sql.title("MySQL Password")
         getpass_sql.geometry("550x150")
-        getpass_sql.resizable(0, 0)
+        #getpass_sql.resizable(0, 0)
         getpass_sql.iconbitmap("images\\1.ico")
 
         mps_cb_style = ttk.Style()
