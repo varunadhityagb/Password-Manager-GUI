@@ -125,15 +125,15 @@ class passwordmenu:
         self.main_canvas = Canvas(
             root, borderwidth=0, width=1350, height=650, background='#1e1e1e'
         )
-        self.main_canvas.grid(row=1, column=0)
+        self.main_canvas.grid(row=0, column=0)
 
         self.hscroll = Scrollbar(
             root, orient=HORIZONTAL, command=self.main_canvas.xview
         )
-        self.hscroll.grid(row=2, column=0, sticky=EW)
+        self.hscroll.grid(row=1, column=0, sticky=EW)
 
         self.scroll = Scrollbar(root, orient=VERTICAL, command=self.main_canvas.yview)
-        self.scroll.grid(row=1, column=2, sticky=NS)
+        self.scroll.grid(row=0, column=2, sticky=NS)
 
         self.main_canvas.configure(yscrollcommand=self.scroll.set)
         self.main_canvas.configure(xscrollcommand=self.hscroll.set)
@@ -350,7 +350,14 @@ class passwordmenu:
 class addedit:
     def __init__(self, uid, psl, open_e, close, addr, editr):
         def adds():
-            web = "https://" + str(site_ent.get())
+            if '.com' in str(site_ent.get()):
+                if str(site_ent.get()).startswith('https://') == True:
+                    web = str(site_ent).get()
+                else:
+                    web = "https://" + str(site_ent.get())
+            else:
+                web = str(site_ent.get())
+
             un = str(usern_ent.get())
             ps = encrypt(str(pass_ent.get()))
             reps = encrypt(str(repass_ent.get()))
@@ -363,8 +370,11 @@ class addedit:
                     insintodata(web, un, ps, str(uid))
                     mydb.commit()
                     messagebox.showinfo("Success", "Data added successfully")
-                    passwordmenu(psl, str(uid), close, open_e)
                     adk.destroy()
+                    psl.destroy()
+                    system('python main.py')
+                    
+
                 else:
                     messagebox.showerror(
                         "Wrong password", "Please enter correct Master Password"
@@ -634,7 +644,7 @@ class addedit:
             )
             site_lbl.grid(row=1, column=1, padx=10, pady=10, sticky=W)
 
-            site_ent = Entry(adk, bg="#1e1e1e", fg="white", font=("", 13))
+            site_ent = Entry(adk, font=("", 13),bg="#28282E", fg="white", borderwidth=0)
             site_ent.grid(row=1, column=2, padx=10, pady=10)
 
             usern_lbl = Label(
@@ -642,7 +652,7 @@ class addedit:
             )
             usern_lbl.grid(row=2, column=1, padx=10, pady=10, sticky=W)
 
-            usern_ent = Entry(adk, bg="#1e1e1e", fg="white", font=("", 13))
+            usern_ent = Entry(adk, font=("", 13),bg="#28282E", fg="white", borderwidth=0)
             usern_ent.grid(row=2, column=2, padx=10, pady=10)
 
             pass_lbl = Label(
@@ -650,7 +660,7 @@ class addedit:
             )
             pass_lbl.grid(row=3, column=1, padx=10, pady=10, sticky=W)
 
-            pass_ent = Entry(adk, bg="#1e1e1e", fg="white", font=("", 13))
+            pass_ent = Entry(adk, font=("", 13),bg="#28282E", fg="white", borderwidth=0)
             pass_ent.grid(row=3, column=2, padx=10, pady=10)
 
             repass_lbl = Label(
@@ -658,7 +668,7 @@ class addedit:
             )
             repass_lbl.grid(row=4, column=1, padx=10, pady=10, sticky=W)
 
-            repass_ent = Entry(adk, bg="#1e1e1e", fg="white", font=("", 13))
+            repass_ent = Entry(adk, font=("", 13),bg="#28282E", fg="white", borderwidth=0)
             repass_ent.grid(row=4, column=2, padx=10, pady=10)
 
             mpass_lbl = Label(
@@ -666,7 +676,7 @@ class addedit:
             )
             mpass_lbl.grid(row=5, column=1, padx=10, pady=10, sticky=W)
 
-            mpass_ent = Entry(adk, bg="#1e1e1e", fg="white", font=("", 13), show="•")
+            mpass_ent = Entry(adk, font=("", 13), show="•",bg="#28282E", fg="white", borderwidth=0)
             mpass_ent.grid(row=5, column=2, padx=10, pady=10)
             addedit_btn = Button(
                 adk, text="none", font=("", 13), bg="#1e1e1e", fg="white"
@@ -1219,7 +1229,7 @@ def login_page():
         else:
             usern_dm = ttk.Combobox(lpg, value=ls, font=("", 14))
             usern_dm.current(0)
-            usern_dm.place(relx=0.7, rely=0.3, anchor=CENTER)
+            usern_dm.place(relx=0.7, rely=0.3, anchor=CENTER)                  
 
         lpg.mainloop()
 
@@ -1230,11 +1240,14 @@ def signup_page():
 
     spg = Tk()
     spg.title("Sign Up")
-    spg.config(bg="#1e1e1e")
+    spg.config(bg="#1e1e1e")   
     spg.geometry("450x600")
     spg.resizable(0, 0)
     spg.iconbitmap("images\\1.ico")
 
+    lgp_bg1 = ImageTk.PhotoImage(file="images//9.png")
+    lgp_bg2 = ImageTk.PhotoImage(file="images//10.png")
+    
     passkey = StringVar()
     repasskey = StringVar()
     cbvar = IntVar(value=0)
@@ -1349,15 +1362,18 @@ def signup_page():
                             command=cbshow,
                             style="R.TCheckbutton",
                         )
+                        Label(spg, image=lgp_bg1, borderwidth=0).place(x=0, y=441)
                         global up_btn
                         up_btn = Button(
                             spg,
                             text="Sign Up",
                             command=signup,
                             font=("", 14),
-                            width=20,
-                            bg="#568943",
+                            width=16,
+                            bg="#28282E",
                             fg="white",
+                            borderwidth=0,
+                            activebackground="#28282E"
                         )
 
                         upass_lbl.grid(row=8, column=1, padx=10, pady=10)
@@ -1366,7 +1382,7 @@ def signup_page():
                         urepass_ent.grid(row=9, column=2, padx=10, pady=10)
                         showpass_cb.grid(row=10, column=2, padx=10, sticky=E)
                         up_btn.grid(
-                            row=11, column=1, columnspan=2, padx=10, pady=10, ipadx=100
+                            row=11, column=1, columnspan=2, padx=20, pady=10, ipadx=100
                         )
                     else:
                         messagebox.showerror(
@@ -1494,15 +1510,19 @@ def signup_page():
                         command=cbshow,
                         style="R.TCheckbutton",
                     )
+                    
+                    Label(spg, image=lgp_bg2, borderwidth=0).place(x=0, y=345)
                     global up_btn
                     up_btn = Button(
                         spg,
                         text="Sign Up",
                         command=signup,
                         font=("", 14),
-                        width=20,
-                        bg="#568943",
+                        width=16,
+                        bg="#28282E",
                         fg="white",
+                        borderwidth=0,
+                        activebackground="#28282E"
                     )
 
                     upass_lbl.grid(row=8, column=1, padx=10, pady=10)
