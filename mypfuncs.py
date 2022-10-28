@@ -5,7 +5,7 @@ from string import ascii_letters, ascii_lowercase, ascii_uppercase, digits
 from tkinter import messagebox
 import tkinter.ttk as ttk
 from tkinter import *
-
+from PIL import Image, ImageTk
 import mysql.connector as sqlc
 import requests
 
@@ -49,12 +49,14 @@ def mysql_passd():
     getpass_sql.resizable(0, 0)
     getpass_sql.iconbitmap("images\\1.ico")
 
+    mysql_bg = ImageTk.PhotoImage(file="images//11.png")
+
     mps_cb_style = ttk.Style()
     mps_cb_style.configure("R.TCheckbutton", foreground="white", background="#1e1e1e")
 
     mps_passkey = StringVar()
     mps_cbvar = IntVar(value=0)
-
+    Label(getpass_sql, image=mysql_bg, borderwidth=0).place(x=0,y=0)
     mps_lbl = Label(
         getpass_sql,
         text="Enter your MySQL Password :",
@@ -67,16 +69,19 @@ def mysql_passd():
         textvariable=mps_passkey,
         show="•",
         font=("", 14),
-        bg="#1e1e1e",
+        bg="#28282E",
         fg="white",
+        borderwidth=0,
     )
     mps_btn = Button(
         getpass_sql,
         text="Enter",
         font=("", 14),
-        width=20,
-        bg="#1e1e1e",
+        width=15,
+        bg="#28282E",
+        activebackground='#28282E',
         fg="white",
+        borderwidth=0,
         command=mps_enter,
     )
     mps_showpass_cb = ttk.Checkbutton(

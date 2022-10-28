@@ -8,7 +8,6 @@ from tkinter import filedialog, messagebox
 from tkinter.font import BOLD
 from database import *
 from mypfuncs import *
-from PIL import Image, ImageTk
 import webbrowser as wb
 
 
@@ -684,9 +683,14 @@ class addedit:
         elif (addr == "yes") and (editr == "no"):
             adk = Toplevel()
             adk.title("Add Data")
+            adk.geometry("730x342")
+            adk.resizable(0,0)
             adk.wm_attributes('-topmost', True)
             adk.iconbitmap("images\\1.ico")
             adk.configure(bg="#1e1e1e")
+
+            add_bg = ImageTk.PhotoImage(file="images//12.png")  
+            Label(adk, image=add_bg, borderwidth=0).place(x=0,y=0)  
 
             site_lbl = Label(
                 adk, text="Website:", font=("", 13), bg="#1e1e1e", fg="white"
@@ -738,7 +742,10 @@ class addedit:
             )
             mpass_ent.grid(row=5, column=2, padx=10, pady=10)
             addedit_btn = Button(
-                adk, text="none", font=("", 13), bg="#1e1e1e", fg="white"
+                adk, text="none", font=("", 13), bg="#28282E",
+                fg="white",
+                activebackground='#28282E',
+                borderwidth=0,
             )
             addedit_btn.grid(row=6, column=1, columnspan=2, padx=10, pady=20)
 
@@ -755,11 +762,13 @@ class addedit:
                 adk,
                 text="Generate Password",
                 font=("", 13),
-                bg="#1e1e1e",
+                bg="#28282E",
                 fg="white",
+                activebackground='#28282E',
+                borderwidth=0,
                 command=generpass,
             )
-            gen_pass_btn.grid(row=3, column=3)
+            gen_pass_btn.grid(row=3, column=3, padx = 20)
 
             adk.mainloop()
 
