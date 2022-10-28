@@ -11,15 +11,13 @@ from mypfuncs import *
 mydb = sqlc.connect(
     host="localhost",
     user="root",
-    passwd=mysql_password,
-    )
+    passwd=open('sqlp.txt').read())
 
 mycur = mydb.cursor()
 
 ##################################### FUNCTIONS ################################
 
 global opt_lp
-
 
 def insintousers(firstName, lastName, userName, masterPass, eMail):
     # this functions inserts data into the myp_user table
@@ -28,11 +26,19 @@ def insintousers(firstName, lastName, userName, masterPass, eMail):
     passu = hashcrypt(masterPass)
     action = (
         f"""INSERT INTO myp_users (firstName, lastName, userName, eMail, masterPass)
-        VALUES (""" + "TRIM('" + firstName + "'), "
-        + "TRIM('" + lastName + "'), '"
-        + str(userName) + "', '"
-        + str(eMail) + "', '"
-        + passu + "');"
+        VALUES ("""
+        + "TRIM('"
+        + firstName
+        + "'), "
+        + "TRIM('"
+        + lastName
+        + "'), '"
+        + str(userName)
+        + "', '"
+        + str(eMail)
+        + "', '"
+        + passu
+        + "');"
     )
     mycur.execute(action)
     mydb.commit()
@@ -46,10 +52,16 @@ def insintousers_eno(firstName, lastName, userName, masterPass):
     action = (
         f"""INSERT INTO myp_users (firstName, lastName, userName, masterPass)
         VALUES ("""
-        + "TRIM('" + firstName + "'), "
-        + "TRIM('" + lastName + "'), '" 
-        + userName + "', '" 
-        + passu + "');"
+        + "TRIM('"
+        + firstName
+        + "'), "
+        + "TRIM('"
+        + lastName
+        + "'), '"
+        + userName
+        + "', '"
+        + passu
+        + "');"
     )
     mycur.execute(action)
     mydb.commit()
@@ -61,10 +73,14 @@ def insintodata(website, loginName, loginPass, userId):
     action = (
         f"""INSERT INTO myp_data (website, loginName, loginPass, userId) 
         VALUES ('"""
-        + website + "', '"
-        + loginName + "', '"
-        + loginPass + "', '"
-        + userId + "');"
+        + website
+        + "', '"
+        + loginName
+        + "', '"
+        + loginPass
+        + "', '"
+        + userId
+        + "');"
     )
     mycur.execute(action)
     mydb.commit()

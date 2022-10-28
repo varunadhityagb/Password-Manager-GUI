@@ -19,108 +19,109 @@ def shbtn(cbvar, pass_ent):
 
 
 global mysql_password
-mysql_password = ""
-try:
-    p1 = open("sqlp.txt", "r")
-except:
-    p = open("sqlp.txt", "w+")
 
-    def mysql_passd():
-        def mps_enter(*e):
-            v = mps_ent.get()
-            p.write(v)
-            p.flush()
-
+def mysql_passd():
+    def mps_enter(*e):
+        global mysql_password
+        try:
+            mysql_password = mps_ent.get()
+            mydb = sqlc.connect(
+                host="localhost",
+                user="root",
+                passwd=mysql_password,
+            )
+            v1 = open("sqlp.txt", "w")
+            v1.write(mysql_password)
+            v1.flush()
+            v1.close()
             getpass_sql.destroy()
 
-        getpass_sql = Tk()
-        getpass_sql.wm_attributes("-topmost", True)
-        getpass_sql.config(bg="#1e1e1e")
-        getpass_sql.title("MySQL Password")
-        getpass_sql.geometry("550x150")
-        #getpass_sql.resizable(0, 0)
-        getpass_sql.iconbitmap("images\\1.ico")
-
-        mps_cb_style = ttk.Style()
-        mps_cb_style.configure(
-            "R.TCheckbutton", foreground="white", background="#1e1e1e"
-        )
-
-        mps_passkey = StringVar()
-        mps_cbvar = IntVar(value=0)
-
-        mps_lbl = Label(
-            getpass_sql,
-            text="Enter your MySQL Password :",
-            font=("", 14),
-            bg="#1e1e1e",
-            fg="white",
-        )
-        mps_ent = Entry(
-            getpass_sql,
-            textvariable=mps_passkey,
-            show="•",
-            font=("", 14),
-            bg="#1e1e1e",
-            fg="white",
-        )
-        mps_btn = Button(
-            getpass_sql,
-            text="Enter",
-            font=("", 14),
-            width=20,
-            bg="#1e1e1e",
-            fg="white",
-            command=mps_enter,
-        )
-        mps_showpass_cb = ttk.Checkbutton(
-            getpass_sql,
-            text="Show Password",
-            variable=mps_cbvar,
-            onvalue=1,
-            offvalue=0,
-            command=lambda: shbtn(mps_cbvar, mps_ent),
-            style="R.TCheckbutton",
-        )
-
-        mps_ent.bind("<Return>", mps_enter)
-
-        mps_lbl.grid(row=0, column=0, padx=10, pady=10)
-        mps_ent.grid(row=0, column=1, padx=10, pady=10)
-        mps_showpass_cb.grid(row=1, column=1, padx=10)
-        mps_btn.grid(row=2, column=0, columnspan=2, pady=10, padx=10)
-
-        getpass_sql.mainloop()
-
-    try:
-        d = open("cache.txt", "r")
-        da = p.read()
-        if da == "":
+        except:
+            messagebox.showerror("Authentication Error", "Wrong MYSQL Password!!")
+            getpass_sql.destroy()
             mysql_passd()
-        else:
-            pass
-    except:
-        da = p.read()
-        if da == "":
-            mysql_passd()
-        else:
-            pass
+
+    getpass_sql = Tk()
+    getpass_sql.wm_attributes("-topmost", True)
+    getpass_sql.config(bg="#1e1e1e")
+    getpass_sql.title("MySQL Password")
+    getpass_sql.geometry("550x150")
+    getpass_sql.resizable(0, 0)
+    getpass_sql.iconbitmap("images\\1.ico")
+
+    mps_cb_style = ttk.Style()
+    mps_cb_style.configure("R.TCheckbutton", foreground="white", background="#1e1e1e")
+
+    mps_passkey = StringVar()
+    mps_cbvar = IntVar(value=0)
+
+    mps_lbl = Label(
+        getpass_sql,
+        text="Enter your MySQL Password :",
+        font=("", 14),
+        bg="#1e1e1e",
+        fg="white",
+    )
+    mps_ent = Entry(
+        getpass_sql,
+        textvariable=mps_passkey,
+        show="•",
+        font=("", 14),
+        bg="#1e1e1e",
+        fg="white",
+    )
+    mps_btn = Button(
+        getpass_sql,
+        text="Enter",
+        font=("", 14),
+        width=20,
+        bg="#1e1e1e",
+        fg="white",
+        command=mps_enter,
+    )
+    mps_showpass_cb = ttk.Checkbutton(
+        getpass_sql,
+        text="Show Password",
+        variable=mps_cbvar,
+        onvalue=1,
+        offvalue=0,
+        command=lambda: shbtn(mps_cbvar, mps_ent),
+        style="R.TCheckbutton",
+    )
+
+    mps_ent.bind("<Return>", mps_enter)
+
+    mps_lbl.grid(row=0, column=0, padx=10, pady=10)
+    mps_ent.grid(row=0, column=1, padx=10, pady=10)
+    mps_showpass_cb.grid(row=1, column=1, padx=10)
+    mps_btn.grid(row=2, column=0, columnspan=2, pady=10, padx=10)
+
+    getpass_sql.mainloop()
+
 
 try:
-    mysql_password = open("sqlp.txt", "r").read()
+    p1 = open("sqlp.txt", "r")
+    p1.close()
+    
 except:
-    mysql_password = "mysql"
+    p = open("sqlp.txt", "w+")
+    p.close()
+
 
 ######################## CONNECTING SQL ###############################################
 try:
+    p = open('sqlp.txt', 'r')
+    q = p.read()
     mydb = sqlc.connect(
         host="localhost",
         user="root",
-        passwd=mysql_password,
+        passwd=q,
     )
     mycur = mydb.cursor()
+    
 except:
     mysql_passd()
+
 
 #########################   VARIABLES   ##################################################
 # characters
@@ -227,7 +228,8 @@ def hashcrypt(var: str):
 
 
 def emailvalidation(strg):
-    # this functions checks whether the e-mail really exists with a help of a tool by isitrealemail.com
+    '''this functions checks whether the e-mail really exists 
+    with a help of a tool by isitrealemail.com'''
     try:
         api_key = "00209c5b-b82b-4c80-8db2-5621a90ff038"
         email = strg
@@ -251,7 +253,8 @@ def emailvalidation(strg):
 
 
 def unamecheck(strg):
-    # this finction checks whether this username already exists, if it exeist it tell the user to try a different username
+    '''this finction checks whether this username already exists, 
+    if it exeist it tell the user to try a different username'''
     mycur.execute("USE myp;")
     username_ls = []
     mycur.execute("SELECT userName FROM myp_users;")
