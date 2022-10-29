@@ -1,4 +1,5 @@
 import csv
+import os
 import requests
 import tkinter.ttk as ttk
 from os import system
@@ -6,6 +7,7 @@ from time import *
 from tkinter import *
 from tkinter import filedialog, messagebox
 from tkinter.font import BOLD
+import pyautogui as pg
 from database import *
 from mypfuncs import *
 import webbrowser as wb
@@ -121,7 +123,21 @@ class passwordmenu:
 
             link_win.mainloop()
 
+        def get_info():
+            global infowin
+            infowin = Toplevel()
+            infowin.geometry("500x500")
+            infowin.overrideredirect(True)
+            place_center(infowin)
+            infowin.bind("<Leave>", lambda i: infowin.destroy())
+            mepage = ImageTk.PhotoImage(file="images//15.png")
+            Label(infowin, image=mepage, borderwidth=0).pack()
+            
+            infowin.mainloop()
+
+
         global len_1
+        global infowin
         mycur.execute("USE myp;")
         root.wm_attributes("-transparentcolor", "red")
         self.img = ImageTk.PhotoImage(file="images//6.png")
@@ -134,6 +150,13 @@ class passwordmenu:
         self.hscroll = Scrollbar(
             root, orient=HORIZONTAL, command=self.main_canvas.xview
         )
+
+        self.info = ImageTk.PhotoImage(file= "images//14.png")
+        self.random_btn = Label(root, image=self.info, borderwidth=0)
+        self.random_btn.bind("<Enter>", lambda i: get_info())
+        #self.random_btn.bind("<Leave>", lambda i: infowin.destroy())
+        self.random_btn.place(relx=0.9, rely=0.75)        
+
         self.hscroll.grid(row=1, column=0, sticky=EW)
 
         self.scroll = Scrollbar(root, orient=VERTICAL, command=self.main_canvas.yview)
@@ -493,8 +516,13 @@ class addedit:
                             adk = Toplevel()
                             adk.title("Edit Data")
                             adk.wm_attributes("-topmost", True)
+                            adk.geometry("541x362")
+                            #adk.resizable(0,0)
                             adk.iconbitmap("images\\1.ico")
-                            adk.configure(bg="#1e1e1e")
+                            #adk.configure(bg="#1e1e1e")
+
+                            ed_bg = ImageTk.PhotoImage(file="images//13.png")  
+                            Label(adk, image=ed_bg, borderwidth=0).place(x=0,y=0)
 
                             site_lbl = Label(
                                 adk,
@@ -589,7 +617,9 @@ class addedit:
                             addedit_btn = Button(
                                 adk,
                                 font=("", 13),
-                                bg="#1e1e1e",
+                                bg="#28282E",
+                                activebackground="#28282E",
+                                borderwidth=0,
                                 fg="white",
                                 command=edits,
                                 text="Save",
@@ -602,7 +632,9 @@ class addedit:
                                 adk,
                                 text="Revert",
                                 font=("", 13),
-                                bg="#1e1e1e",
+                                bg="#28282E",
+                                activebackground="#28282E",
+                                borderwidth=0,
                                 fg="white",
                                 command=revert,
                             )
@@ -632,6 +664,7 @@ class addedit:
                             usern_ent.insert(0, str(editdata[1]))
                             pass_ent.insert(0, decrypt(str(editdata[2])))
                             repass_ent.insert(0, decrypt(str(editdata[2])))
+                            adk.mainloop()
 
                     else:
                         messagebox.showerror(
@@ -815,6 +848,15 @@ def internet_stat(url="https://www.google.com/", timeout=3):
 
 net_stat = internet_stat()
 
+def place_center(root): # Placing the window in the center of the screen
+    global x, y
+    reso = pg.size()
+    rx = reso[0]
+    ry = reso[1]
+    x = int((rx/2) - (500/2))
+    y = int((ry/2) - (500/2))
+    root.geometry(f"500x500+{x}+{y}")
+
 
 def lbk_rootw():
     global lpg
@@ -888,6 +930,7 @@ def ui(uid):
 
         ddk = Tk()
         ddk.title("Delete Data")
+        place_center(ddk)
         ddk.wm_attributes('-topmost', True)
         ddk.iconbitmap("images\\1.ico")
         ddk.configure(bg="#1e1e1e")
@@ -1199,6 +1242,7 @@ def login_page():
         lpg = Tk()
         bg_login = ImageTk.PhotoImage(file="images//8.png")
         lpg.title("Login")
+        place_center(lpg)
         lpg.config(bg="#1e1e1e")
         lpg.geometry("450x300")
         lpg.resizable(0, 0)
@@ -1326,6 +1370,7 @@ def signup_page():
     spg = Tk()
     spg.title("Sign Up")
     spg.config(bg="#1e1e1e")
+    place_center(spg)
     spg.geometry("450x600")
     spg.resizable(0, 0)
     spg.iconbitmap("images\\1.ico")
@@ -1663,6 +1708,7 @@ def rootw():
     root = Tk()
     root.config(bg="#1e1e1e")
     root.title("Password Manager")
+    place_center(root)
     root.iconbitmap("images\\1.ico")
     root.geometry("300x300")
     root.resizable(0, 0)
