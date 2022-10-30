@@ -8,16 +8,14 @@ from mypfuncs import *
 
 ##################################### CONNECTING MySQL ################################
 
-mydb = sqlc.connect(
-    host="localhost",
-    user="root",
-    passwd=open('sqlp.txt').read())
+mydb = sqlc.connect(host="localhost", user="root", passwd=open("sqlp.txt").read())
 
 mycur = mydb.cursor()
 
 ##################################### FUNCTIONS ################################
 
 global opt_lp
+
 
 def insintousers(firstName, lastName, userName, masterPass, eMail):
     # this functions inserts data into the myp_user table

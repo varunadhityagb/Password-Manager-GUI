@@ -20,6 +20,7 @@ def shbtn(cbvar, pass_ent):
 
 global mysql_password
 
+
 def mysql_passd():
     def mps_enter(*e):
         global mysql_password
@@ -56,7 +57,7 @@ def mysql_passd():
 
     mps_passkey = StringVar()
     mps_cbvar = IntVar(value=0)
-    Label(getpass_sql, image=mysql_bg, borderwidth=0).place(x=0,y=0)
+    Label(getpass_sql, image=mysql_bg, borderwidth=0).place(x=0, y=0)
     mps_lbl = Label(
         getpass_sql,
         text="Enter your MySQL Password :",
@@ -79,7 +80,7 @@ def mysql_passd():
         font=("", 14),
         width=15,
         bg="#28282E",
-        activebackground='#28282E',
+        activebackground="#28282E",
         fg="white",
         borderwidth=0,
         command=mps_enter,
@@ -107,7 +108,7 @@ def mysql_passd():
 try:
     p1 = open("sqlp.txt", "r")
     p1.close()
-    
+
 except:
     p = open("sqlp.txt", "w+")
     p.close()
@@ -115,7 +116,7 @@ except:
 
 ######################## CONNECTING SQL ###############################################
 try:
-    p = open('sqlp.txt', 'r')
+    p = open("sqlp.txt", "r")
     q = p.read()
     mydb = sqlc.connect(
         host="localhost",
@@ -123,7 +124,7 @@ try:
         passwd=q,
     )
     mycur = mydb.cursor()
-    
+
 except:
     mysql_passd()
 
@@ -173,7 +174,7 @@ def password(n: int):
     for i in range(n - 6):
         passwd += random.choice(random.choice(char))
 
-    # Seperating the password AND Checking
+    # Separating the password AND Checking
     passwd_l = list(passwd)
 
     if pun not in passwd_l:
@@ -193,7 +194,7 @@ def password(n: int):
 
 
 def encrypt(strg: str):
-    # takes input a string and returns a encryted passwd
+    # takes input a string and returns a encrypted passwd
     str_ls = list(strg)
     for i in str_ls:
 
@@ -209,7 +210,7 @@ def encrypt(strg: str):
 
 
 def decrypt(strg: str):
-    ## takes input a string and returns a encryted passwd
+    ## takes input a string and returns a encrypted passwd
     str_ls = list(strg)
     for i in str_ls:
 
@@ -233,8 +234,8 @@ def hashcrypt(var: str):
 
 
 def emailvalidation(strg):
-    '''this functions checks whether the e-mail really exists 
-    with a help of a tool by isitrealemail.com'''
+    """this functions checks whether the e-mail really exists
+    with a help of a tool by isitrealemail.com"""
     try:
         api_key = "00209c5b-b82b-4c80-8db2-5621a90ff038"
         email = strg
@@ -249,7 +250,7 @@ def emailvalidation(strg):
         elif status == "invalid":
             return False
         else:
-            messagebox.showerror("Sorry for the inconvenience", "Please try tommorow🙏🏼")
+            messagebox.showerror("Sorry for the inconvenience", "Please try tomorrow🙏🏼")
 
     except Exception:
         messagebox.showerror(
@@ -258,8 +259,8 @@ def emailvalidation(strg):
 
 
 def unamecheck(strg):
-    '''this finction checks whether this username already exists, 
-    if it exeist it tell the user to try a different username'''
+    """this function checks whether this username already exists,
+    if it exists it tell the user to try a different username"""
     mycur.execute("USE myp;")
     username_ls = []
     mycur.execute("SELECT userName FROM myp_users;")
@@ -273,8 +274,8 @@ def unamecheck(strg):
 
 
 def emailcheck(strg):
-    # this functions checks whether the email address is already
-    # used ot not in our database
+    '''this functions checks whether the email address is already
+    used ot not in our database'''
     mycur.execute("USE myp;")
     email_ls = []
     mycur.execute("SELECT eMail FROM myp_users;")

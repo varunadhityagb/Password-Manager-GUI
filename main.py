@@ -107,7 +107,7 @@ class passwordmenu:
             link_win.title("Password Manager")
             link_win.iconbitmap("images\\1.ico")
             link_win.geometry("400x50")
-            link_win.wm_attributes('-topmost', True)
+            link_win.wm_attributes("-topmost", True)
             link_win.resizable(0, 0)
 
             lbl = Label(
@@ -132,9 +132,8 @@ class passwordmenu:
             infowin.bind("<Leave>", lambda i: infowin.destroy())
             mepage = ImageTk.PhotoImage(file="images//15.png")
             Label(infowin, image=mepage, borderwidth=0).pack()
-            
-            infowin.mainloop()
 
+            infowin.mainloop()
 
         global len_1
         global infowin
@@ -151,11 +150,11 @@ class passwordmenu:
             root, orient=HORIZONTAL, command=self.main_canvas.xview
         )
 
-        self.info = ImageTk.PhotoImage(file= "images//14.png")
+        self.info = ImageTk.PhotoImage(file="images//14.png")
         self.random_btn = Label(root, image=self.info, borderwidth=0)
         self.random_btn.bind("<Enter>", lambda i: get_info())
         #self.random_btn.bind("<Leave>", lambda i: infowin.destroy())
-        self.random_btn.place(relx=0.9, rely=0.75)        
+        self.random_btn.place(relx=0.9, rely=0.75)
 
         self.hscroll.grid(row=1, column=0, sticky=EW)
 
@@ -359,7 +358,7 @@ class passwordmenu:
 
                 masterc = Toplevel()
                 masterc.title("Verification")
-                masterc.wm_attributes('-topmost', True)
+                masterc.wm_attributes("-topmost", True)
                 masterc.iconbitmap("images\\1.ico")
                 masterc.configure(bg="#1e1e1e")
 
@@ -517,12 +516,12 @@ class addedit:
                             adk.title("Edit Data")
                             adk.wm_attributes("-topmost", True)
                             adk.geometry("541x362")
-                            #adk.resizable(0,0)
+                            # adk.resizable(0,0)
                             adk.iconbitmap("images\\1.ico")
-                            #adk.configure(bg="#1e1e1e")
+                            # adk.configure(bg="#1e1e1e")
 
-                            ed_bg = ImageTk.PhotoImage(file="images//13.png")  
-                            Label(adk, image=ed_bg, borderwidth=0).place(x=0,y=0)
+                            ed_bg = ImageTk.PhotoImage(file="images//13.png")
+                            Label(adk, image=ed_bg, borderwidth=0).place(x=0, y=0)
 
                             site_lbl = Label(
                                 adk,
@@ -679,7 +678,7 @@ class addedit:
 
             edid = Toplevel()
             edid.title("Edit Data")
-            edid.wm_attributes('-topmost', True)
+            edid.wm_attributes("-topmost", True)
             edid.iconbitmap("images\\1.ico")
             edid.configure(bg="#1e1e1e")
 
@@ -717,13 +716,13 @@ class addedit:
             adk = Toplevel()
             adk.title("Add Data")
             adk.geometry("730x342")
-            adk.resizable(0,0)
-            adk.wm_attributes('-topmost', True)
+            adk.resizable(0, 0)
+            adk.wm_attributes("-topmost", True)
             adk.iconbitmap("images\\1.ico")
             adk.configure(bg="#1e1e1e")
 
-            add_bg = ImageTk.PhotoImage(file="images//12.png")  
-            Label(adk, image=add_bg, borderwidth=0).place(x=0,y=0)  
+            add_bg = ImageTk.PhotoImage(file="images//12.png")
+            Label(adk, image=add_bg, borderwidth=0).place(x=0, y=0)
 
             site_lbl = Label(
                 adk, text="Website:", font=("", 13), bg="#1e1e1e", fg="white"
@@ -775,9 +774,12 @@ class addedit:
             )
             mpass_ent.grid(row=5, column=2, padx=10, pady=10)
             addedit_btn = Button(
-                adk, text="none", font=("", 13), bg="#28282E",
+                adk,
+                text="none",
+                font=("", 13),
+                bg="#28282E",
                 fg="white",
-                activebackground='#28282E',
+                activebackground="#28282E",
                 borderwidth=0,
             )
             addedit_btn.grid(row=6, column=1, columnspan=2, padx=10, pady=20)
@@ -785,7 +787,7 @@ class addedit:
             addedit_btn.configure(command=adds, text="Add")
             optional = Label(
                 adk,
-                text="(Generating Password is completely optioal.)",
+                text="(Generating Password is completely optional.)",
                 font=("", 12),
                 bg="#1e1e1e",
                 fg="white",
@@ -797,11 +799,11 @@ class addedit:
                 font=("", 13),
                 bg="#28282E",
                 fg="white",
-                activebackground='#28282E',
+                activebackground="#28282E",
                 borderwidth=0,
                 command=generpass,
             )
-            gen_pass_btn.grid(row=3, column=3, padx = 20)
+            gen_pass_btn.grid(row=3, column=3, padx=20)
 
             adk.mainloop()
 
@@ -810,7 +812,7 @@ class loading_screen:
     def __init__(self, root, time):
         global top
         top = Toplevel()
-        top.wm_attributes('-topmost', True)
+        top.wm_attributes("-topmost", True)
         top.overrideredirect(1)
         x = root.winfo_x()
         y = root.winfo_y()
@@ -848,13 +850,14 @@ def internet_stat(url="https://www.google.com/", timeout=3):
 
 net_stat = internet_stat()
 
-def place_center(root): # Placing the window in the center of the screen
+
+def place_center(root):  # Placing the window in the center of the screen
     global x, y
     reso = pg.size()
     rx = reso[0]
     ry = reso[1]
-    x = int((rx/2) - (500/2))
-    y = int((ry/2) - (500/2))
+    x = int((rx / 2) - (500 / 2))
+    y = int((ry / 2) - (500 / 2))
     root.geometry(f"500x500+{x}+{y}")
 
 
@@ -931,7 +934,7 @@ def ui(uid):
         ddk = Tk()
         ddk.title("Delete Data")
         place_center(ddk)
-        ddk.wm_attributes('-topmost', True)
+        ddk.wm_attributes("-topmost", True)
         ddk.iconbitmap("images\\1.ico")
         ddk.configure(bg="#1e1e1e")
 
@@ -994,7 +997,7 @@ def ui(uid):
         pass_ls = passdget(uid)
 
         mstc = Toplevel()
-        mstc.wm_attributes('-topmost', True)
+        mstc.wm_attributes("-topmost", True)
         mstc.title("Confirmation")
         mstc.iconbitmap("images\\1.ico")
         mstc.configure(bg="#1e1e1e")
@@ -1124,7 +1127,7 @@ def ui(uid):
 
         des = Toplevel()
         des.title("Verification")
-        des .wm_attributes('-topmost', True)
+        des.wm_attributes("-topmost", True)
         des.iconbitmap("images\\1.ico")
         des.configure(bg="#1e1e1e")
 
@@ -1175,7 +1178,7 @@ def ui(uid):
         pass_ls = passdget(uid)
 
         des = Toplevel()
-        des.wm_attributes('-topmost', True)
+        des.wm_attributes("-topmost", True)
         des.title("Confirmation")
         des.iconbitmap("images\\1.ico")
         des.configure(bg="#1e1e1e")
@@ -1206,6 +1209,7 @@ def ui(uid):
     passwordmenu(psl, str(uid), close, open_e)
 
     menu = Menu(psl, fg="white", background="#1e1e1e", font=("", 20))
+
     psl.config(menu=menu)
 
     more = Menu(menu)
@@ -1253,7 +1257,6 @@ def login_page():
 
         def login(*event):
             global lpg
-            
 
             mycur.execute("USE myp;")
 
