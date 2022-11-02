@@ -680,6 +680,7 @@ class addedit:
             edid.title("Edit Data")
             edid.wm_attributes("-topmost", True)
             edid.iconbitmap("images\\1.ico")
+            edid.resizable(0,0)
             edid.configure(bg="#1e1e1e")
 
             lbl = Label(
@@ -935,9 +936,10 @@ def ui(uid):
         ddk.title("Delete Data")
         place_center(ddk)
         ddk.wm_attributes("-topmost", True)
+        ddk.geometry('420x100')
+        ddk.resizable(0,0)
         ddk.iconbitmap("images\\1.ico")
         ddk.configure(bg="#1e1e1e")
-
         lbl = Label(
             ddk, text="Enter the Id : ", font=("", 13), bg="#1e1e1e", fg="white"
         )
@@ -999,6 +1001,9 @@ def ui(uid):
         mstc = Toplevel()
         mstc.wm_attributes("-topmost", True)
         mstc.title("Confirmation")
+        place_center(mstc)
+        mstc.geometry('402x164')
+        mstc.resizable(0,0)
         mstc.iconbitmap("images\\1.ico")
         mstc.configure(bg="#1e1e1e")
 
@@ -1041,7 +1046,8 @@ def ui(uid):
             mstc,
             text="Change",
             font=("", 13),
-            bg="#1e1e1e",
+            bg="#28282E",
+            borderwidth=0,
             fg="white",
             command=mc_check,
         )
