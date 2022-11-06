@@ -8,6 +8,8 @@ from tkinter import *
 from PIL import Image, ImageTk
 import mysql.connector as sqlc
 import requests
+from os import system
+import sv_ttk
 
 # ProjectbyVarunAdhityaGB
 ######################## SQL Password ###############################################
@@ -36,11 +38,11 @@ def mysql_passd():
             v1.flush()
             v1.close()
             getpass_sql.destroy()
+            system("python main.py")
 
         except:
             messagebox.showerror("Authentication Error", "Wrong MYSQL Password!!")
-            getpass_sql.destroy()
-            mysql_passd()
+            mps_ent.delete(0, END)
 
     getpass_sql = Tk()
     getpass_sql.wm_attributes("-topmost", True)
@@ -50,39 +52,16 @@ def mysql_passd():
     getpass_sql.resizable(0, 0)
     getpass_sql.iconbitmap("images\\1.ico")
 
-    mysql_bg = ImageTk.PhotoImage(file="images//11.png")
-
-    mps_cb_style = ttk.Style()
-    mps_cb_style.configure("R.TCheckbutton", foreground="white", background="#1e1e1e")
+    sv_ttk.set_theme("dark")
 
     mps_passkey = StringVar()
     mps_cbvar = IntVar(value=0)
-    Label(getpass_sql, image=mysql_bg, borderwidth=0).place(x=0, y=0)
-    mps_lbl = Label(
-        getpass_sql,
-        text="Enter your MySQL Password :",
-        font=("", 14),
-        bg="#1e1e1e",
-        fg="white",
-    )
-    mps_ent = Entry(
-        getpass_sql,
-        textvariable=mps_passkey,
-        show="•",
-        font=("", 14),
-        bg="#28282E",
-        fg="white",
-        borderwidth=0,
-    )
-    mps_btn = Button(
+    mps_lbl = ttk.Label(getpass_sql, text="Enter your MySQL Password :", font=("", 14))
+    mps_ent = ttk.Entry(getpass_sql, textvariable=mps_passkey, show="•", font=("", 14))
+    mps_btn = ttk.Button(
         getpass_sql,
         text="Enter",
-        font=("", 14),
         width=15,
-        bg="#28282E",
-        activebackground="#28282E",
-        fg="white",
-        borderwidth=0,
         command=mps_enter,
     )
     mps_showpass_cb = ttk.Checkbutton(
@@ -130,6 +109,7 @@ except:
 
 
 #########################   VARIABLES   ##################################################
+
 # characters
 lcase, ucase, num, alpha, pun = (
     list(ascii_lowercase),
@@ -274,8 +254,8 @@ def unamecheck(strg):
 
 
 def emailcheck(strg):
-    '''this functions checks whether the email address is already
-    used ot not in our database'''
+    """this functions checks whether the email address is already
+    used ot not in our database"""
     mycur.execute("USE myp;")
     email_ls = []
     mycur.execute("SELECT eMail FROM myp_users;")

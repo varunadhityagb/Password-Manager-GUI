@@ -81,7 +81,10 @@ def insintodata(website, loginName, loginPass, userId):
         + "');"
     )
     mycur.execute(action)
+    mycur.execute("SELECT LAST_INSERT_ID();")
+    p = mycur.fetchone()[0]
     mydb.commit()
+    return p
 
 
 def otpmail(receivermail):
