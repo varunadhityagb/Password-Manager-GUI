@@ -8,7 +8,6 @@ from tkinter.font import BOLD
 import pyautogui as pg
 from database import *
 from mypfuncs import *
-import webbrowser as wb
 
 
 ########################## CHECKING AND CREATING DATABASE #############################
@@ -355,13 +354,13 @@ class passwordmenu:
             omp_lbl = ttk.Label(mstc, text="Old Master Password :", font=("", 13))
             omp_lbl.grid(row=1, column=1, padx=10, pady=10)
 
-            omp_ent = ttk.Entry(mstc, font=("", 13), show="•")
+            omp_ent = ttk.Entry(mstc, show="•")
             omp_ent.grid(row=1, column=2, padx=10, pady=10)
 
             nmp_lbl = ttk.Label(mstc, text="New Master Password :", font=("", 13))
             nmp_lbl.grid(row=2, column=1, padx=10, pady=10)
 
-            nmp_ent = ttk.Entry(mstc, font=("", 13), show="•")
+            nmp_ent = ttk.Entry(mstc, show="•")
             nmp_ent.grid(row=2, column=2, padx=10, pady=10)
             nmp_ent.bind("<Return>", mc_check)
 
@@ -476,7 +475,7 @@ class passwordmenu:
             lbl = ttk.Label(des, text="Master Password :", font=("", 13))
             lbl.grid(row=1, column=1, padx=10, pady=10)
 
-            ent = ttk.Entry(des, font=("", 13), show="•")
+            ent = ttk.Entry(des, show="•")
             ent.grid(row=1, column=2, padx=10, pady=10)
 
             ent.bind("<Return>", mc_check)
@@ -527,7 +526,7 @@ class passwordmenu:
             lbl = ttk.Label(des, text="Master Password :", font=("", 13))
             lbl.grid(row=1, column=1, padx=10, pady=10)
 
-            ent = ttk.Entry(des, font=("", 13), show="•")
+            ent = ttk.Entry(des, show="•")
             ent.grid(row=1, column=2, padx=10, pady=10)
 
             ent.bind("<Return>", mc_check)
@@ -971,7 +970,7 @@ def signup_page():
                         )
                         global upass_ent
                         upass_ent = ttk.Entry(
-                            spg, textvariable=passkey, show="•", font=("", 14)
+                            spg, textvariable=passkey, show="•", width=20
                         )
                         global urepass_lbl
                         urepass_lbl = ttk.Label(
@@ -981,9 +980,7 @@ def signup_page():
                         urepass_ent = ttk.Entry(
                             spg,
                             textvariable=repasskey,
-                            show="•",
-                            font=("", 14),
-                            bg="#28282E",
+                            show="•", width = 20
                         )
                         urepass_ent.bind("<Return>", signup)
                         global showpass_cb
@@ -995,10 +992,9 @@ def signup_page():
                             offvalue=0,
                             command=cbshow,
                         )
-                        # Label(spg, image=lgp_bg1, borderwidth=0).place(x=0, y=441)
                         global up_btn
                         up_btn = ttk.Button(
-                            spg, text="Sign Up", command=signup, font=("", 14), width=16
+                            spg, text="Sign Up", command=signup, width=16
                         )
 
                         upass_lbl.grid(row=8, column=1, padx=10, pady=10)
@@ -1035,7 +1031,7 @@ def signup_page():
                         global otp_lbl
                         otp_lbl = ttk.Label(spg, text="OTP:      ", font=("", 14))
                         global otp_ent
-                        otp_ent = ttk.Entry(spg, font=("", 14))
+                        otp_ent = ttk.Entry(spg, width=20)
                         otp_ent.bind("<Return>", otpc)
 
                         otp_lbl.grid(row=7, column=1, padx=10, pady=10)
@@ -1057,7 +1053,7 @@ def signup_page():
                     global email_lbl
                     email_lbl = ttk.Label(spg, text="E-Mail:   ", font=("", 14))
                     global email_ent
-                    email_ent = ttk.Entry(spg, font=("", 14))
+                    email_ent = ttk.Entry(spg, width=20)
                     email_ent.bind("<Return>", emailc)
 
                     email_lbl.grid(row=6, column=1, padx=10, pady=10)
@@ -1085,8 +1081,7 @@ def signup_page():
                     upass_ent = ttk.Entry(
                         spg,
                         textvariable=passkey,
-                        show="•",
-                        font=("", 14)
+                        show="•", width=20
                     )
                     global urepass_lbl
                     urepass_lbl = ttk.Label(
@@ -1098,8 +1093,7 @@ def signup_page():
                     urepass_ent = ttk.Entry(
                         spg,
                         textvariable=repasskey,
-                        show="•",
-                        font=("", 14)
+                        show="•", width=20
                     )
                     urepass_ent.bind("<Return>", signup)
                     global showpass_cb
@@ -1131,13 +1125,13 @@ def signup_page():
 
     global f_name_ent
     f_name_lbl = ttk.Label(spg, text="First Name:", font=("", 14))
-    f_name_ent = ttk.Entry(spg, font=("", 14))
+    f_name_ent = ttk.Entry(spg, width=20)
     global l_name_ent
     l_name_lbl = ttk.Label(spg, text="Last Name:", font=("", 14))
-    l_name_ent = ttk.Entry(spg, font=("", 14))
+    l_name_ent = ttk.Entry(spg, width=20)
     global u_name_ent
     u_name_lbl = ttk.Label(spg, text="Create Username:", font=("", 14))
-    u_name_ent = ttk.Entry(spg, font=("", 14))
+    u_name_ent = ttk.Entry(spg, width=20)
     u_name_ent.bind("<Return>", unamec)
 
     bk_btn = ttk.Button(
