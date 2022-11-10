@@ -52,7 +52,8 @@ def mysql_passd():
     getpass_sql.resizable(0, 0)
     getpass_sql.iconbitmap("images\\1.ico")
 
-    sv_ttk.set_theme("dark")
+    getpass_sql.tk.call('source', 'sv.tcl')
+    getpass_sql.tk.call('set_theme', 'dark')
 
     mps_passkey = StringVar()
     mps_cbvar = IntVar(value=0)

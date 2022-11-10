@@ -1,6 +1,8 @@
 import csv
+import sys
 import requests
 import tkinter.ttk as ttk
+import tkinter.ttk as tkt
 from time import *
 from tkinter import *
 from tkinter import filedialog, messagebox
@@ -69,7 +71,33 @@ def passdget(uid):
 
 class passwordmenu:
     def __init__(self, root, uid):
-        def get_data():
+        global count
+        root.tk.call('source', 'sv.tcl')
+        root.tk.call('set_theme', mode)
+
+        count = 0
+
+        def refresh_tree():
+            site_ent.config(state=DISABLED)
+            uname_ent.config(state=DISABLED)
+            mpass_ent.config(state=DISABLED)
+            genpass_btn.config(state=DISABLED)
+            add_btn.config(state=DISABLED)
+            del_btn.config(state=DISABLED)
+            pass_ent.config(state=DISABLED)
+            edit_btn.config(state=DISABLED)
+            signout_btn.config(state=DISABLED)
+            chanmps_btn.config(state=DISABLED)
+            import_btn.config(state=DISABLED)
+            export_btn.config(state=DISABLED)
+            del_usr_btn.config(state=DISABLED)
+            info_btn.config(state=DISABLED)
+            showp_btn.config(state=DISABLED)
+            hide_btn.config(state=DISABLED)
+
+            for item in my_tree.get_children():
+                my_tree.delete(item)
+            
             mycur.execute("SELECT passId FROM myp_data WHERE userId=" + uid)
             uiddata = mycur.fetchall()
             uidls = []
@@ -86,13 +114,28 @@ class passwordmenu:
                 for data in mycur.fetchall():
                     uls.append(data)
 
-            return uls
+            global count
+            for i in range(len(uls)):
+                p = decrypt(str(uls[i][2]))
+                my_tree.insert(
+                    parent="",
+                    iid=count,
+                    index="end",
+                    text="",
+                    values=(
+                        uls[i][3],
+                        uls[i][0],
+                        uls[i][1],
+                        "•" * len(p),
+                    ),
+                )
+                count += 1
 
         pvar = IntVar(value=0)
 
         mycur.execute("USE MYP;")
 
-        sv_ttk.set_theme("dark")
+
         my_tree = ttk.Treeview(root)
 
         my_tree["columns"] = ("id", "site", "uname", "passwd")
@@ -108,24 +151,8 @@ class passwordmenu:
         my_tree.heading("uname", anchor=CENTER, text="Username")
         my_tree.heading("passwd", anchor=CENTER, text="Password")
 
-        self.uls = get_data()
-        global count
-        count = 0
-        for i in range(len(self.uls)):
-            self.p = decrypt(str(self.uls[i][2]))
-            my_tree.insert(
-                parent="",
-                iid=count,
-                index="end",
-                text="",
-                values=(
-                    self.uls[i][3],
-                    self.uls[i][0],
-                    self.uls[i][1],
-                    "•" * len(self.p),
-                ),
-            )
-            count += 1
+        refresh_tree()
+        
 
         def shbtn():
             if (pvar.get()) == 1:
@@ -153,7 +180,7 @@ class passwordmenu:
                     "Wrong password", "Please enter correct Master Password"
                 )
 
-        def add_data(*e):
+        def add_data():
             if mpass_ent.get() == site_ent.get() == pass_ent.get() == "":
                 messagebox.showinfo(
                     "Data Not Found", "Enter the values in the entry boxes."
@@ -174,23 +201,23 @@ class passwordmenu:
                     pid = insintodata(
                         web, uname_ent.get(), encrypt(pass_ent.get()), uid
                     )
-                    my_tree.insert(
-                        parent="",
-                        index="end",
-                        iid=count,
-                        text="",
-                        value=(
-                            pid,
-                            web,
-                            uname_ent.get(),
-                            "•" * len(encrypt(pass_ent.get())),
-                        ),
-                    )
-                    count += 1
-                    site_ent.delete(0, END)
-                    uname_ent.delete(0, END)
-                    pass_ent.delete(0, END)
-                    mpass_ent.delete(0, END)
+                    site_ent.config(state=DISABLED)
+                    uname_ent.config(state=DISABLED)
+                    mpass_ent.config(state=DISABLED)
+                    genpass_btn.config(state=DISABLED)
+                    add_btn.config(state=DISABLED)
+                    del_btn.config(state=DISABLED)
+                    pass_ent.config(state=DISABLED)
+                    edit_btn.config(state=DISABLED)
+                    signout_btn.config(state=DISABLED)
+                    chanmps_btn.config(state=DISABLED)
+                    import_btn.config(state=DISABLED)
+                    export_btn.config(state=DISABLED)
+                    del_usr_btn.config(state=DISABLED)
+                    info_btn.config(state=DISABLED)
+                    showp_btn.config(state=DISABLED)
+                    hide_btn.config(state=DISABLED)
+
 
                 else:
                     messagebox.showerror(
@@ -344,25 +371,29 @@ class passwordmenu:
             mstc = Toplevel()
             mstc.wm_attributes("-topmost", True)
             mstc.title("Confirmation")
-            place_center(mstc)
-            mstc.geometry("402x200")
+            place_center(mstc, "402x200")
             mstc.resizable(0, 0)
             mstc.iconbitmap("images\\1.ico")
 
-            cb_style = ttk.Style()
-
-            omp_lbl = ttk.Label(mstc, text="Old Master Password :", font=("", 13))
+            omp_lbl = Label(mstc, text="Old Master Password :", font=("", 13))
             omp_lbl.grid(row=1, column=1, padx=10, pady=10)
 
             omp_ent = ttk.Entry(mstc, show="•")
             omp_ent.grid(row=1, column=2, padx=10, pady=10)
 
-            nmp_lbl = ttk.Label(mstc, text="New Master Password :", font=("", 13))
+            nmp_lbl = Label(mstc, text="New Master Password :", font=("", 13))
             nmp_lbl.grid(row=2, column=1, padx=10, pady=10)
 
             nmp_ent = ttk.Entry(mstc, show="•")
             nmp_ent.grid(row=2, column=2, padx=10, pady=10)
             nmp_ent.bind("<Return>", mc_check)
+
+            if mode == 'light':
+                mstc.config(bg="#9e9e9e")
+                nmp_lbl.config(fg='black', bg='#9e9e9e')
+                omp_lbl.config(fg='black', bg='#9e9e9e')
+            else:
+                pass
 
             showpass_cb = ttk.Checkbutton(
                 mstc,
@@ -427,9 +458,13 @@ class passwordmenu:
                 messagebox.showinfo("Failure", "Failed to to import!!")
 
         def exp_data():
-            def mc_check(*e):
-                if hashcrypt(str(ent.get())) == str(pass_ls[0]):
-                    des.destroy()
+            if mpass_ent.get() == '':
+                messagebox.showinfo(
+                    "Missing Password", "Please enter master password to delete data."
+                )
+            else:
+                pass_ls = passdget(uid)
+                if hashcrypt(str(mpass_ent.get())) == str(pass_ls[0]):
                     mycur.execute(
                         "SELECT SUBSTR(website, 9)'name', website, loginName FROM myp_data WHERE userId = "
                         + str(uid)
@@ -461,29 +496,19 @@ class passwordmenu:
                         for i in range(len(pls_)):
                             csv_w.writerow(globals()[f"expd{i+1}"])
                         file.close()
+                        mpass_ent.delete(0, END)
                 else:
                     messagebox.showerror("Wrong Password", "Enter the correct password")
-                    des.destroy()
-
-            pass_ls = passdget(uid)
-
-            des = Toplevel()
-            des.title("Verification")
-            des.wm_attributes("-topmost", True)
-            des.iconbitmap("images\\1.ico")
-
-            lbl = ttk.Label(des, text="Master Password :", font=("", 13))
-            lbl.grid(row=1, column=1, padx=10, pady=10)
-
-            ent = ttk.Entry(des, show="•")
-            ent.grid(row=1, column=2, padx=10, pady=10)
-
-            ent.bind("<Return>", mc_check)
+                    mpass_ent.delete(0,END)
 
         def deluser():
-            def mc_check(e):
-                if hashcrypt(str(ent.get())) == str(pass_ls[0]):
-                    des.destroy()
+            if mpass_ent.get() == '':
+                messagebox.showinfo(
+                    "Missing Password", "Please enter master password to delete data."
+                )
+            else:
+                pass_ls = passdget(uid)
+                if hashcrypt(mpass_ent.get()) == str(pass_ls[0]):
                     mycur.execute(
                         "SELECT email FROM myp_users WHERE userId = " + str(uid)
                     )
@@ -514,22 +539,7 @@ class passwordmenu:
                     system("python main.py")
                 else:
                     messagebox.showerror("Wrong Password", "Enter the correct password")
-                    des.destroy()
-
-            pass_ls = passdget(uid)
-
-            des = Toplevel()
-            des.wm_attributes("-topmost", True)
-            des.title("Confirmation")
-            des.iconbitmap("images\\1.ico")
-
-            lbl = ttk.Label(des, text="Master Password :", font=("", 13))
-            lbl.grid(row=1, column=1, padx=10, pady=10)
-
-            ent = ttk.Entry(des, show="•")
-            ent.grid(row=1, column=2, padx=10, pady=10)
-
-            ent.bind("<Return>", mc_check)
+                    mpass_ent.delete(0, END)
 
         def signout():
             psl.destroy()
@@ -608,7 +618,7 @@ class passwordmenu:
 
         global infowin
         genpass_btn = ttk.Button(root, text="Generate Password", command=generpass)
-        add_btn = ttk.Button(root, text="Add", command=add_data)
+        add_btn = ttk.Button(root, text="Add", command=lambda : [add_data(), refresh_tree()])
         del_btn = ttk.Button(root, text="Delete Selected", command=delete_selected)
         edit_btn = ttk.Button(
             root, text="Edit Selected", command=edit_selected, state=DISABLED
@@ -628,6 +638,9 @@ class passwordmenu:
         hide_btn = ttk.Button(
             root, text="Hide Password for Selected", command=hidep, state=DISABLED
         )
+        ref_btn = ttk.Button(
+            root, text="Refresh Table", command=refresh_tree
+        )
         my_tree.bind(
             "<Button-1>",
             lambda i: [
@@ -638,36 +651,33 @@ class passwordmenu:
         )
 
         site_lbl = Label(
-            root, text="Site: ", font=("", 14, BOLD), bg="#1e1e1e", fg="white"
+            root, text="Site: ", font=("", 14, BOLD)
         )
         site_ent = ttk.Entry(root, width=25)
 
         uname_lbl = Label(
-            root, text="Username: ", font=("", 14, BOLD), bg="#1e1e1e", fg="white"
+            root, text="Username: ", font=("", 14, BOLD)
         )
         uname_ent = ttk.Entry(root, width=25)
 
         pass_lbl = Label(
-            root, text="Password: ", font=("", 14, BOLD), bg="#1e1e1e", fg="white"
+            root, text="Password: ", font=("", 14, BOLD)
         )
         pass_ent = ttk.Entry(root, width=25, show="•")
 
         mpass_lbl = Label(
             root,
             text="Master Password: ",
-            font=("", 14, BOLD),
-            bg="#1e1e1e",
-            fg="white",
+            font=("", 14, BOLD)
         )
         mpass_ent = ttk.Entry(root, width=25, show="•")
-
         showpass_btn = ttk.Checkbutton(
             root,
             onvalue=1,
             offvalue=0,
             variable=pvar,
             text="Show password",
-            command=shbtn,
+            command=shbtn
         )
 
         my_tree.grid(row=1, column=1, pady=10, columnspan=7, rowspan=5, sticky=NSEW)
@@ -701,6 +711,17 @@ class passwordmenu:
         showpass_btn.grid(row=7, column=5, padx=10, pady=10)
         showp_btn.grid(row=7, column=6, padx=10, pady=10)
         hide_btn.grid(row=8, column=6, padx=10, pady=10)
+        ref_btn.grid(row=9, column=6, padx=10, pady=10)
+
+        if mode == 'light':
+            psl.config(bg="#9e9e9e")
+            site_lbl.config(fg='black', bg='#9e9e9e')
+            uname_lbl.config(fg='black', bg='#9e9e9e')
+            pass_lbl.config(fg='black', bg='#9e9e9e')
+            mpass_lbl.config(fg='black', bg='#9e9e9e')
+            
+        else:
+            pass
 
 
 class loading_screen:
@@ -745,26 +766,26 @@ def internet_stat(url="https://www.google.com/", timeout=3):
 net_stat = internet_stat()
 
 
-def place_center(root):  # Placing the window in the center of the screen
+def place_center(root, resol='500x500'):  # Placing the window in the center of the screen
     global x, y
     reso = pg.size()
     rx = reso[0]
     ry = reso[1]
     x = int((rx / 2) - (500 / 2))
     y = int((ry / 2) - (500 / 2))
-    root.geometry(f"500x500+{x}+{y}")
+    root.geometry(resol+f"+{x}+{y}")
 
 
 def lbk_rootw():
     global lpg
     lpg.destroy()
-    system("python main.py")
+    rootw()
 
 
 def sbk_rootw():
     global spg
     spg.destroy()
-    system("python main.py")
+    rootw()
 
 
 def ipass_ui():
@@ -800,13 +821,27 @@ def login_page():
         global lpg
         global user
         lpg = Tk()
+
+        if mode == 'light':
+            lpg.config(bg="#9e9e9e")
+        else:
+            pass
+
         lpg.title("Login")
-        place_center(lpg)
-        lpg.geometry("450x300")
+        place_center(lpg, '450x300')
         lpg.resizable(0, 0)
         lpg.iconbitmap("images\\1.ico")
         passkey = StringVar()
         cbvar = IntVar(value=0)
+        
+        lpg.tk.call('source', 'sv.tcl')
+        
+        if mode == 'light':
+            bk_arrow = ImageTk.PhotoImage(Image.open("images\\4.png"))
+            lpg.tk.call('set_theme', 'light')
+        elif mode == 'dark':
+            bk_arrow = ImageTk.PhotoImage(Image.open("images\\2.png"))
+            lpg.tk.call('set_theme', 'dark')
 
         def login(*event):
             global lpg
@@ -851,8 +886,7 @@ def login_page():
                             break
                 pass_ls = []
 
-        sv_ttk.set_theme("dark")
-        bk_arrow = ImageTk.PhotoImage(Image.open("images\\2.png"))
+
         ################# STYLES ##########################################
 
         ###WIDGETS
@@ -896,17 +930,29 @@ def signup_page():
     global spg
 
     spg = Tk()
+
+    if mode == 'light':
+        spg.config(bg="#9e9e9e")
+    else:
+        pass
+
     spg.title("Sign Up")
-    place_center(spg)
-    spg.geometry("450x600")
+    place_center(spg ,'450x600')
     spg.resizable(0, 0)
     spg.iconbitmap("images\\1.ico")
-    sv_ttk.set_theme("dark")
+
+    spg.tk.call('source', 'sv.tcl')
+
+    if mode == 'light':
+        bk_arrow = ImageTk.PhotoImage(Image.open("images\\4.png"))
+        spg.tk.call('set_theme', 'light')
+    elif mode == 'dark':
+        bk_arrow = ImageTk.PhotoImage(Image.open("images\\2.png"))
+        spg.tk.call('set_theme', 'dark')
 
     passkey = StringVar()
     repasskey = StringVar()
     cbvar = IntVar(value=0)
-    bk_arrow = ImageTk.PhotoImage(Image.open("images\\2.png"))
 
     def signup(*event):
         def upass_ui():
@@ -1154,50 +1200,95 @@ def signup_page():
 
 def rootw():
     global root
+    global mode
+
+    def change_mode():
+        global mode
+
+        def darks():
+            global mode
+            with open('mode.txt', 'w') as f:
+                f.write('dark')
+            
+            q = messagebox.askokcancel('Reload', "Reload Required\nClick OK to Reload.\nClick Cancel to reload mannually later.\nNOTE:THEME WILL CHANGE ONLY AFTER RELOAD.")
+            if q == True:
+                mode = 'dark'
+                chngm.destroy()
+                root.destroy()
+                system("python main.py")
+            elif q == False:
+                pass
+            else:
+                pass
+                
+
+        def lights():
+            global mode
+            with open('mode.txt', 'w') as f:
+                f.write('light')
+            
+            q = messagebox.askokcancel('Reload', "Reload Required\nClick OK to Reload.\nClick Cancel to reload mannually later.\nNOTE:THEME WILL CHANGE ONLY AFTER RELOAD.")
+            if q == True:
+                mode = 'light'
+                chngm.destroy()
+                root.destroy()
+                system("python main.py")
+            elif q == False:
+                pass
+            else:
+                pass
+
+        chngm = Toplevel()
+        #chngm.after(5000, chngm.destroy)
+        
+        if mode == "light":
+            lgt = ImageTk.PhotoImage(file='images//8.png')
+            bgt = ImageTk.PhotoImage(file='images//9.png')
+        if mode == 'dark':
+            lgt = ImageTk.PhotoImage(file='images//6.png')
+            bgt = ImageTk.PhotoImage(file='images//7.png')
+        
+        lgt_btn = ttk.Button(chngm, image=lgt, command=lights)
+        bgt_btn = ttk.Button(chngm, image=bgt, command=darks)
+        lgt_btn.pack()
+        bgt_btn.pack()
+        chngm.mainloop()
 
     root = Tk()
-    root.config(bg="#1e1e1e")
-    root.title("Password Manager")
-    place_center(root)
-    root.iconbitmap("images\\1.ico")
-    root.geometry("300x300")
-    root.resizable(0, 0)
-    backg = ImageTk.PhotoImage(file="images//4.png")
-    Label(root, image=backg, borderwidth=0).place(x=0.5, y=0)
 
-    signin_btn = Button(
+    if mode == 'light':
+        root.config(bg="#9e9e9e")
+    else:
+        pass
+
+    root.title("Password Manager")
+    place_center(root,'300x300')
+    root.iconbitmap("images\\1.ico")
+    root.resizable(0, 0)
+
+    root.tk.call('source', 'sv.tcl')
+    root.tk.call('set_theme', mode)
+
+    signin_btn = ttk.Button(
         root,
         text="Sign In",
         command=login_page,
-        bg="#2f2f2f",
-        fg="white",
-        width=8,
-        font=("", 14),
-        borderwidth=0,
-        activebackground="#2f2f2f",
+        width=8
     )
-    signup_btn = Button(
+    signup_btn = ttk.Button(
         root,
         text="Sign Up",
         command=signup_page,
-        bg="#2f2f2f",
-        fg="white",
-        width=8,
-        font=("", 14),
-        borderwidth=0,
-        activebackground="#2f2f2f",
+        width=8
     )
-    exit_btn = Button(
+    exit_btn = ttk.Button(
         root,
         text="Exit",
-        command=root.destroy,
-        bg="#2f2f2f",
-        fg="white",
-        width=8,
-        font=("", 14),
-        borderwidth=0,
-        activebackground="#2f2f2f",
+        command=lambda: [sys.exit()],
+        width=8
     )
+    mode_btn = ttk.Button(root, text="Mode", command= lambda: [change_mode()])
+
 
     signin_btn.place(
         relx=0.5,
@@ -1206,6 +1297,7 @@ def rootw():
     )
     signup_btn.place(relx=0.5, rely=0.5, anchor=CENTER)
     exit_btn.place(relx=0.5, rely=0.65, anchor=CENTER)
+    mode_btn.place(relx=0.975, rely=0.025, anchor=NE)
 
     root.mainloop()
 
@@ -1216,11 +1308,20 @@ check = open("cache.txt", "r", newline="\n")
 ls = check.readlines()
 check.close()
 
+global mode
+try:
+    f = open("mode.txt", 'r')
+    mode = f.read()
+    f.close()
+except:
+    f = open("mode.txt", 'w')
+    f.write('dark')
+    f.close()
+
 try:
     check_n = ls[-1]
-except IndexError:
-    check_n = ""
-if check_n == "":
-    rootw()
-else:
     ui(check_n)
+except:
+    rootw()
+
+#thanks to github:@rdbende for the sv_ttk theme
