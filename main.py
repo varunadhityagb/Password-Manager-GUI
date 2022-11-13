@@ -346,17 +346,17 @@ class passwordmenu:
             mstc = Toplevel()
             mstc.wm_attributes("-topmost", True)
             mstc.title("Confirmation")
-            place_center(mstc, "420x200")
+            place_center(mstc, "420x200", 400, 200)
             mstc.resizable(0, 0)
             mstc.iconbitmap("images\\1.ico")
 
-            omp_lbl = Label(mstc, text="Old Master Password :", font=("", 14, BOLD), bg="#9e9e9e", fg='black')
+            omp_lbl = ttk.Label(mstc, text="Old Master Password :", font=("", 14, BOLD), )
             omp_lbl.grid(row=1, column=1, padx=10, pady=10)
 
             omp_ent = ttk.Entry(mstc, show="•")
             omp_ent.grid(row=1, column=2, padx=10, pady=10)
 
-            nmp_lbl = Label(mstc, text="New Master Password :", font=("", 14, BOLD), bg="#9e9e9e", fg='black')
+            nmp_lbl = ttk.Label(mstc, text="New Master Password :", font=("", 14, BOLD), )
             nmp_lbl.grid(row=2, column=1, padx=10, pady=10)
 
             nmp_ent = ttk.Entry(mstc, show="•")
@@ -365,8 +365,6 @@ class passwordmenu:
 
             if mode == 'light':
                 mstc.config(bg="#9e9e9e")
-                nmp_lbl.config(fg='black', bg='#9e9e9e')
-                omp_lbl.config(fg='black', bg='#9e9e9e')
             else:
                 pass
 
@@ -532,7 +530,7 @@ class passwordmenu:
             place_center(infowin)
             infowin.bind("<Leave>", lambda i: infowin.destroy())
             mepage = ImageTk.PhotoImage(file="images//5.png")
-            Label(infowin, image=mepage, borderwidth=0).pack()
+            ttk.Label(infowin, image=mepage, borderwidth=0).pack()
             infowin.mainloop()
 
         def showp():
@@ -655,7 +653,7 @@ class passwordmenu:
             command=shbtn
         )
 
-        my_tree.grid(row=1, column=1, pady=10, columnspan=7, rowspan=5, sticky=NSEW)
+        my_tree.grid(row=1, column=1, pady=10, columnspan=6, rowspan=5, sticky=NSEW)
 
         genpass_btn.grid(row=1, column=8, padx=10, pady=10)
         add_btn.grid(row=2, column=8, padx=10, pady=10)
@@ -689,11 +687,10 @@ class passwordmenu:
 
         if mode == 'light':
             psl.config(bg="#9e9e9e")
-            site_lbl.config(fg='black', bg='#9e9e9e')
-            uname_lbl.config(fg='black', bg='#9e9e9e')
-            pass_lbl.config(fg='black', bg='#9e9e9e')
-            mpass_lbl.config(fg='black', bg='#9e9e9e')
-            
+            site_lbl.config(bg="#9e9e9e", fg='black')
+            uname_lbl.config(bg="#9e9e9e", fg='black')
+            pass_lbl.config(bg="#9e9e9e", fg='black')
+            mpass_lbl.config(bg="#9e9e9e", fg='black')
         else:
             pass
 
@@ -706,7 +703,7 @@ class loading_screen:
         top.overrideredirect(1)
         x = root.winfo_x()
         y = root.winfo_y()
-        top.geometry("+%d+%d" % (x + 500, y + 200))
+        top.geometry("+%d+%d" % (x+120, y+200))
         top.lift()
         top.after(time, lambda: top.destroy())
         frameCnt = 20
@@ -724,7 +721,7 @@ class loading_screen:
             label.configure(image=frame)
             top.after(100, update, ind)
 
-        label = Label(top)
+        label = ttk.Label(top)
         label.pack()
         top.after(0, update, 0)
 
@@ -740,13 +737,13 @@ def internet_stat(url="https://www.google.com/", timeout=3):
 net_stat = internet_stat()
 
 
-def place_center(root, resol='500x500'):  # Placing the window in the center of the screen
+def place_center(root, resol='500x500', x1=500, y1=500):  # Placing the window in the center of the screen
     global x, y
     reso = pg.size()
     rx = reso[0]
     ry = reso[1]
-    x = int((rx / 2) - (500 / 2))
-    y = int((ry / 2) - (500 / 2))
+    x = int((rx / 2) - (x1 / 2))
+    y = int((ry / 2) - (y1 / 2))
     root.geometry(resol+f"+{x}+{y}")
 
 
@@ -804,20 +801,14 @@ def login_page():
             pass
 
         lpg.title("Login")
-        place_center(lpg, '450x300')
+        place_center(lpg, '450x300', 450, 300)
         lpg.resizable(0, 0)
         lpg.iconbitmap("images\\1.ico")
         passkey = StringVar()
         cbvar = IntVar(value=0)
         
         lpg.tk.call('source', 'sv.tcl')
-        
-        if mode == 'light':
-            bk_arrow = ImageTk.PhotoImage(Image.open("images\\4.png"))
-            lpg.tk.call('set_theme', 'light')
-        elif mode == 'dark':
-            bk_arrow = ImageTk.PhotoImage(Image.open("images\\2.png"))
-            lpg.tk.call('set_theme', 'dark')
+    
 
         def login(*event):
             global lpg
@@ -866,11 +857,19 @@ def login_page():
         ################# STYLES ##########################################
 
         ###WIDGETS
-        usern_lbl = Label(lpg, text="Username:", font=("", 14, BOLD), bg='#9e9e9e', fg='black')
-        pass_lbl = Label(lpg, text="Password:", font=("", 14, BOLD), bg='#9e9e9e', fg='black')
+        usern_lbl = ttk.Label(lpg, text="Username:", font=("", 14, BOLD), )
+        pass_lbl = ttk.Label(lpg, text="Password:", font=("", 14, BOLD), )
         pass_ent = ttk.Entry(lpg, textvariable=passkey, show="•", width=30)
         pass_ent.bind("<Return>", login)
         in_btn = ttk.Button(lpg, text="Sign In", command=login, width=20)
+        
+        if mode == 'light':
+            bk_arrow = ImageTk.PhotoImage(Image.open("images\\4.png"))
+            lpg.tk.call('set_theme', 'light')
+        elif mode == 'dark':
+            bk_arrow = ImageTk.PhotoImage(Image.open("images\\2.png"))
+            lpg.tk.call('set_theme', 'dark')
+        
         showpass_cb = ttk.Checkbutton(
             lpg,
             text="Show Password",
@@ -913,7 +912,7 @@ def signup_page():
         pass
 
     spg.title("Sign Up")
-    place_center(spg ,'450x600')
+    place_center(spg ,'450x600', 450, 600)
     spg.resizable(0, 0)
     spg.iconbitmap("images\\1.ico")
 
@@ -987,16 +986,16 @@ def signup_page():
                     js = eval(otp_ent.get())
                     if js == otp:
                         global upass_lbl
-                        upass_lbl = Label(
-                            spg, text="Master Password:", font=("", 14, BOLD), bg="#9e9e9e", fg='black'
+                        upass_lbl = ttk.Label(
+                            spg, text="Master Password:", font=("", 14, BOLD), 
                         )
                         global upass_ent
                         upass_ent = ttk.Entry(
                             spg, textvariable=passkey, show="•", width=20
                         )
                         global urepass_lbl
-                        urepass_lbl = Label(
-                            spg, text="Re-Enter Password:", font=("", 14, BOLD), bg="#9e9e9e", fg='black'
+                        urepass_lbl = ttk.Label(
+                            spg, text="Re-Enter Password:", font=("", 14, BOLD), 
                         )
                         global urepass_ent
                         urepass_ent = ttk.Entry(
@@ -1051,7 +1050,7 @@ def signup_page():
                         otp = otpmail(email_ent.get())
                         print(otp)
                         global otp_lbl
-                        otp_lbl = Label(spg, text="OTP:      ", font=("", 14, BOLD), bg="#9e9e9e", fg='black')
+                        otp_lbl = ttk.Label(spg, text="OTP:      ", font=("", 14, BOLD), )
                         global otp_ent
                         otp_ent = ttk.Entry(spg, width=20)
                         otp_ent.bind("<Return>", otpc)
@@ -1073,7 +1072,7 @@ def signup_page():
                 else:
 
                     global email_lbl
-                    email_lbl = Label(spg, text="E-Mail:   ", font=("", 14, BOLD), bg="#9e9e9e", fg='black')
+                    email_lbl = ttk.Label(spg, text="E-Mail:   ", font=("", 14, BOLD), )
                     global email_ent
                     email_ent = ttk.Entry(spg, width=20)
                     email_ent.bind("<Return>", emailc)
@@ -1094,10 +1093,10 @@ def signup_page():
                     messagebox.showerror("Fill Everything", "Please enter a username.")
                 else:
                     global upass_lbl
-                    upass_lbl = Label(
+                    upass_lbl = ttk.Label(
                         spg,
                         text="Master Password:",
-                        font=("", 14, BOLD), bg="#9e9e9e", fg='black'
+                        font=("", 14, BOLD), 
                     )
                     global upass_ent
                     upass_ent = ttk.Entry(
@@ -1106,10 +1105,10 @@ def signup_page():
                         show="•", width=20
                     )
                     global urepass_lbl
-                    urepass_lbl = Label(
+                    urepass_lbl = ttk.Label(
                         spg,
                         text="Re-Enter Password:",
-                        font=("", 14, BOLD), bg="#9e9e9e", fg='black'
+                        font=("", 14, BOLD), 
                     )
                     global urepass_ent
                     urepass_ent = ttk.Entry(
@@ -1146,13 +1145,13 @@ def signup_page():
                     )
 
     global f_name_ent
-    f_name_lbl = Label(spg, text="First Name:", font=("", 14, BOLD), bg="#9e9e9e", fg='black')
+    f_name_lbl = ttk.Label(spg, text="First Name:", font=("", 14, BOLD), )
     f_name_ent = ttk.Entry(spg, width=20)
     global l_name_ent
-    l_name_lbl = Label(spg, text="Last Name:", font=("", 14, BOLD), bg="#9e9e9e", fg='black')
+    l_name_lbl = ttk.Label(spg, text="Last Name:", font=("", 14, BOLD), )
     l_name_ent = ttk.Entry(spg, width=20)
     global u_name_ent
-    u_name_lbl = Label(spg, text="Create Username:", font=("", 14, BOLD), bg="#9e9e9e", fg='black')
+    u_name_lbl = ttk.Label(spg, text="Create Username:", font=("", 14, BOLD), )
     u_name_ent = ttk.Entry(spg, width=20)
     u_name_ent.bind("<Return>", unamec)
 
@@ -1215,8 +1214,9 @@ def rootw():
                 pass
 
         chngm = Toplevel()
-        #chngm.after(5000, chngm.destroy)
-        
+        chngm.title('Theme')
+        chngm.iconbitmap("images\\1.ico")
+        place_center(chngm, '150x150', 150, 150)
         if mode == "light":
             lgt = ImageTk.PhotoImage(file='images//8.png')
             bgt = ImageTk.PhotoImage(file='images//9.png')
@@ -1226,8 +1226,8 @@ def rootw():
         
         lgt_btn = ttk.Button(chngm, image=lgt, command=lights)
         bgt_btn = ttk.Button(chngm, image=bgt, command=darks)
-        lgt_btn.pack()
-        bgt_btn.pack()
+        lgt_btn.place(relx=0.5, rely=0.3, anchor=CENTER)
+        bgt_btn.place(relx=0.5, rely=0.7, anchor=CENTER)
         chngm.mainloop()
 
     root = Tk()
@@ -1238,7 +1238,7 @@ def rootw():
         pass
 
     root.title("Password Manager")
-    place_center(root,'300x300')
+    place_center(root,'300x300', 300, 300)
     root.iconbitmap("images\\1.ico")
     root.resizable(0, 0)
 
