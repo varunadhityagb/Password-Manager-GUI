@@ -216,19 +216,24 @@ class passwordmenu:
                 signout_btn.config(state=ACTIVE)
 
             elif str(passdget(uid)[0]) == hashcrypt(mpass_ent.get()):
-                mpass_ent.delete(0, END)
-                selected = my_tree.selection()[0]
-                values = my_tree.item(selected, "values")
-                mycur.execute(
-                    f"SELECT loginPass from myp_data where passId = {values[0]}"
-                )
-                for i in mycur:
-                    passwd1 = decrypt(i[0])
+                try:
+                    mpass_ent.delete(0, END)
+                    selected = my_tree.selection()[0]
+                    values = my_tree.item(selected, "values")
+                    mycur.execute(
+                        f"SELECT loginPass from myp_data where passId = {values[0]}"
+                    )
+                    for i in mycur:
+                        passwd1 = decrypt(i[0])
 
-                t0, t1, t2, t3 = values[0], values[1], values[2], passwd1
-                site_ent.insert(0, values[1])
-                uname_ent.insert(0, values[2])
-                pass_ent.insert(0, passwd1)
+                    t0, t1, t2, t3 = values[0], values[1], values[2], passwd1
+                    site_ent.insert(0, values[1])
+                    uname_ent.insert(0, values[2])
+                    pass_ent.insert(0, passwd1)
+                except:
+                    messagebox.showinfo("Internal Error", "Relaunch required")
+                    root.destroy()
+                    system("python main.py")
 
                 def revert():
                     site_ent.delete(0, END)
