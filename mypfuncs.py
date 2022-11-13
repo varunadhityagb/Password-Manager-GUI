@@ -232,7 +232,6 @@ def emailvalidation(strg):
             return False
         else:
             messagebox.showerror("Sorry for the inconvenience", "Please try tomorrow🙏🏼")
-
     except Exception:
         messagebox.showerror(
             "Network", "Please ensure that you are connected to the internet."
