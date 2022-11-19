@@ -502,30 +502,32 @@ class passwordmenu:
                         "SELECT email FROM myp_users WHERE userId = " + str(uid)
                     )
                     els = mycur.fetchall()
-                    for i in els:
-                        if i == (None,):
-                            continue
-                        else:
-                            byemail(i[0])
-                    mycur.execute(
-                        "SELECT passId FROM myp_data WHERE userId = " + str(uid)
-                    )
-                    dells = []
-                    for i in mycur.fetchall():
-                        dells.extend(i)
-                    if dells != []:
-                        for pid in dells:
-                            mycur.execute(
-                                " DELETE FROM myp_data WHERE passId = " + str(pid)
-                            )
-                        mydb.commit()
+                    if net_stat == True:
+                        for i in els:
+                            if i == (None,):
+                                continue
+                            else:
+                                byemail(i[0])
                     else:
-                        pass
-                    mycur.execute("DELETE FROM myp_users WHERE userId = " + str(uid))
-                    mydb.commit()
-                    psl.destroy()
-                    open("cache.txt", "w")
-                    system("python main.py")
+                        mycur.execute(
+                            "SELECT passId FROM myp_data WHERE userId = " + str(uid)
+                        )
+                        dells = []
+                        for i in mycur.fetchall():
+                            dells.extend(i)
+                        if dells != []:
+                            for pid in dells:
+                                mycur.execute(
+                                    " DELETE FROM myp_data WHERE passId = " + str(pid)
+                                )
+                            mydb.commit()
+                        else:
+                            pass
+                        mycur.execute("DELETE FROM myp_users WHERE userId = " + str(uid))
+                        mydb.commit()
+                        psl.destroy()
+                        open("cache.txt", "w")
+                        system("python main.py")
                 else:
                     messagebox.showerror("Wrong Password", "Enter the correct password")
                     mpass_ent.delete(0, END)
