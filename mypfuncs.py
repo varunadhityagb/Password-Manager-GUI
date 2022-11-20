@@ -9,7 +9,6 @@ from PIL import Image, ImageTk
 import mysql.connector as sqlc
 import requests
 from os import system
-import sv_ttk
 
 # ProjectbyVarunAdhityaGB
 ######################## SQL Password ###############################################
