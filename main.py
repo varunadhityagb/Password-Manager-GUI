@@ -170,7 +170,7 @@ def ui(uid):
             )
             for data in mycur.fetchall():
                 uls.append(data)
-        print(5)
+
         global count
         for i in range(len(uls)):
             p = decrypt(str(uls[i][2]))
@@ -178,7 +178,7 @@ def ui(uid):
                 parent="",
                 iid=count,
                 index="end",
-                text="",
+                text=count+1,
                 values=(
                     uls[i][3],
                     uls[i][0],
@@ -191,7 +191,8 @@ def ui(uid):
     pvar = IntVar(value=0)
 
     mycur.execute("USE MYP;")
-    my_frm = Frame(psl)
+    my_frm_d = Frame(psl)
+    my_frm = Frame(psl, width=250)
     my_tree = ttk.Treeview(my_frm)
     scr_bar = ttk.Scrollbar(my_frm, orient=VERTICAL, command=my_tree.yview)
 
@@ -384,9 +385,9 @@ def ui(uid):
             revt_btn = ttk.Button(psl, text="Revert", command=revert)
             cancel_btn = ttk.Button(psl, text="Cancel", command=canceler)
 
-            save_btn.grid(row=7, column=8, padx=10, pady=10)
-            revt_btn.grid(row=8, column=8, padx=10, pady=10)
-            cancel_btn.grid(row=9, column=8, padx=10, pady=10)
+            save_btn.grid(row=8, column=8, padx=10, pady=10)
+            revt_btn.grid(row=9, column=8, padx=10, pady=10)
+            cancel_btn.grid(row=10, column=8, padx=10, pady=10)
 
         else:
             messagebox.showerror(
@@ -683,7 +684,47 @@ def ui(uid):
         del_btn.config(state=ACTIVE)
         signout_btn.config(state=ACTIVE)
 
+    def search(*e):
+        req = search_bar.get()
+        srch_ls = []
+        mycur.execute(f"select passId, website, loginName, loginPass from myp_data where userId = {uid};")
+        for i in mycur:
+            srch_ls.append(i)
+        for item in my_tree.get_children():
+            my_tree.delete(item)
+        for j in srch_ls:
+            if (req in j[1]) or (req in j[2]):
+                global count
+                my_tree.insert(
+                    parent="",
+                    index="end",
+                    iid=count,
+                    text="",
+                    value=(
+                        j[0],
+                        j[1],
+                        j[2],
+                        "•" * len(j[3]),
+                    ),
+                )
+                count += 1
+        else:
+            search_bar.delete(0, END)
+            messagebox.showinfo("Info", "No data found.")
+            refresh_tree()
+
+    def cancel_srch():
+        search_bar.delete(0, END)
+        for item in my_tree.get_children():
+            my_tree.delete(item)
+        refresh_tree()
+
     global infowin
+    global search_btn
+    search_bar = ttk.Entry(psl, width=100)
+    srch_cancel_btn = ttk.Button(psl, text='X', command=cancel_srch)
+    search_btn = ttk.Button(psl, text='Search', command=search)
+    search_bar.bind("<Return>", search)
     genpass_btn = ttk.Button(psl, text="Generate Password", command=generpass)
     add_btn = ttk.Button(psl, text="Add", command=lambda: [add_data()])
     del_btn = ttk.Button(psl, text="Delete Selected", command=delete_selected)
@@ -731,43 +772,48 @@ def ui(uid):
         text="Show password",
         command=shbtn,
     )
-    my_tree.place(relx=0.001, rely=0.01, width=1175, height=230)
-    scr_bar.place(relx=0.982, rely=0.01, height=230)
-    my_frm.grid(row=1, column=1, pady=10, columnspan=6, rowspan=5, sticky=NSEW)
+    search_bar.grid(row=0, column=0, pady=10, columnspan=6, padx=25)
+    srch_cancel_btn.place(relx=0.63, rely=0.015)
+    search_btn.place(relx=0.66, rely=0.015)
+    my_tree.place(relx=0.001, rely=0.001, width=1170, height=250)
+    scr_bar.place(relx=0.982, rely=0.001, height=250)
+    my_frm_d.grid(row=1, column=1, pady=10, columnspan=6, rowspan=5, sticky=NSEW)
+    my_frm.place(relx=0.001, rely=0.075, width=1195, height=250)
 
-    genpass_btn.grid(row=1, column=8, padx=10, pady=10)
-    add_btn.grid(row=2, column=8, padx=10, pady=10)
-    edit_btn.grid(row=3, column=8, padx=10, pady=10)
-    del_btn.grid(row=4, column=8, padx=10, pady=10)
-    signout_btn.grid(row=5, column=8, padx=10, pady=10)
+    genpass_btn.grid(row=2, column=8, padx=12, pady=10)
+    add_btn.grid(row=3, column=8, padx=12, pady=10)
+    edit_btn.grid(row=4, column=8, padx=12, pady=10)
+    del_btn.grid(row=5, column=8, padx=12, pady=10)
+    signout_btn.grid(row=6, column=8, padx=12, pady=10)
 
-    chanmps_btn.grid(row=10, column=1, pady=240, sticky=SE)
-    import_btn.grid(row=10, column=2, padx=10, pady=240, sticky=SE)
-    export_btn.grid(row=10, column=3, padx=10, pady=240, sticky=SE)
-    del_usr_btn.grid(row=10, column=4, padx=10, pady=240, sticky=SE)
-    info_btn.grid(row=10, column=8, padx=10, pady=240, sticky=SE)
+    chanmps_btn.grid(row=11, column=1, pady=200, sticky=SE)
+    import_btn.grid(row=11, column=2, padx=10, pady=200, sticky=SE)
+    export_btn.grid(row=11, column=3, padx=10, pady=200, sticky=SE)
+    del_usr_btn.grid(row=11, column=4, padx=10, pady=200, sticky=SE)
+    info_btn.grid(row=11, column=8, padx=10, pady=200, sticky=SE)
     info_btn.bind("<Enter>", lambda i: me())
     info_btn.bind("<Leave>", lambda i: infowin.destroy())
 
-    site_lbl.grid(row=6, column=1, padx=10)
-    site_ent.grid(row=7, column=1, padx=10)
+    site_lbl.grid(row=7, column=1, padx=10)
+    site_ent.grid(row=8, column=1, padx=10)
 
-    uname_lbl.grid(row=6, column=2, padx=10)
-    uname_ent.grid(row=7, column=2, padx=10)
+    uname_lbl.grid(row=7, column=2, padx=10)
+    uname_ent.grid(row=8, column=2, padx=10)
 
-    pass_lbl.grid(row=6, column=3, padx=10)
-    pass_ent.grid(row=7, column=3, padx=10)
+    pass_lbl.grid(row=7, column=3, padx=10)
+    pass_ent.grid(row=8, column=3, padx=10)
 
-    mpass_lbl.grid(row=6, column=4, padx=10)
-    mpass_ent.grid(row=7, column=4, padx=10)
+    mpass_lbl.grid(row=7, column=4, padx=10)
+    mpass_ent.grid(row=8, column=4, padx=10)
 
-    showpass_btn.grid(row=7, column=5, padx=10, pady=10)
-    showp_btn.grid(row=7, column=6, padx=10, pady=10)
-    hide_btn.grid(row=8, column=6, padx=10, pady=10)
+    showpass_btn.grid(row=8, column=5, padx=10, pady=10)
+    showp_btn.grid(row=8, column=6, padx=10, pady=10)
+    hide_btn.grid(row=9, column=6, padx=10, pady=10)
 
     if mode == "light":
         psl.config(bg="#9e9e9e")
         my_frm.config(bg="#9e9e9e")
+        my_frm_d.config(bg="#9e9e9e")
         site_lbl.config(bg="#9e9e9e", fg="black")
         uname_lbl.config(bg="#9e9e9e", fg="black")
         pass_lbl.config(bg="#9e9e9e", fg="black")
