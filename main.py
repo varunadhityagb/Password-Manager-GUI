@@ -283,8 +283,8 @@ def ui(uid):
                 messagebox.showerror(
                     "Wrong password", "Please enter correct Master Password"
                 )
-        system("python main.py")
-        psl.destroy()
+            system("python main.py")
+            psl.destroy()
 
     def edit_selected():
         add_btn.config(state=DISABLED)
@@ -687,6 +687,7 @@ def ui(uid):
     def search(*e):
         req = search_bar.get()
         srch_ls = []
+        sls = []
         mycur.execute(f"select passId, website, loginName, loginPass from myp_data where userId = {uid};")
         for i in mycur:
             srch_ls.append(i)
@@ -694,6 +695,14 @@ def ui(uid):
             my_tree.delete(item)
         for j in srch_ls:
             if (req in j[1]) or (req in j[2]):
+                sls.append(j)
+        print(sls)
+        if sls == []:
+            search_bar.delete(0, END)
+            messagebox.showinfo("Info", "No data found.")
+            refresh_tree()
+        else:
+            for k in sls:
                 global count
                 my_tree.insert(
                     parent="",
@@ -701,17 +710,13 @@ def ui(uid):
                     iid=count,
                     text="",
                     value=(
-                        j[0],
-                        j[1],
-                        j[2],
-                        "•" * len(j[3]),
+                        k[0],
+                        k[1],
+                        k[2],
+                        "•" * len(k[3]),
                     ),
                 )
                 count += 1
-        else:
-            search_bar.delete(0, END)
-            messagebox.showinfo("Info", "No data found.")
-            refresh_tree()
 
     def cancel_srch():
         search_bar.delete(0, END)
