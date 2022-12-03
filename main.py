@@ -481,51 +481,61 @@ def ui(uid):
         change_btn.grid(row=4, column=1, columnspan=2, padx=10, pady=10)
 
     def imp_data():
-        try:
-            psl.filename = filedialog.askopenfile(
-                title="Select a file",
-                filetypes=(("CSV Files", "*.csv"), ("All Files", "*.*")),
+        pass_ls = passdget(uid)
+        if mpass_ent.get() == "":
+            messagebox.showinfo(
+                "Missing Password", "Please enter master password to delete data."
             )
-            m = str(psl.filename).split()
-            m.remove("<_io.TextIOWrapper")
-            m.remove("encoding='cp1252'>")
-            m.remove("mode='r'")
-            n = " ".join(m)
-            final_path = n.split("=")[1]
-            final_path = final_path.replace("'", "")
-            final_path = final_path.strip()
-
-            file = open(final_path, "r")
-            csv_r = csv.reader(file)
-            ls = []
-            for i in csv_r:
-                ls.append(i)
-
-            ls.reverse()
-            ls.pop()
-            ls.reverse()
-
+        elif hashcrypt(mpass_ent.get()) == str(pass_ls[0]):
+            mpass_ent.delete(0,END)
             try:
-                for i in range(len(ls)):
-                    global count
-                    web = ls[i][1]
-                    logn = ls[i][2]
-                    logp = encrypt(str(ls[i][3]))
-                    pid = insintodata(web, logn, logp, uid)
-                    mydb.commit()
-                    my_tree.insert(
-                        parent="",
-                        index="end",
-                        iid=count,
-                        text="",
-                        value=(pid, web, logn, "•" * len(logp)),
-                    )
-                    count += 1
-                messagebox.showinfo("Success", "Successfuly imported!!")
+                psl.filename = filedialog.askopenfile(
+                    title="Select a file",
+                    filetypes=(("CSV Files", "*.csv"), ("All Files", "*.*")),
+                )
+                m = str(psl.filename).split()
+                m.remove("<_io.TextIOWrapper")
+                m.remove("encoding='cp1252'>")
+                m.remove("mode='r'")
+                n = " ".join(m)
+                final_path = n.split("=")[1]
+                final_path = final_path.replace("'", "")
+                final_path = final_path.strip()
+
+                file = open(final_path, "r")
+                csv_r = csv.reader(file)
+                ls = []
+                for i in csv_r:
+                    ls.append(i)
+
+                ls.reverse()
+                ls.pop()
+                ls.reverse()
+                if len(ls) > 20:
+                    messagebox.showinfo("Loading....", "This might take sometime")
+                try:
+                    for i in range(len(ls)):
+                        global count
+                        web = ls[i][1]
+                        logn = ls[i][2]
+                        logp = encrypt(str(ls[i][3]))
+                        pid = insintodata(web, logn, logp, uid)
+                        mydb.commit()
+                        my_tree.insert(
+                            parent="",
+                            index="end",
+                            iid=count,
+                            text="",
+                            value=(pid, web, logn, "•" * len(logp)),
+                        )
+                        count += 1  
+                    messagebox.showinfo("Success", "Successfuly imported!!")
+                except:
+                    messagebox.showinfo("Failure", "Failed to to import!!")
             except:
-                messagebox.showinfo("Failure", "Failed to to import!!")
-        except:
-            pass
+                pass
+        else:
+            messagebox.showerror("Wrong Password", "Enter the correct password")
 
     def exp_data():
         if mpass_ent.get() == "":
@@ -588,25 +598,26 @@ def ui(uid):
                         else:
                             byemail(i[0])
                 else:
-                    mycur.execute(
-                        "SELECT passId FROM myp_data WHERE userId = " + str(uid)
-                    )
-                    dells = []
-                    for i in mycur.fetchall():
-                        dells.extend(i)
-                    if dells != []:
-                        for pid in dells:
-                            mycur.execute(
-                                " DELETE FROM myp_data WHERE passId = " + str(pid)
-                            )
-                        mydb.commit()
-                    else:
-                        pass
-                    mycur.execute("DELETE FROM myp_users WHERE userId = " + str(uid))
+                    pass
+                mycur.execute(
+                    "SELECT passId FROM myp_data WHERE userId = " + str(uid)
+                )
+                dells = []
+                for i in mycur.fetchall():
+                    dells.extend(i)
+                if dells != []:
+                    for pid in dells:
+                        mycur.execute(
+                            " DELETE FROM myp_data WHERE passId = " + str(pid)
+                        )
                     mydb.commit()
-                    psl.destroy()
-                    open("cache.txt", "w")
-                    system("python main.py")
+                else:
+                    pass
+                mycur.execute("DELETE FROM myp_users WHERE userId = " + str(uid))
+                mydb.commit()
+                psl.destroy()
+                open("cache.txt", "w")
+                system("python main.py")
             else:
                 messagebox.showerror("Wrong Password", "Enter the correct password")
                 mpass_ent.delete(0, END)
@@ -696,7 +707,6 @@ def ui(uid):
         for j in srch_ls:
             if (req in j[1]) or (req in j[2]):
                 sls.append(j)
-        print(sls)
         if sls == []:
             search_bar.delete(0, END)
             messagebox.showinfo("Info", "No data found.")
@@ -724,6 +734,30 @@ def ui(uid):
             my_tree.delete(item)
         refresh_tree()
 
+    def user():
+        usr = Toplevel()
+        usr.wm_attributes("-topmost", True)
+        usr.title("Confirmation")
+        place_center(usr, "500x100", 500,500)
+        usr.resizable(0, 0)
+        usr.iconbitmap("images\\1.ico")
+        mycur.execute(f"SELECT concat(firstName, ' ', lastName), eMail from myp_users where userId = {uid};")
+        for i in mycur:
+            usr_name = i[0]
+            usr_email = i[1]
+
+        if usr_email == None:
+            usr_email = "-"
+        else:
+            pass
+
+        usrn_lbl = ttk.Label(usr, text=f'Username: {usr_name}', font = ("", 14, BOLD))
+        usre_lbl = ttk.Label(usr, text=f'Email: {usr_email}', font = ("", 14, BOLD))
+        usrn_lbl.grid(row=0, column=0, padx = 10, pady=10)
+        usre_lbl.grid(row=1, column=0, padx=10, pady=10)
+        usr.mainloop()
+
+
     global infowin
     global search_btn
     search_bar = ttk.Entry(psl, width=100)
@@ -736,6 +770,14 @@ def ui(uid):
     edit_btn = ttk.Button(
         psl, text="Edit Selected", command=edit_selected, state=DISABLED
     )
+    if mode == 'dark':
+        usr_img = ImageTk.PhotoImage(file="images\\11.png")
+    elif mode == 'light':
+        usr_img = ImageTk.PhotoImage(file="images\\10.png")
+    else:
+        pass
+
+    b = ttk.Button(psl, image=usr_img, command=user)
 
     signout_btn = ttk.Button(psl, text="Sign Out", command=signout)
     chanmps_btn = ttk.Button(psl, text="Change Master Password", command=mstrchange)
@@ -780,6 +822,7 @@ def ui(uid):
     search_bar.grid(row=0, column=0, pady=10, columnspan=6, padx=25)
     srch_cancel_btn.place(relx=0.63, rely=0.015)
     search_btn.place(relx=0.66, rely=0.015)
+    b.place(relx=0.9, rely=0.015)
     my_tree.place(relx=0.001, rely=0.001, width=1170, height=250)
     scr_bar.place(relx=0.982, rely=0.001, height=250)
     my_frm_d.grid(row=1, column=1, pady=10, columnspan=6, rowspan=5, sticky=NSEW)
@@ -825,6 +868,7 @@ def ui(uid):
         mpass_lbl.config(bg="#9e9e9e", fg="black")
     else:
         pass
+
     psl.mainloop()
 
 
