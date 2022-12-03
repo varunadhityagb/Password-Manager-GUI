@@ -289,14 +289,12 @@ def ui(uid):
     def edit_selected():
         add_btn.config(state=DISABLED)
         del_btn.config(state=DISABLED)
-        signout_btn.config(state=DISABLED)
         if mpass_ent.get() == "":
             messagebox.showinfo(
                 "Missing Password", "Please enter master password to delete data."
             )
             add_btn.config(state=ACTIVE)
             del_btn.config(state=ACTIVE)
-            signout_btn.config(state=ACTIVE)
 
         elif str(passdget(uid)[0]) == hashcrypt(mpass_ent.get()):
             try:
@@ -358,7 +356,6 @@ def ui(uid):
                     cancel_btn.destroy()
                     add_btn.config(state=ACTIVE)
                     del_btn.config(state=ACTIVE)
-                    signout_btn.config(state=ACTIVE)
                     site_ent.delete(0, END)
                     uname_ent.delete(0, END)
                     pass_ent.delete(0, END)
@@ -375,7 +372,6 @@ def ui(uid):
                 cancel_btn.destroy()
                 add_btn.config(state=ACTIVE)
                 del_btn.config(state=ACTIVE)
-                signout_btn.config(state=ACTIVE)
                 site_ent.delete(0, END)
                 uname_ent.delete(0, END)
                 pass_ent.delete(0, END)
@@ -395,7 +391,6 @@ def ui(uid):
             )
             add_btn.config(state=ACTIVE)
             del_btn.config(state=ACTIVE)
-            signout_btn.config(state=ACTIVE)
 
     def generpass():
         pass_ent.delete(0, END)
@@ -512,7 +507,7 @@ def ui(uid):
                 ls.pop()
                 ls.reverse()
                 if len(ls) > 20:
-                    messagebox.showinfo("Loading....", "This might take sometime")
+                    messagebox.showinfo("Please be patient", "This might take sometime")
                 try:
                     for i in range(len(ls)):
                         global count
@@ -643,7 +638,6 @@ def ui(uid):
         add_btn.config(state=DISABLED)
         del_btn.config(state=DISABLED)
         edit_btn.config(state=DISABLED)
-        signout_btn.config(state=DISABLED)
         if hashcrypt(mpass_ent.get()) == str(pass_ls[0]):
             mpass_ent.delete(0, END)
             selected = my_tree.selection()
@@ -661,13 +655,11 @@ def ui(uid):
                 system("python main.py")
             add_btn.config(state=ACTIVE)
             del_btn.config(state=ACTIVE)
-            signout_btn.config(state=ACTIVE)
 
         elif mpass_ent.get() == "":
             messagebox.showinfo("Password Missing", "Enter Master Password")
             add_btn.config(state=ACTIVE)
             del_btn.config(state=ACTIVE)
-            signout_btn.config(state=ACTIVE)
 
         else:
             messagebox.showerror(
@@ -679,7 +671,6 @@ def ui(uid):
         add_btn.config(state=DISABLED)
         del_btn.config(state=DISABLED)
         edit_btn.config(state=DISABLED)
-        signout_btn.config(state=DISABLED)
         mpass_ent.delete(0, END)
         selected = my_tree.selection()
         try:
@@ -693,7 +684,6 @@ def ui(uid):
             system("python main.py")
         add_btn.config(state=ACTIVE)
         del_btn.config(state=ACTIVE)
-        signout_btn.config(state=ACTIVE)
 
     def search(*e):
         req = search_bar.get()
@@ -737,8 +727,8 @@ def ui(uid):
     def user():
         usr = Toplevel()
         usr.wm_attributes("-topmost", True)
-        usr.title("Confirmation")
-        place_center(usr, "500x100", 500,500)
+        usr.title("User Details")
+        place_center(usr, "500x150", 500,500)
         usr.resizable(0, 0)
         usr.iconbitmap("images\\1.ico")
         mycur.execute(f"SELECT concat(firstName, ' ', lastName), eMail from myp_users where userId = {uid};")
@@ -751,10 +741,12 @@ def ui(uid):
         else:
             pass
 
-        usrn_lbl = ttk.Label(usr, text=f'Username: {usr_name}', font = ("", 14, BOLD))
-        usre_lbl = ttk.Label(usr, text=f'Email: {usr_email}', font = ("", 14, BOLD))
-        usrn_lbl.grid(row=0, column=0, padx = 10, pady=10)
-        usre_lbl.grid(row=1, column=0, padx=10, pady=10)
+        usrn_lbl = ttk.Label(usr, text=f'Username: {usr_name}', font = ("", 14, BOLD), anchor=CENTER)
+        usre_lbl = ttk.Label(usr, text=f'Email: {usr_email}', font = ("", 14, BOLD), anchor=CENTER)
+        signout_btn = ttk.Button(usr, text="Sign Out", command=signout)
+        usrn_lbl.place(relx=0.5, rely=0.5, anchor=CENTER)
+        usre_lbl.place(relx=0.5, rely=0.65, anchor=CENTER)
+        signout_btn.place(relx=0.975, rely=0.025, anchor=NE)
         usr.mainloop()
 
 
@@ -779,7 +771,6 @@ def ui(uid):
 
     b = ttk.Button(psl, image=usr_img, command=user)
 
-    signout_btn = ttk.Button(psl, text="Sign Out", command=signout)
     chanmps_btn = ttk.Button(psl, text="Change Master Password", command=mstrchange)
     import_btn = ttk.Button(psl, text="Import Data", command=imp_data)
     export_btn = ttk.Button(psl, text="Export data", command=exp_data)
@@ -822,23 +813,22 @@ def ui(uid):
     search_bar.grid(row=0, column=0, pady=10, columnspan=6, padx=25)
     srch_cancel_btn.place(relx=0.63, rely=0.015)
     search_btn.place(relx=0.66, rely=0.015)
-    b.place(relx=0.9, rely=0.015)
+    b.grid(row=1, column=8, padx=12, pady=8)
     my_tree.place(relx=0.001, rely=0.001, width=1170, height=250)
     scr_bar.place(relx=0.982, rely=0.001, height=250)
     my_frm_d.grid(row=1, column=1, pady=10, columnspan=6, rowspan=5, sticky=NSEW)
     my_frm.place(relx=0.001, rely=0.075, width=1195, height=250)
 
-    genpass_btn.grid(row=2, column=8, padx=12, pady=10)
-    add_btn.grid(row=3, column=8, padx=12, pady=10)
-    edit_btn.grid(row=4, column=8, padx=12, pady=10)
-    del_btn.grid(row=5, column=8, padx=12, pady=10)
-    signout_btn.grid(row=6, column=8, padx=12, pady=10)
+    genpass_btn.grid(row=3, column=8, padx=12, pady=10)
+    add_btn.grid(row=4, column=8, padx=12, pady=10)
+    edit_btn.grid(row=5, column=8, padx=12, pady=10)
+    del_btn.grid(row=6, column=8, padx=12, pady=10)
 
-    chanmps_btn.grid(row=11, column=1, pady=200, sticky=SE)
-    import_btn.grid(row=11, column=2, padx=10, pady=200, sticky=SE)
-    export_btn.grid(row=11, column=3, padx=10, pady=200, sticky=SE)
-    del_usr_btn.grid(row=11, column=4, padx=10, pady=200, sticky=SE)
-    info_btn.grid(row=11, column=8, padx=10, pady=200, sticky=SE)
+    chanmps_btn.grid(row=11, column=1, pady=180, sticky=SE)
+    import_btn.grid(row=11, column=2, padx=10, pady=180, sticky=SE)
+    export_btn.grid(row=11, column=3, padx=10, pady=180, sticky=SE)
+    del_usr_btn.grid(row=11, column=4, padx=10, pady=180, sticky=SE)
+    info_btn.grid(row=11, column=8, padx=10, pady=180, sticky=SE)
     info_btn.bind("<Enter>", lambda i: me())
     info_btn.bind("<Leave>", lambda i: infowin.destroy())
 
