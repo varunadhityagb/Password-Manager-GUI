@@ -139,7 +139,6 @@ def sbk_rootw():
 def ipass_ui():
     lpg.destroy()
     system("python main.py")
-    psl.destroy()
 
 
 def ui(uid):
@@ -927,7 +926,7 @@ def login_page():
                 while ch == False:
                     masterPass_check_hash = hashcrypt(passkey.get())
                     if masterPass_check_hash == pass_ls[0]:
-                        ch == True
+                        ch = True
                         ipass_ui()
                     else:
                         msgbox = messagebox.showwarning("ERROR", "WRONG PASSWORD!!")
