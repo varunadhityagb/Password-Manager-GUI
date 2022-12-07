@@ -8,7 +8,6 @@ from tkinter import filedialog, messagebox
 from tkinter.font import BOLD
 
 import pyautogui as pg
-import requests
 
 from database import *
 from mypfuncs import *
