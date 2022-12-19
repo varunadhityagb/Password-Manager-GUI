@@ -14,7 +14,7 @@ idna==3.4
 MouseInfo==0.1.3
 mysql-connector-python==8.0.31
 pefile==2022.5.30
-Pillow==9.2.0
+Pillow==9.3.0
 protobuf==3.20.1
 PyAutoGUI==0.9.53
 pycparser==2.21
