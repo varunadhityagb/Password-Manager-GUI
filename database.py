@@ -3,6 +3,7 @@ import ssl
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import mysql.connector as sqlc
+import time
 from mypfuncs import *
 
 ##################################### CONNECTING MySQL ################################
@@ -120,7 +121,9 @@ def otpmail(receivermail):
         server.login("manageyourpass91@gmail.com", "mokktrqhxujqrrtd")
         server.send_message(msg)
         server.quit()
-    return otp
+    print(otp)
+    ts = time.strftime('%M')
+    return otp, ts
 
 
 def byemail(receivermail):

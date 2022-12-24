@@ -1,4 +1,5 @@
 import csv
+from email import message
 import sys
 import tkinter.ttk as ttk
 import tkinter.ttk as tkt
@@ -1067,61 +1068,66 @@ def signup_page():
 
             def emailc(*event):
                 def otpc(*event):
-                    global urepass_ent
-                    global upass_ent
-
-                    js = eval(otp_ent.get())
-                    if js == otp:
-                        global upass_lbl
-                        upass_lbl = ttk.Label(
-                            spg,
-                            text="Master Password:",
-                            font=("", 14, BOLD),
-                        )
-                        global upass_ent
-                        upass_ent = ttk.Entry(
-                            spg, textvariable=passkey, show="•", width=20
-                        )
-                        global urepass_lbl
-                        urepass_lbl = ttk.Label(
-                            spg,
-                            text="Re-Enter Password:",
-                            font=("", 14, BOLD),
-                        )
-                        global urepass_ent
-                        urepass_ent = ttk.Entry(
-                            spg, textvariable=repasskey, show="•", width=20
-                        )
-                        urepass_ent.bind("<Return>", signup)
-                        global showpass_cb
-                        showpass_cb = ttk.Checkbutton(
-                            spg,
-                            text="Show Password",
-                            variable=cbvar,
-                            onvalue=1,
-                            offvalue=0,
-                            command=cbshow,
-                        )
-                        global up_btn
-                        up_btn = ttk.Button(
-                            spg, text="Sign Up", command=signup, width=16
-                        )
-
-                        upass_lbl.grid(row=8, column=1, padx=10, pady=10)
-                        upass_ent.grid(row=8, column=2, padx=10, pady=10)
-                        urepass_lbl.grid(row=9, column=1, padx=10, pady=10)
-                        urepass_ent.grid(row=9, column=2, padx=10, pady=10)
-                        showpass_cb.grid(row=10, column=2, padx=10, sticky=E)
-                        up_btn.grid(
-                            row=11, column=1, columnspan=2, padx=20, pady=10, ipadx=100
-                        )
+                    nts = time.strftime('%M')
+                    if (int(nts)-int(ts)) > 0:
+                        messagebox.showinfo("OTP EXPIRED", "Click on resend OTP.")
                     else:
-                        messagebox.showerror(
-                            "Wrong OTP",
-                            "The entered otp is wrong.\nPlease check again.",
-                        )
+                        global otp
+                        global urepass_ent
+                        global upass_ent
 
-                loading_screen(spg, 6000)
+                        js = eval(otp_ent.get())
+                        if js == otp:
+                            resend.destroy()
+                            global upass_lbl
+                            upass_lbl = ttk.Label(
+                                spg,
+                                text="Master Password:",
+                                font=("", 14, BOLD),
+                            )
+                            global upass_ent
+                            upass_ent = ttk.Entry(
+                                spg, textvariable=passkey, show="•", width=20
+                            )
+                            global urepass_lbl
+                            urepass_lbl = ttk.Label(
+                                spg,
+                                text="Re-Enter Password:",
+                                font=("", 14, BOLD),
+                            )
+                            global urepass_ent
+                            urepass_ent = ttk.Entry(
+                                spg, textvariable=repasskey, show="•", width=20
+                            )
+                            urepass_ent.bind("<Return>", signup)
+                            global showpass_cb
+                            showpass_cb = ttk.Checkbutton(
+                                spg,
+                                text="Show Password",
+                                variable=cbvar,
+                                onvalue=1,
+                                offvalue=0,
+                                command=cbshow,
+                            )
+                            global up_btn
+                            up_btn = ttk.Button(
+                                spg, text="Sign Up", command=signup, width=16
+                            )
+
+                            upass_lbl.grid(row=8, column=1, padx=10, pady=10)
+                            upass_ent.grid(row=8, column=2, padx=10, pady=10)
+                            urepass_lbl.grid(row=9, column=1, padx=10, pady=10)
+                            urepass_ent.grid(row=9, column=2, padx=10, pady=10)
+                            showpass_cb.grid(row=10, column=2, padx=10, sticky=E)
+                            up_btn.grid(
+                                row=11, column=1, columnspan=2, padx=20, pady=10, ipadx=100
+                            )
+                        else:
+                            messagebox.showerror(
+                                "Wrong OTP",
+                                "The entered otp is wrong.\nPlease check again.",
+                            )
+
                 res = emailvalidation(email_ent.get())
 
                 if res == False:
@@ -1136,8 +1142,20 @@ def signup_page():
                             "This is email address is assosiated with another user.",
                         )
                     else:
-                        otp = otpmail(email_ent.get())
-                        print(otp)
+                        loading_screen(spg, 4000)
+
+                        def rentered(*e):
+                            resend.config(fg = "light blue")
+                        
+                        def rexit(*e):
+                            resend.config(fg= "white")
+                        
+                        def resendp(*e):
+                            global otp, ts
+                            otp, ts = otpmail(email_ent.get())
+
+                        global otp, ts
+                        otp, ts = otpmail(email_ent.get())
                         global otp_lbl
                         otp_lbl = ttk.Label(
                             spg,
@@ -1148,8 +1166,15 @@ def signup_page():
                         otp_ent = ttk.Entry(spg, width=20)
                         otp_ent.bind("<Return>", otpc)
 
+                        resend = Label(spg, text="Resend OTP", font=("", 9, BOLD))
+
                         otp_lbl.grid(row=7, column=1, padx=10, pady=10)
                         otp_ent.grid(row=7, column=2, padx=10, pady=10)
+                        resend.place(relx=0.5, rely=0.559)
+
+                        resend.bind("<Enter>", rentered)
+                        resend.bind("<Button-1>", resendp)
+                        resend.bind("<Leave>", rexit)
 
             res = unamecheck(u_name_ent.get())
 
