@@ -2,7 +2,7 @@ import csv
 from email import message
 import sys
 import tkinter.ttk as ttk
-import tkinter.ttk as tkt
+import tkinter as tk
 from time import *
 from tkinter import *
 from tkinter import filedialog, messagebox
@@ -283,7 +283,7 @@ def ui(uid):
                     "Wrong password", "Please enter correct Master Password"
                 )
             system("python main.py")
-            psl.destroy()
+            #psl.destroy()
 
     def edit_selected():
         add_btn.config(state=DISABLED)
