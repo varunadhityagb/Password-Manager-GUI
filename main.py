@@ -722,6 +722,8 @@ def ui(uid):
         for item in my_tree.get_children():
             my_tree.delete(item)
         refresh_tree()
+        
+
 
     def user():
         usr = Toplevel()
@@ -749,11 +751,31 @@ def ui(uid):
         usr.mainloop()
 
 
+    def bar(*e):
+        global size, value
+        value = 0
+        size = 15
+        search_btn.destroy()
+        search_bar.grid(row=0, column=0, pady=10, columnspan=6, padx=25)
+        srch_cancel_btn.place(relx=0.63, rely=0.015)
+
+    def expand(*e):
+        global size, value
+        while value < 45:
+            size += 2
+            value += 1
+            search_btn.config(width=size)
+        psl.after(100, bar)
+
     global infowin
     global search_btn
+    global size, value
+
+    size = 15
+    value = 0
     search_bar = ttk.Entry(psl, width=100)
     srch_cancel_btn = ttk.Button(psl, text='X', command=cancel_srch)
-    search_btn = ttk.Button(psl, text='Search', command=search)
+    search_btn = ttk.Button(psl, text='Search', command=expand, width=size,)
     search_bar.bind("<Return>", search)
     genpass_btn = ttk.Button(psl, text="Generate Password", command=generpass)
     add_btn = ttk.Button(psl, text="Add", command=lambda: [add_data()])
@@ -809,9 +831,9 @@ def ui(uid):
         text="Show password",
         command=shbtn,
     )
-    search_bar.grid(row=0, column=0, pady=10, columnspan=6, padx=25)
-    srch_cancel_btn.place(relx=0.63, rely=0.015)
-    search_btn.place(relx=0.66, rely=0.015)
+    #search_bar.grid(row=0, column=0, pady=10, columnspan=6, padx=25)
+    #srch_cancel_btn.place(relx=0.63, rely=0.015)
+    search_btn.grid(row=0, column=0, pady=10, columnspan=6)
     b.grid(row=1, column=8, padx=12, pady=8)
     my_tree.place(relx=0.001, rely=0.001, width=1170, height=250)
     scr_bar.place(relx=0.982, rely=0.001, height=250)
