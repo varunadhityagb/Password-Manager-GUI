@@ -500,50 +500,56 @@ global pass_btn
 root = Tk()
 sv.set_theme(mode)
 root.title(" Password Manager")
-root.iconbitmap("images\\1.ico")
+root.iconbitmap("1.ico")
 root.state("zoomed")
 
 global count
 count = 0
 
 def refresh_tree():
-    for items in my_tree.get_children():
+    try:
+        for items in my_tree.get_children():
             my_tree.delete(items)
+    except:
+        pass
 
     if (open('cache.txt').read()) == "":
         pass
     else:
-        mycur.execute("SELECT passId FROM myp_data WHERE userId=" + (open('cache.txt').read()))
-        uiddata = mycur.fetchall()
-        uidls = []
-        for i in uiddata:
-            uidls.extend(i)
+        try:
+            mycur.execute("SELECT passId FROM myp_data WHERE userId=" + (open('cache.txt').read()))
+            uiddata = mycur.fetchall()
+            uidls = []
+            for i in uiddata:
+                uidls.extend(i)
 
-        uls = []
-        for uidn in uidls:
-            mycur.execute(
-            "SELECT website, loginName, loginPass, passId FROM myp_data WHERE passId="
-            + str(uidn)
-            )
-            for data in mycur.fetchall():
-                uls.append(data)
+            uls = []
+            for uidn in uidls:
+                mycur.execute(
+                "SELECT website, loginName, loginPass, passId FROM myp_data WHERE passId="
+                + str(uidn)
+                )
+                for data in mycur.fetchall():
+                    uls.append(data)
 
-        global count    
-        for i in range(len(uls)):   
-            p = decrypt(str(uls[i][2]))
-            my_tree.insert( 
-                parent="",  
-                iid=count,  
-                index="end",    
-                text=count+1,   
-                values=(
-                    uls[i][3],
-                    uls[i][0],
-                    uls[i][1],
-                    "•" * len(p),
-                ),
-            )
-            count += 1
+            global count    
+            for i in range(len(uls)):   
+                p = decrypt(str(uls[i][2]))
+                my_tree.insert( 
+                    parent="",  
+                    iid=count,  
+                    index="end",    
+                    text=count+1,   
+                    values=(
+                        uls[i][3],
+                        uls[i][0],
+                        uls[i][1],
+                        "•" * len(p),
+                    ),
+                )
+                count += 1
+        except:
+            pass
 
 pvar = IntVar(value=0)
 
@@ -566,8 +572,6 @@ my_tree.heading("id", anchor=CENTER, text="Id")
 my_tree.heading("site", anchor=CENTER, text="Website")
 my_tree.heading("uname", anchor=CENTER, text="Username")
 my_tree.heading("passwd", anchor=CENTER, text="Password")
-
-refresh_tree()
 
 def shbtn_og():
     if (pvar.get()) == 1:
@@ -905,16 +909,19 @@ def exp_data():
                     pls_.extend(i)
                 for i in range(len(pls_)):
                     globals()[f"expd{i+1}"].insert(3, decrypt(str(pls_[i])))
-                file = open(root.filedir + "/export.csv", "w", newline="")
-                csv_w = csv.writer(file)
-                ls = ("name", "url", "username", "password")
-                csv_w.writerow(ls)
-                file.close()
-                file = open(root.filedir + "/export.csv", "a+", newline="")
-                csv_w = csv.writer(file)
-                for i in range(len(pls_)):
-                    csv_w.writerow(globals()[f"expd{i+1}"])
-                file.close()
+                try:
+                    file = open(root.filedir + "/export.csv", "w", newline="")
+                    csv_w = csv.writer(file)
+                    ls = ("name", "url", "username", "password")
+                    csv_w.writerow(ls)
+                    file.close()
+                    file = open(root.filedir + "/export.csv", "a+", newline="")
+                    csv_w = csv.writer(file)
+                    for i in range(len(pls_)):
+                        csv_w.writerow(globals()[f"expd{i+1}"])
+                    file.close()
+                except PermissionError:
+                    pass
                 mpass_ent.delete(0, END)
         else:
             messagebox.showerror("Wrong Password", "Enter the correct password")
@@ -1681,7 +1688,7 @@ except Exception as e:
     getpass_sql.title("MySQL Password")
     getpass_sql.geometry("550x150")
     getpass_sql.resizable(0, 0)
-    getpass_sql.iconbitmap("images\\1.ico")
+    getpass_sql.iconbitmap("1.ico")
 
 
     mps_passkey = StringVar()
@@ -1713,7 +1720,7 @@ except Exception as e:
 
     getpass_sql.mainloop()
     
-
+refresh_tree()
 
 ########################## CHECKING AND CREATING DATABASE #############
 mycur.execute("SHOW SCHEMAS;")
