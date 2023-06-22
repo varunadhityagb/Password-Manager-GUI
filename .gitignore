@@ -1,5 +1,3 @@
-cache.txt
-mode.txt
-sqlp.txt
 *.csv
-activate
+/venv
+/ven2
